@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Heroes;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
