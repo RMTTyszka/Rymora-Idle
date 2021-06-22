@@ -1,12 +1,14 @@
+using System;
 using System.Collections.Generic;
 using Areas.Realms.Cities;
 using Areas.Realms.Places;
+using UnityEngine.Serialization;
 
 namespace Areas.Realms
 {
-    public class Realm
+    [Serializable]
+    public class Realm : Visitable
     {
-        public string Name { get; set; }
         public List<Mine> Mines { get; set; }
         public List<City> Cities { get; set; }
     }

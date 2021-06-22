@@ -1,19 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Areas;
 using Areas.Realms;
+using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class MapComponent : MonoBehaviour
+public class VisitableComponent : MonoBehaviour
 {
-    public string realmName;
-    public Realm Realm { get; set; }
+    public Visitable visitable;
+
     // Start is called before the first frame update
     void Start()
     {
-        Realm = new Realm
-        {
-            Name = realmName
-        };
     }
 
     // Update is called once per frame
@@ -22,8 +22,5 @@ public class MapComponent : MonoBehaviour
         
     }
 
-    public void Hide()
-    {
-        
-    }
+
 }

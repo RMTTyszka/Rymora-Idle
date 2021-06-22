@@ -11,7 +11,7 @@ public static class RealmManagerService
     
     // Start is called before the first frame update
 
-    public static void PublishRealmSelected(string mapName)
+    public static void PublishVisitableSelected(string mapName)
     {
         OnRealmSelected?.Invoke(mapName);
     }
