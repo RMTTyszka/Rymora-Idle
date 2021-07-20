@@ -1,9 +1,13 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Items.Nodes
 {
-    public abstract class MaterialNode
+    public abstract class MaterialNode<TNode, TMaterial> : MonoBehaviour 
+        where TNode : NodeMaterial<TMaterial> 
+        where TMaterial : Material
+
     {
-        public List<Material> Material { get; set; }
+        public List<TNode> material;
     }
 }

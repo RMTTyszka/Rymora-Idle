@@ -1,8 +1,11 @@
+using System;
+using UnityEngine;
+
 namespace Items
 {
-    public abstract class Material
+    public abstract class Material : MonoBehaviour
     {
-        public string Name { get; set; }
-        public int Level { get; set; }
+        public string name;
+        public int level;
     }
 }

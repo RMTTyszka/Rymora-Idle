@@ -29,7 +29,7 @@ public class VisitableManager : MonoBehaviour
 
     void EnableDefaultVisitable()
     {
-        visitables.FirstOrDefault()?.gameObject.SetActive(true);
+        UpdateVisitableView(visitables.FirstOrDefault()?.visitable.name);
     }
 
     // Update is called once per frame
