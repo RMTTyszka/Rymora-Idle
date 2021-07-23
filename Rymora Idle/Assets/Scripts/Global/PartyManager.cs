@@ -5,18 +5,20 @@ using Global;
 using Heroes;
 using UnityEngine;
 
-public class CurrentHeroService : MonoBehaviour
+public class PartyManager : MonoBehaviour
 {
 
     public delegate void HeroSelected(Hero hero);
 
-    public static event HeroSelected OnHeroSelected;
-    
-    
-    public static Hero CurrentHero { get; set; }
+    public event HeroSelected OnHeroSelected;
+
+    [SerializeField]
+    public List<Hero> heroes;
+
+    public Hero CurrentHero { get; set; }
     // Start is called before the first frame update
 
-    public static void PublishHeroSelected(Hero hero)
+    public void PublishHeroSelected(Hero hero)
     {
         CurrentHero = hero;
         OnHeroSelected?.Invoke(hero);

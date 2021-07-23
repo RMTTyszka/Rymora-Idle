@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da82cbab5a2f4609aa4cbb2c70c12a7e, type: 3}
-  m_Name: 9 - Master Forest
+  m_Script: {fileID: 11500000, guid: b240eb6e7aff4540a4d538a58a09c9a9, type: 3}
+  m_Name: 5 - Good Mountain
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: -2135585597343286014, guid: 8b712e3d5612ad046b5b66e9366c3ce2, type: 3}
-  m_Color: {r: 0.029681386, g: 0.2735849, b: 0.04097852, a: 1}
+  m_Color: {r: 0.3679245, g: 0.19256082, b: 0.071155205, a: 1}
   m_Transform:
     e00: 1
     e01: 0
@@ -35,5 +35,5 @@ MonoBehaviour:
   m_Flags: 1
   m_ColliderType: 1
   isWalkable: 1
-  moveSpeed: 70
-  quality: 9
+  moveSpeed: 30
+  quality: 4

@@ -1,8 +1,10 @@
+using UnityEngine;
+
 namespace Heroes
 {
-    public class Hero
+    public class Hero : MonoBehaviour
     {
-        public string Name { get; set; }
+        public new string Name { get; set; }
         public int Level{ get; set; }
     
         public Inventory Inventory { get; set; }

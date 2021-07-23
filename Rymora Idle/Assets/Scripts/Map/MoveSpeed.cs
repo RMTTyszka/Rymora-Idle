@@ -10,11 +10,11 @@ namespace Map
         Mountain = 30,
         Desert = 50,
         Jungle = 60,
-        Road = 110,
-        PavedRoad = 120,
+        Road = 100,
         Swamp = 40,
         Snow = 50,
         Water = 20,
-        Ice = 60
+        Ice = 60,
+        Hills = 60
     }
 }

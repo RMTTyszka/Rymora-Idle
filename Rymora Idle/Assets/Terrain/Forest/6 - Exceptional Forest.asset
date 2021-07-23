@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 6 - Exceptional Forest
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: -2135585597343286014, guid: 8b712e3d5612ad046b5b66e9366c3ce2, type: 3}
-  m_Color: {r: 0, g: 0.69803923, b: 0.3137255, a: 1}
+  m_Color: {r: 0.07058824, g: 0.39607847, b: 0.0627451, a: 1}
   m_Transform:
     e00: 1
     e01: 0
@@ -36,4 +36,4 @@ MonoBehaviour:
   m_ColliderType: 1
   isWalkable: 1
   moveSpeed: 70
-  quality: 2
+  quality: 6

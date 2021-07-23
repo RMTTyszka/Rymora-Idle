@@ -10,7 +10,8 @@ public class CurrentHeroPanel : MonoBehaviour
 {
 
 
-    public Hero CurrentHero => CurrentHeroService.CurrentHero;
+    public PartyManager partyManager;
+    public Hero CurrentHero { get; set; }
 
     public Text heroName;
     public Text heroLevel;
@@ -18,12 +19,13 @@ public class CurrentHeroPanel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CurrentHeroService.OnHeroSelected += UpdateCurrentIndoDisplayData;
+        partyManager.OnHeroSelected += UpdateCurrentIndoDisplayData;
     }
 
     public void UpdateCurrentIndoDisplayData(Hero hero)
     {
         Debug.Log(heroName);
+        CurrentHero = hero;
         heroName.text = hero.Name;
         heroLevel.text = hero.Level.ToString();
     }

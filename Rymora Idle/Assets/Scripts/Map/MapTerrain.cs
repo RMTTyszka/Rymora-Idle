@@ -10,5 +10,14 @@ namespace Map
 		public bool isWalkable = true;
 		public MoveSpeed moveSpeed;
 		public QualityGrade quality = QualityGrade.Common;
+
+		public bool CanMine()
+		{
+			return this is Mountain;
+		}	
+		public bool CanCutWood()
+		{
+			return this is Forest;
+		}
 	}
 }
