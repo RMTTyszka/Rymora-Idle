@@ -24,7 +24,6 @@ public class CurrentHeroPanel : MonoBehaviour
 
     public void UpdateCurrentIndoDisplayData(Hero hero)
     {
-        Debug.Log(heroName);
         CurrentHero = hero;
         heroName.text = hero.Name;
         heroLevel.text = hero.Level.ToString();

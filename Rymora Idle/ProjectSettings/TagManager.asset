@@ -13,7 +13,7 @@ TagManager:
   - Water
   - UI
   - CurrentMap
-  - 
+  - HightlightMap
   - 
   - 
   - Heroes
@@ -47,6 +47,9 @@ TagManager:
     locked: 0
   - name: CurrentMap
     uniqueID: 3866902135
+    locked: 0
+  - name: HightlightMap
+    uniqueID: 3936574649
     locked: 0
   - name: Heros
     uniqueID: 1740841801

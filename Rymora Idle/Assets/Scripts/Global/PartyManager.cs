@@ -22,6 +22,8 @@ public class PartyManager : MonoBehaviour
     {
         CurrentHero = hero;
         OnHeroSelected?.Invoke(hero);
+        Vector3 position = new Vector3(hero.gameObject.transform.position.x, hero.gameObject.transform.position.y, Camera.main.transform.position.z);
+        Camera.main.transform.position = position;
     }
 
 }

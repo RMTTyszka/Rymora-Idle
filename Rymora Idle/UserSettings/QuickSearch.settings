@@ -17,6 +17,7 @@ filters = {
 }
 scopes = {
 	"last_search.AB59B443" = "Grid Layout"
+	"last_search.00000000" = "Drag Camera 2D"
 }
 providers = {
 	asset = {

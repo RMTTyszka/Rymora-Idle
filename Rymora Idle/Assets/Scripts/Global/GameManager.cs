@@ -21,7 +21,9 @@ public class GameManager : MonoBehaviour
 
     private void InitiateHero()
     {
-        partyManager.CurrentHero.transform.position = mapManager.currentMap.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[0]));
+        partyManager.heroes[0].transform.position = mapManager.map.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[0]));
+        partyManager.heroes[1].transform.position = mapManager.map.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[1]));
+        partyManager.heroes[2].transform.position = mapManager.map.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[2]));
     }
 
     // Update is called once per frame

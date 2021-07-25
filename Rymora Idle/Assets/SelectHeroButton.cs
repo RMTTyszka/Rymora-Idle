@@ -17,7 +17,7 @@ public class SelectHeroButton : MonoBehaviour
 
     public void HeroSelected()
     {
-        Debug.Log(JsonConvert.SerializeObject(partyManager.heroes[heroIndex]));
+        Debug.Log(JsonConvert.SerializeObject(partyManager.heroes[heroIndex].name));
         partyManager.PublishHeroSelected(partyManager.heroes[heroIndex]);
     }
 
