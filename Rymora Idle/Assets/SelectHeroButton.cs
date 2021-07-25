@@ -1,26 +1,20 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using Global;
-using Newtonsoft.Json;
+using Heroes;
 using UnityEngine;
 
 public class SelectHeroButton : MonoBehaviour
 {
-    public PartyManager partyManager;
+    [SerializeField] private SelectHeroService _selectHeroService;
+    [SerializeField] private Hero _hero;
 
-    public int heroIndex;
     // Start is called before the first frame update
     void Start()
     {
     }
-
+   
     public void HeroSelected()
     {
-        Debug.Log(JsonConvert.SerializeObject(partyManager.heroes[heroIndex].name));
-        partyManager.PublishHeroSelected(partyManager.heroes[heroIndex]);
+        _selectHeroService.HeroSelected(_hero);
     }
-
-
-
 }

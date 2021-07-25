@@ -50,37 +50,31 @@ public class MapManager : MonoBehaviour
         Vector3Int mousePos = GetMousePosition();
         if (Input.GetMouseButtonDown(1))
         {
-            Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Vector3Int gridPosition = map.WorldToCell(mousePosition);
-
-            MapTerrain clickedTile = map.GetTile(gridPosition) as MapTerrain;
+            MapTerrain clickedTile = map.GetTile(mousePos) as MapTerrain;
             if (clickedTile != null)
             {
                 CurrentMouseTile = clickedTile;
                 actionMenu.transform.position = Input.mousePosition;
                 actionMenu.SetActive(true);
-                hightlightMap.SetTile(mousePos, null);
             }
 
         }
         if (!mousePos.Equals(previousMousePos))
         {
-            hightlightMap.SetTile(previousMousePos, null); // Remove old hoverTile
-            hightlightMap.SetTile(mousePos, hoverTile);
-            map.SetTile(mousePos, hoverTile);
-            var a = hightlightMap.GetTile(mousePos);
-            print	(a.name);
-            previousMousePos = mousePos;
+            hightlightMap.SetTile(previousMousePos, null);
+            MapTerrain clickedTile = map.GetTile(mousePos) as MapTerrain;
+            if (clickedTile != null)
+            {
+                hightlightMap.SetTile(mousePos, hoverTile);
+                previousMousePos = mousePos;
+            }
+
         }  
-        if (Input.GetMouseButtonDown(0))
-        {
-        //    hightlightMap.SetTile(previousMousePos, null); // Remove old hoverTile
-            hightlightMap.SetTile(mousePos, hoverTile);
-        }
 
     }
     Vector3Int GetMousePosition () {
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorldPos.z = 0;
         return hightlightMap.WorldToCell(mouseWorldPos);
     }
 
