@@ -15,15 +15,16 @@ public class MapManager : MonoBehaviour
     public event CitiesPopulated OnCitiesPoulated;
     public MapTerrain CurrentMouseTile { get; set; }
     public MapTerrain CurrentPlayerTile { get; set; }
+    [SerializeField] private PartyManager partyManager;
     public GameObject actionMenu;
 
-    [FormerlySerializedAs("currentMap")] [SerializeField] public Tilemap map;
-    private int currentIndex = 0;
+    [SerializeField] public Tilemap map;
     public List<City> Cities { get; set; } = new List<City>();
     public List<Vector3> CityPositions { get; set; } = new List<Vector3>();
     
     [SerializeField] private Tilemap hightlightMap;
     [SerializeField] private Tile hoverTile;
+    public Vector3 CurrentMapPosition { get; set; }
     private Vector3Int previousMousePos = new Vector3Int();
 
     private void Start()
@@ -47,35 +48,51 @@ public class MapManager : MonoBehaviour
 
     private void Update()
     {
-        Vector3Int mousePos = GetMousePosition();
+        var mousePos = GetMousePosition();
         if (Input.GetMouseButtonDown(1))
         {
-            MapTerrain clickedTile = map.GetTile(mousePos) as MapTerrain;
+            if (actionMenu.gameObject.activeInHierarchy)
+            {
+                actionMenu.SetActive(false);
+            }
+
+            MapTerrain clickedTile = map.GetTile(mousePos.worldToCellPosition) as MapTerrain;
             if (clickedTile != null)
             {
                 CurrentMouseTile = clickedTile;
+                CurrentMapPosition =  mousePos.worldPosition;
                 actionMenu.transform.position = Input.mousePosition;
                 actionMenu.SetActive(true);
             }
+
+        }      
+        if (Input.GetMouseButtonDown(0))
+        {
+/*            if (actionMenu.gameObject.activeInHierarchy)
+            {
+                actionMenu.SetActive(false);
+                            CurrentMouseTile = null;
+            CurrentMapPosition = new Vector3();
+            }*/
 
         }
         if (!mousePos.Equals(previousMousePos))
         {
             hightlightMap.SetTile(previousMousePos, null);
-            MapTerrain clickedTile = map.GetTile(mousePos) as MapTerrain;
+            MapTerrain clickedTile = map.GetTile(mousePos.worldToCellPosition) as MapTerrain;
             if (clickedTile != null)
             {
-                hightlightMap.SetTile(mousePos, hoverTile);
-                previousMousePos = mousePos;
+                hightlightMap.SetTile(mousePos.worldToCellPosition, hoverTile);
+                previousMousePos = mousePos.worldToCellPosition;
             }
 
         }  
 
     }
-    Vector3Int GetMousePosition () {
+    (Vector3Int worldToCellPosition, Vector3 worldPosition) GetMousePosition () {
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0;
-        return hightlightMap.WorldToCell(mouseWorldPos);
+        return (hightlightMap.WorldToCell(mouseWorldPos), mouseWorldPos);
     }
 
 }
