@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 1 - Poor Mountain
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: -2135585597343286014, guid: 8b712e3d5612ad046b5b66e9366c3ce2, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.5754717, g: 0.34563303, b: 0.18729976, a: 1}
   m_Transform:
     e00: 1
     e01: 0
