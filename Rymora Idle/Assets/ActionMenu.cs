@@ -35,8 +35,9 @@ public class ActionMenu : MonoBehaviour
 
     public void Move()
     {
-        partyManager.CurrentHero.Waypoints.Clear();
-        partyManager.CurrentHero.Waypoints.Add(mapManager.CurrentMapPosition);
+        partyManager.CurrentHero.WayPoints.Add(mapManager.CurrentMapPosition);
+        gameObject.SetActive(false);
+        partyManager.PublishWayPointUpdated(partyManager.CurrentHero);
     }
 
 }

@@ -38,7 +38,6 @@ public class MapManager : MonoBehaviour
             var tile = map.GetTile(position);
             if (tile is City city)
             {
-                print(tile.name);
                 Cities.Add(city);
                 CityPositions.Add(position);
             }
@@ -59,10 +58,20 @@ public class MapManager : MonoBehaviour
             MapTerrain clickedTile = map.GetTile(mousePos.worldToCellPosition) as MapTerrain;
             if (clickedTile != null)
             {
-                CurrentMouseTile = clickedTile;
-                CurrentMapPosition =  mousePos.worldPosition;
-                actionMenu.transform.position = Input.mousePosition;
-                actionMenu.SetActive(true);
+                if (CurrentMouseTile != null && CurrentMouseTile.Equals(clickedTile))
+                {
+                    actionMenu.SetActive(false);
+                    CurrentMouseTile = null;
+                }
+                else
+                {
+                    CurrentMouseTile = clickedTile;
+                    CurrentMapPosition =  mousePos.worldPosition;
+                    actionMenu.transform.position = Input.mousePosition;
+                    actionMenu.SetActive(true);  
+                }
+
+
             }
 
         }      
