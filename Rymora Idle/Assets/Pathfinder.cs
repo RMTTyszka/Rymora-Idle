@@ -62,7 +62,7 @@ public class Pathfinder : MonoBehaviour {
         newWp.Reverse();
         monster.waypoints.Clear();
         foreach (Vector2Int pos in newWp) {
-            monster.waypoints.Enqueue(new Vector3(pos.x+0.5f, pos.y + 0.5f, 0));
+            monster.waypoints.Enqueue(new Vector3(pos.x, pos.y, 0));
         }
         if (monster.waypoints.Count > 0)
         {
@@ -75,8 +75,8 @@ public class Pathfinder : MonoBehaviour {
 
         for (int i = 0; i < newWp.Count-1; i++)
         {
-            Vector3 ori = new Vector3(newWp[i].x+0.5f, newWp[i].y + 0.5f, 0);
-            Vector3 dest = new Vector3(newWp[i+1].x + 0.5f, newWp[i+1].y + 0.5f, 0);
+            Vector3 ori = new Vector3(newWp[i].x, newWp[i].y, 0);
+            Vector3 dest = new Vector3(newWp[i+1].x, newWp[i+1].y, 0);
             Debug.DrawLine(ori, dest, Color.red, 3f);
         }
 

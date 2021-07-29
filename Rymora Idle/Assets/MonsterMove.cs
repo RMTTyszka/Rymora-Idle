@@ -49,7 +49,15 @@ public class MonsterMove : MonoBehaviour {
             if (Vector3.Distance(transform.position, target) > 0)
             {
                 hasArrived = false;
-                MoveToTarget(waypoint);
+                if (Vector3.Distance(transform.position, target) < 1)
+                {
+                    MoveToTarget(target);
+                }
+                else
+                {
+                    MoveToTarget(waypoint);
+                }
+
             }
             else {
                 hasArrived = true;
@@ -63,7 +71,7 @@ public class MonsterMove : MonoBehaviour {
     public void MoveToTarget(Vector3 wp) {
         MapTerrain floor = Pathfinder.ground.GetTile(Vector3Int.FloorToInt(transform.position)) as MapTerrain;
 
-        Hero.transform.position = Vector3.MoveTowards(transform.position, wp, Hero.Speed() * Time.deltaTime * (float)floor.moveSpeed);
+        Hero.transform.position = Vector3.MoveTowards(transform.position, wp, Hero.Speed(floor.moveSpeed) * Time.deltaTime * (float)floor.moveSpeed);
     }
 
 }
