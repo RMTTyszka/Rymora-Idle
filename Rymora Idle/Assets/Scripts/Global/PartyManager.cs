@@ -11,6 +11,10 @@ public class PartyManager : MonoBehaviour
     public delegate void HeroSelected(Hero hero);
 
     public event HeroSelected OnHeroSelected;
+    
+    public delegate void WayPointChanged(Hero hero);
+
+    public event WayPointChanged OnWayPointChanged;
 
     [SerializeField]
     public List<Hero> heroes;
@@ -22,8 +26,13 @@ public class PartyManager : MonoBehaviour
     {
         CurrentHero = hero;
         OnHeroSelected?.Invoke(hero);
-        Vector3 position = new Vector3(hero.gameObject.transform.position.x, hero.gameObject.transform.position.y, Camera.main.transform.position.z);
+        Vector3 position = Vector3Int.FloorToInt(new Vector3(hero.gameObject.transform.position.x, hero.gameObject.transform.position.y, Camera.main.transform.position.z));
         Camera.main.transform.position = position;
+    }
+
+    public void PublishWayPointUpdated(Hero hero)
+    {
+        OnWayPointChanged?.Invoke(hero);
     }
 
 }

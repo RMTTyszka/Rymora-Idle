@@ -215,7 +215,13 @@ public class DragCamera2D : MonoBehaviour
 
 
        // if mouse is down
-        if (Input.GetMouseButton(0)) {
+        if (Input.GetMouseButton(0))
+        {
+            if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
+
             float x = Input.GetAxis("Mouse X") * dragSpeed;
             float y = Input.GetAxis("Mouse Y") * dragSpeed;
 
