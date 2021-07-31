@@ -38,6 +38,10 @@ public class ActionMenu : MonoBehaviour
         partyManager.CurrentHero.WayPoints.Add(mapManager.CurrentMapPosition);
         gameObject.SetActive(false);
         partyManager.PublishWayPointUpdated(partyManager.CurrentHero);
+    }    
+    public void Mine()
+    {
+        partyManager.CurrentHero.Mine();
     }
 
 }

@@ -3,9 +3,7 @@ using UnityEngine;
 
 namespace Items
 {
-    public abstract class Material : MonoBehaviour
+    public abstract class Material : Item
     {
-        public string name;
-        public int level;
     }
 }

@@ -1,18 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
+using Heroes;
+using Map;
 using UnityEngine;
 
-public class Miner : MonoBehaviour
+public class Miner
 {
-    // Start is called before the first frame update
-    void Start()
+    public void Mine(Hero hero)
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        var mapTerrain = hero.CurrentTile;
+        if (mapTerrain.CanMine())
+        {
+            var mine = mapTerrain as Mine;
+            var mineRoll = Random.Range(1, 101);
+            var total = mineRoll + hero.Skills.Mine.TotalValue();
+        }
     }
 }
