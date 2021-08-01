@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -33,6 +34,8 @@ public class ProgressBar : MonoBehaviour
     private AudioSource audiosource;
     private Text txtTitle;
     private float barValue;
+    public float TotalSeconds { get; set; }
+    public float CurrentSeconds { get; set; }
     public float BarValue
     {
         get { return barValue; }
@@ -76,7 +79,7 @@ public class ProgressBar : MonoBehaviour
     void UpdateValue(float val)
     {
         bar.fillAmount = val / 100;
-        txtTitle.text = Title + " " + val + "%";
+        txtTitle.text = $"{Title} {Math.Round(CurrentSeconds, 1)} - {Math.Round(TotalSeconds, 1)}s";
 
         if (Alert >= val)
         {

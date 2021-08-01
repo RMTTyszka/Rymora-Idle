@@ -11,7 +11,7 @@ namespace Heroes
 {
     public class Hero : MonoBehaviour
     {
-        public new string Name { get; set; }
+        public string Name { get; set; }
         public int Level{ get; set; }
     
         public Inventory Inventory { get; set; }
@@ -41,11 +41,16 @@ namespace Heroes
             NextActions = new Queue<HeroAction>();
         }
 
+        private void OnEnable()
+        {
+            if (string.IsNullOrWhiteSpace(Name)) Name = gameObject.name;
+            if (Level == 0) Level= 1;
+        }
+
         void Start()
         {
             Move = GetComponent<MonsterMove>();
-            if (string.IsNullOrWhiteSpace(Name)) Name = gameObject.name;
-            if (Level == 0) Level= 1;
+
         }
 
         void Update()
@@ -53,18 +58,6 @@ namespace Heroes
             TryAction();
         }
 
-        public void InitiateMovement(Vector3 waypoint)
-        {
-            WayPoints.Add(waypoint);
-            NextActions.Enqueue(new HeroAction
-            {
-                ActionEndType = ActionEndType.ByCount,
-                Action = TryMove,
-                LimitCount = 1,
-                ExecutionAction = TryMove,
-                TimeToExecute = 0
-            });
-        }       
 
 
         private void TryAction()
@@ -78,9 +71,9 @@ namespace Heroes
                     CurrentActionTime += (decimal)Time.deltaTime * ActionPerformance;
                     if (CurrentActionTime >= EndActionTime)
                     {
+                        CurrentAction.Started = false;
                         CurrentAction.ExecutionAction.Invoke();
                         ResetAction();
-                        CurrentAction.Started = false;
                     }  
                 }
                 else
@@ -91,6 +84,19 @@ namespace Heroes
 
             }
         }
+        public void InitiateMovement(Vector3 waypoint)
+        {
+            WayPoints.Add(waypoint);
+            NextActions.Enqueue(new HeroAction
+            {
+                ActionEndType = ActionEndType.ByCount,
+                Action = TryMove,
+                LimitCount = 1,
+                ExecutionAction = TryMove,
+                TimeToExecute = 0,
+                ActionName = "Travel"
+            });
+        }       
 
         private void TryMove()
         {
@@ -101,7 +107,7 @@ namespace Heroes
                 if (isCloseEnough)
                 {
                     WayPoints.RemoveAt(0);
-                    partyManager.PublishWayPointUpdated(this);
+                    partyManager.PublishActionsUpdated(this);
                     transform.position = waypoint;
                     CurrentAction = null;
                 }
@@ -112,7 +118,7 @@ namespace Heroes
                     if (CurrentTile == null)
                     {
                         WayPoints.Clear();
-                        partyManager.PublishWayPointUpdated(this);
+                        partyManager.PublishActionsUpdated(this);
                         CurrentAction = null;
                         NextActions.Clear();
                     }
@@ -127,7 +133,7 @@ namespace Heroes
                         else
                         {
                             WayPoints.Clear();
-                            partyManager.PublishWayPointUpdated(this);
+                            partyManager.PublishActionsUpdated(this);
                             CurrentAction = null;
                             NextActions.Clear();
                         }
@@ -136,21 +142,6 @@ namespace Heroes
                 }
 
             }
-
-/*            if (WayPoints.Any())
-            {
-                var waypoint = WayPoints.First();
-                if (transform.position.Equals(waypoint))
-                {
-                    WayPoints.RemoveAt(0);
-                    partyManager.PublishWayPointUpdated(this);
-                    Move.target = Vector3.zero;
-                }
-                else
-                {
-                    Move.target = waypoint;
-                }
-            }*/
         }
 
 

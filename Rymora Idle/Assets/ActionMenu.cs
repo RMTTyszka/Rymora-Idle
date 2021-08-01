@@ -38,7 +38,7 @@ public class ActionMenu : MonoBehaviour
     {
         partyManager.CurrentHero.InitiateMovement(mapManager.CurrentMapPosition);
         gameObject.SetActive(false);
-        partyManager.PublishWayPointUpdated(partyManager.CurrentHero);
+        partyManager.PublishActionsUpdated(partyManager.CurrentHero);
     }    
     public void Mine()
     {
@@ -47,7 +47,6 @@ public class ActionMenu : MonoBehaviour
         if (!isAlreadyOnMapTile)
         {
             partyManager.CurrentHero.InitiateMovement(mapManager.CurrentMapPosition);
-            partyManager.PublishWayPointUpdated(partyManager.CurrentHero);
         }
 
         var heroAction = new HeroAction
@@ -60,10 +59,12 @@ public class ActionMenu : MonoBehaviour
             ActionEndType = ActionEndType.ByCount,
             LimitCount = 5,
             TimeToExecute = Heroes.Skills.MineTime,
-            Terrain = mapManager.CurrentMouseTile
+            Terrain = mapManager.CurrentMouseTile,
+            ActionName = "Mine"
         };
         partyManager.CurrentHero.InitiateMining(heroAction);
         gameObject.SetActive(false);
+        partyManager.PublishActionsUpdated(partyManager.CurrentHero);
     }
 
 }

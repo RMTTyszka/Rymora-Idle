@@ -16,6 +16,7 @@ namespace Heroes
         public int TimeToExecute { get; set; }
         public bool Started { get; set; }
         public MapTerrain Terrain { get; set; }
+        public string ActionName { get; set; }
         
     }
 }
