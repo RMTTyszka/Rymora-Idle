@@ -1,7 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using Items.Metals;
 using Map;
 using UnityEngine;
+using UnityEngine.Experimental.TerrainAPI;
 
 namespace Heroes
 {
@@ -19,6 +23,13 @@ namespace Heroes
         [SerializeField] private MapManager mapManager;
         [SerializeField] private PartyManager partyManager;
         
+        public decimal? CurrentActionTime{ get; set; } 
+        public decimal? EndActionTime { get; set; } 
+        public decimal ActionPerformance { get; set; } 
+        public Metal CurrentMaterial { get; set; }
+        public HeroAction CurrentAction { get; set; }
+        public Queue<HeroAction> NextActions { get; set; }
+
         public Skills Skills { get; set; }
 
         public Hero()
@@ -26,6 +37,8 @@ namespace Heroes
             Inventory = new Inventory();
             WayPoints = new List<Vector3>();
             Skills = new Skills();
+            ActionPerformance = 1m;
+            NextActions = new Queue<HeroAction>();
         }
 
         void Start()
@@ -37,14 +50,60 @@ namespace Heroes
 
         void Update()
         {
+            TryAction();
+        }
+
+        public void InitiateMovement(Vector3 waypoint)
+        {
+            WayPoints.Add(waypoint);
+            NextActions.Enqueue(new HeroAction
+            {
+                ActionEndType = ActionEndType.ByCount,
+                Action = TryMove,
+                LimitCount = 1,
+                ExecutionAction = TryMove,
+                TimeToExecute = 0
+            });
+        }       
+
+
+        private void TryAction()
+        {
+            ProcessNextAction();
+
+            if (CurrentAction != null)
+            {
+                if (CurrentAction.Started)
+                {
+                    CurrentActionTime += (decimal)Time.deltaTime * ActionPerformance;
+                    if (CurrentActionTime >= EndActionTime)
+                    {
+                        CurrentAction.ExecutionAction.Invoke();
+                        ResetAction();
+                        CurrentAction.Started = false;
+                    }  
+                }
+                else
+                {
+                    CurrentAction.Started = true;
+                    CurrentAction.Action.Invoke();
+                }
+
+            }
+        }
+
+        private void TryMove()
+        {
             if (WayPoints.Any())
             {
                 var waypoint = WayPoints.First();
-                if (Vector3.Distance(waypoint, transform.position) <= 0.05f)
+                var isCloseEnough = Vector3.Distance(waypoint, transform.position) <= 0.05f;
+                if (isCloseEnough)
                 {
                     WayPoints.RemoveAt(0);
                     partyManager.PublishWayPointUpdated(this);
                     transform.position = waypoint;
+                    CurrentAction = null;
                 }
                 else
                 {
@@ -54,6 +113,8 @@ namespace Heroes
                     {
                         WayPoints.Clear();
                         partyManager.PublishWayPointUpdated(this);
+                        CurrentAction = null;
+                        NextActions.Clear();
                     }
                     else
                     {
@@ -67,6 +128,8 @@ namespace Heroes
                         {
                             WayPoints.Clear();
                             partyManager.PublishWayPointUpdated(this);
+                            CurrentAction = null;
+                            NextActions.Clear();
                         }
                     }
 
@@ -95,72 +158,83 @@ namespace Heroes
         {
             return 1 * ((float)moveSpeed / 100);
         }
-
-        public void Mine()
+        public void InitiateMining(HeroAction heroAction)
+        {
+            heroAction.Action = TryMine;
+            heroAction.ExecutionAction = Mine;
+            heroAction.TimeToExecute = Skills.MineTime;
+            NextActions.Enqueue(heroAction);
+        }
+        public void TryMine()
         {
             if (CurrentTile.CanMine())
             {
                 var mine = CurrentTile as Mountain;
                 var metal = mine.GetMetal();
+                CurrentMaterial = metal;
                 var rollValue = Skills.Mine.Roll();
                 var difficult = metal.Level * 10 + 50;
-                print(rollValue);
-                print(difficult);
-                if (rollValue > difficult)
+                var actionProficient = rollValue - difficult;
+                ActionPerformance = actionProficient / 100 + 1;
+                CurrentActionTime = 0;
+                EndActionTime = Skills.MineTime;
+                CurrentAction.ExecutionAction = Mine;
+            }
+        }
+        public void Mine()
+        {
+            var rollValue = Skills.Mine.Roll();
+            var difficult = CurrentMaterial.Level * 10 + 50;
+            if (rollValue > difficult)
+            {
+                Inventory.AddItem(CurrentMaterial);
+                print($"Acquired a {Inventory.Items[0].Name}");
+            }
+
+            CurrentAction.PassedTime += (decimal)Time.deltaTime;
+            CurrentAction.ExecutedCount++;
+        }
+
+        public void ResetAction()
+        {
+            ActionPerformance = 1;
+            CurrentActionTime = 0;
+        }
+
+        public void ProcessNextAction()
+        {
+            if (CurrentAction == null && NextActions.Any())
+            {
+                CurrentAction = NextActions.Dequeue();
+                CurrentActionTime = 0;
+                EndActionTime = CurrentAction.TimeToExecute;
+            }
+
+            if (CurrentAction != null)
+            {
+                switch (CurrentAction.ActionEndType)
                 {
-                    Inventory.AddItem(metal);
-                    print(Inventory.Items[0].Name);
+                    case ActionEndType.ByCount:
+                        if (CurrentAction.ExecutedCount >= CurrentAction.LimitCount)
+                        {
+                            CurrentAction = null;
+                        }
+                        break;
+                    case ActionEndType.ByItemQuantity:
+                        break;
+                    case ActionEndType.ByTime:
+                        if (CurrentAction.PassedTime >= CurrentAction.EndTime)
+                        {
+                            CurrentAction = null;
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
         }
 
-    }
 
-    public class Skill
-    {
-        public Skill()
-        {
-            Bonuses = new List<Bonus>();
-        }
-            public int Value { get; set; }
-            public List<Bonus> Bonuses { get; set; }
 
-            public int TotalValue()
-            {
-                return Value + GetTotalBonus();
-            }
-
-            public int GetTotalBonus()
-            {
-                var innate = Bonuses.Where(bonus => bonus.Type == BonusType.Innate).Sum(bonus => bonus.Value);
-                var magic = Bonuses.Where(bonus => bonus.Type == BonusType.Magic).Select(bonus => bonus.Value).DefaultIfEmpty().Max();
-                var equipment = Bonuses.Where(bonus => bonus.Type == BonusType.Equipment).Select(bonus => bonus.Value).DefaultIfEmpty().Max();
-                var food = Bonuses.Where(bonus => bonus.Type == BonusType.Food).Select(bonus => bonus.Value).DefaultIfEmpty().Max();
-                var furniture = Bonuses.Where(bonus => bonus.Type == BonusType.Furniture).Select(bonus => bonus.Value).DefaultIfEmpty().Max();
-                return innate + magic + equipment + food + furniture;
-            }
-
-            public int Roll()
-            {
-                var rollValue = Random.Range(1, 101);
-                return rollValue + GetTotalBonus();
-            }
-    }
-
-    public class Bonus
-    {
-        public int Value { get; set; }
-        public BonusType Type { get; set; }
-        public float StartedAt { get; set; }
-        public float ExpiresAt { get; set; }
-    }
-
-    public enum BonusType
-    {
-        Innate = 0,
-        Magic = 1,
-        Equipment = 2,
-        Food = 3,
-        Furniture = 4
     }
 }

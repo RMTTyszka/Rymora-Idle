@@ -18,6 +18,7 @@ public class CurrentHeroPanel : MonoBehaviour
     public Text heroLevel;
     public GameObject wayPointsPanel;
     public Text textPrefab;
+    public ProgressBar actionBar;
     
     // Start is called before the first frame update
     void Start()
@@ -64,7 +65,11 @@ public class CurrentHeroPanel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (partyManager.CurrentHero.CurrentAction != null && partyManager.CurrentHero.EndActionTime.HasValue && partyManager.CurrentHero.CurrentActionTime.HasValue && partyManager.CurrentHero.EndActionTime.Value != 0)
+        {
+            actionBar.BarValue = (float) (partyManager.CurrentHero.CurrentActionTime.Value / partyManager.CurrentHero.EndActionTime.Value * 100);
+        }
+
     }
     
 }

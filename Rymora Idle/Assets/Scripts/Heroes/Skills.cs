@@ -8,5 +8,10 @@ namespace Heroes
         {
             Mine = new Skill();
         }
+
+
+
+
+        public static int MineTime = 3;
     }
 }

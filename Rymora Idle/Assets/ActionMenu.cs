@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Heroes;
 using UnityEngine;
 
 public class ActionMenu : MonoBehaviour
@@ -35,13 +36,34 @@ public class ActionMenu : MonoBehaviour
 
     public void Move()
     {
-        partyManager.CurrentHero.WayPoints.Add(mapManager.CurrentMapPosition);
+        partyManager.CurrentHero.InitiateMovement(mapManager.CurrentMapPosition);
         gameObject.SetActive(false);
         partyManager.PublishWayPointUpdated(partyManager.CurrentHero);
     }    
     public void Mine()
     {
-        partyManager.CurrentHero.Mine();
+
+        var isAlreadyOnMapTile = partyManager.CurrentHero.transform.position == mapManager.CurrentMapPosition;
+        if (!isAlreadyOnMapTile)
+        {
+            partyManager.CurrentHero.InitiateMovement(mapManager.CurrentMapPosition);
+            partyManager.PublishWayPointUpdated(partyManager.CurrentHero);
+        }
+
+        var heroAction = new HeroAction
+        {
+            Action = null,
+            EndTime = null,
+            PassedTime = 0,
+            ExecutedCount = 0,
+            ExecutionAction = null,
+            ActionEndType = ActionEndType.ByCount,
+            LimitCount = 5,
+            TimeToExecute = Heroes.Skills.MineTime,
+            Terrain = mapManager.CurrentMouseTile
+        };
+        partyManager.CurrentHero.InitiateMining(heroAction);
+        gameObject.SetActive(false);
     }
 
 }
