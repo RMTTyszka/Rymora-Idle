@@ -12,9 +12,9 @@ public class PartyManager : MonoBehaviour
 
     public event HeroSelected OnHeroSelected;
     
-    public delegate void WayPointChanged(Hero hero);
+    public delegate void ActionUpdated(Hero hero);
 
-    public event WayPointChanged OnWayPointChanged;
+    public event ActionUpdated OnActionUpdated;
 
     [SerializeField]
     public List<Hero> heroes;
@@ -30,9 +30,9 @@ public class PartyManager : MonoBehaviour
         Camera.main.transform.position = position;
     }
 
-    public void PublishWayPointUpdated(Hero hero)
+    public void PublishActionsUpdated(Hero hero)
     {
-        OnWayPointChanged?.Invoke(hero);
+        OnActionUpdated?.Invoke(hero);
     }
 
 }

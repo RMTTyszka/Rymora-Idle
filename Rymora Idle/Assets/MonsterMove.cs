@@ -22,7 +22,6 @@ public class MonsterMove : MonoBehaviour {
         Pathfinder = GameObject.FindGameObjectWithTag("Pathfinder").GetComponent<Pathfinder>();
         Hero = GetComponent<Hero>();
         waypoints = new Queue<Vector3>();
-        print(Pathfinder.name);
     }
 
 	// Update is called once per frame
