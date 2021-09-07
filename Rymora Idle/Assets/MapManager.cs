@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,7 @@ public class MapManager : MonoBehaviour
     public delegate void CitiesPopulated();
 
     public event CitiesPopulated OnCitiesPoulated;
+    public Vector3? CurrentMouseTile1 { get; set; }
     public MapTerrain CurrentMouseTile { get; set; }
     public MapTerrain CurrentPlayerTile { get; set; }
     [SerializeField] private PartyManager partyManager;
@@ -41,6 +43,11 @@ public class MapManager : MonoBehaviour
                 Cities.Add(city);
                 CityPositions.Add(position);
             }
+
+            if (tile is MapTerrain)
+            {
+                (tile as MapTerrain).Id = Guid.NewGuid();
+            }
         }
         OnCitiesPoulated?.Invoke();
     }
@@ -55,16 +62,21 @@ public class MapManager : MonoBehaviour
                 actionMenu.SetActive(false);
             }
 
+
             MapTerrain clickedTile = map.GetTile(mousePos.worldToCellPosition) as MapTerrain;
             if (clickedTile != null)
             {
-                if (CurrentMouseTile != null && CurrentMouseTile.Equals(clickedTile))
+                Vector3Int cellPosition = map.LocalToCell(mousePos.worldToCellPosition);
+                var currentPosition = map.GetCellCenterLocal(cellPosition);
+                if (CurrentMouseTile1 != null && CurrentMouseTile1 == currentPosition)
                 {
                     actionMenu.SetActive(false);
                     CurrentMouseTile = null;
+                    CurrentMouseTile1 = null;
                 }
                 else
                 {
+                    CurrentMouseTile1 = currentPosition;
                     CurrentMouseTile = clickedTile;
                     CurrentMapPosition =  mousePos.worldPosition;
                     actionMenu.transform.position = Input.mousePosition;
