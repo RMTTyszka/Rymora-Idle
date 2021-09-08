@@ -6,6 +6,7 @@ namespace Items.Metals
         {
             Level = 6;
             Name = nameof(Mythril);
+            Weight = 3;
         }
     }
 }

@@ -6,6 +6,7 @@ namespace Items.Metals
         {
             Level = 5;
             Name = nameof(Gold);
+            Weight = 2;
         }
     }
 }
