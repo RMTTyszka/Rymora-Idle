@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ControlManager : MonoBehaviour
 {
-    [SerializeField] private SelectHeroService _selectHeroService;
+    [FormerlySerializedAs("_selectHeroService")] [SerializeField] private CurrentHeroService currentHeroService;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,15 +17,15 @@ public class ControlManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            _selectHeroService.HeroSelected(0);
+            currentHeroService.HeroSelected(0);
         }    
         else if (Input.GetKeyDown(KeyCode.F2))
         {
-            _selectHeroService.HeroSelected(1);
+            currentHeroService.HeroSelected(1);
         }       
         else if (Input.GetKeyDown(KeyCode.F3))
         {
-            _selectHeroService.HeroSelected(2);
+            currentHeroService.HeroSelected(2);
         }
 
     }
