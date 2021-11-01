@@ -22,4 +22,16 @@ public class Inventory
             Items.Add(item);
         }
     }
+
+    public void RemoveItem(Item item, int quantity)
+    {
+        if (Items.Contains(item))
+        {
+            for (int i = 0; i < quantity; i++)
+            {
+                var itemIndex = Items.FindIndex(e => e.Name.Equals(item.Name) && e.Level.Equals(item.Level));
+                Items.RemoveAt(itemIndex);
+            }
+        } 
+    }
 }

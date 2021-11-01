@@ -1,0 +1,35 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI;
+
+public class InventoryItemComponent : MonoBehaviour
+{
+
+    public Text itemNameText;
+    public Text itemQuantityText;
+    
+    public Item Item { get; set; }
+    public int Quantity{ get; set; }
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public void Instantiate(Item item, int quantity)
+    {
+        Item = item;
+        Quantity = quantity;
+        itemNameText.text = $"lv {Item.Level} {Item.Name}";
+        itemQuantityText.text = $"{Quantity}";
+    }
+}

@@ -8,7 +8,7 @@ public class ItemListComponent : MonoBehaviour
 {
 
     public PartyManager partyManager;
-    public Text textPrefab;
+    public InventoryItemComponent itemPrefab;
     void Start()
     {
         partyManager.OnHeroSelected += UpdateList;
@@ -17,19 +17,16 @@ public class ItemListComponent : MonoBehaviour
 
     public void UpdateList(Hero hero)
     {
-        foreach (var child in GetComponentsInChildren<Text>())
+        foreach (var child in GetComponentsInChildren<InventoryItemComponent>())
         {
             Destroy(child.gameObject);
         }
         foreach (var item in hero.Inventory.GroupedItems)
         {
-            var tempTextBox = Instantiate(textPrefab, Vector3.zero, transform.rotation) as Text;
+            var tempTextBox = Instantiate(itemPrefab, Vector3.zero, transform.rotation) as InventoryItemComponent;
             //Parent to the panel
             tempTextBox.transform.SetParent(transform, false);
-            //Set the text box's text element font size and style:
-            tempTextBox.fontSize = 12;
-            //Set the text box's text element to the current textToDisplay:
-            tempTextBox.text = $"{item.Key.Name} - {item.Value}";
+            tempTextBox.Instantiate(item.Key, item.Value);
         }   
     }
 

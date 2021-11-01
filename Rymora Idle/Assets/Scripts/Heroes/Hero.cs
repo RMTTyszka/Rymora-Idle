@@ -187,10 +187,16 @@ namespace Heroes
 
         public void AddItem(Item item)
         {
-            Inventory.AddItem(CurrentMaterial);
+            Inventory.AddItem(item);
             partyManager.PublishInventoryUpdate(this);
-            print($"Acquired a {Inventory.Items[0].Name}");
-        }
+            print($"Acquired a {item.Name}");
+        }      
+        public void RemoveItem(Item item, int quantity)
+        {
+            Inventory.RemoveItem(item, quantity);
+            partyManager.PublishInventoryUpdate(this);
+            print($"Removed a {item.Name}");
+        }      
 
         public void ResetAction()
         {
