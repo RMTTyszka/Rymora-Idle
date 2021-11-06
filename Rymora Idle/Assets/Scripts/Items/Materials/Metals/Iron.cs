@@ -8,6 +8,7 @@ namespace Items.Metals
         {
             Level = 1;
             Name = nameof(Iron);
+            Weight = 3;
         }
     }
 }

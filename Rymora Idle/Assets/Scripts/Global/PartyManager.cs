@@ -14,13 +14,16 @@ public class PartyManager : MonoBehaviour
     
     public delegate void ActionUpdated(Hero hero);
 
-    public event ActionUpdated OnActionUpdated;
+    public event ActionUpdated OnActionUpdated; 
+    
+    public delegate void InventoryUpdate(Hero hero);
+
+    public event InventoryUpdate OnInventoryUpdate;
 
     [SerializeField]
     public List<Hero> heroes;
 
     public Hero CurrentHero { get; set; }
-    // Start is called before the first frame update
 
     public void PublishHeroSelected(Hero hero)
     {
@@ -33,6 +36,13 @@ public class PartyManager : MonoBehaviour
     public void PublishActionsUpdated(Hero hero)
     {
         OnActionUpdated?.Invoke(hero);
+    }   
+    public void PublishInventoryUpdate(Hero hero)
+    {
+        if (hero == CurrentHero)
+        {
+            OnInventoryUpdate?.Invoke(hero);
+        }
     }
 
 }

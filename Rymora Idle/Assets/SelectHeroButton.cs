@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class SelectHeroButton : MonoBehaviour
 {
-    [SerializeField] private SelectHeroService _selectHeroService;
+    [FormerlySerializedAs("_selectHeroService")] [SerializeField] private CurrentHeroService currentHeroService;
     [SerializeField] private Hero hero;
     private Text _heroNameText;
 
@@ -20,6 +20,6 @@ public class SelectHeroButton : MonoBehaviour
    
     public void HeroSelected()
     {
-        _selectHeroService.HeroSelected(hero);
+        currentHeroService.HeroSelected(hero);
     }
 }

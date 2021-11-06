@@ -178,13 +178,25 @@ namespace Heroes
             var difficult = CurrentMaterial.Level * 10 + 50;
             if (rollValue > difficult)
             {
-                Inventory.AddItem(CurrentMaterial);
-                print($"Acquired a {Inventory.Items[0].Name}");
+                AddItem(CurrentMaterial);
             }
 
             CurrentAction.PassedTime += (decimal)Time.deltaTime;
             CurrentAction.ExecutedCount++;
         }
+
+        public void AddItem(Item item)
+        {
+            Inventory.AddItem(item);
+            partyManager.PublishInventoryUpdate(this);
+            print($"Acquired a {item.Name}");
+        }      
+        public void RemoveItem(Item item, int quantity)
+        {
+            Inventory.RemoveItem(item, quantity);
+            partyManager.PublishInventoryUpdate(this);
+            print($"Removed a {item.Name}");
+        }      
 
         public void ResetAction()
         {

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class SelectHeroService : MonoBehaviour
+public class CurrentHeroService : MonoBehaviour
 {
     [SerializeField] private PartyManager partyManager;
 
