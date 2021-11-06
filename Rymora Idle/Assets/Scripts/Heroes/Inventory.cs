@@ -8,7 +8,9 @@ public class Inventory
     public List<Item> Items { get; set; }
 
     public Dictionary<Item, int> GroupedItems =>
-        Items.GroupBy(e => new {e.Name, e.Level}).ToDictionary(e => e.First(), e => e.Count());
+        Items.GroupBy(e => new {e.Name, e.Level})
+            .OrderBy(e => e.Key)
+            .ToDictionary(e => e.First(), e => e.Count());
 
     public Inventory()
     {

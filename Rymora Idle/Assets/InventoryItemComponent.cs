@@ -9,6 +9,7 @@ public class InventoryItemComponent : MonoBehaviour
 
     public Text itemNameText;
     public Text itemQuantityText;
+    public ItemListComponent ItemListComponent { get; set; }
     
     public Item Item { get; set; }
     public int Quantity{ get; set; }
@@ -25,11 +26,17 @@ public class InventoryItemComponent : MonoBehaviour
         
     }
 
-    public void Instantiate(Item item, int quantity)
+    public void Instantiate(Item item, int quantity, ItemListComponent itemListComponent)
     {
         Item = item;
         Quantity = quantity;
         itemNameText.text = $"lv {Item.Level} {Item.Name}";
         itemQuantityText.text = $"{Quantity}";
+        ItemListComponent = itemListComponent;
+    }
+
+    public void RemoveItem()
+    {
+        ItemListComponent.RemoveItem(Item, 1);
     }
 }

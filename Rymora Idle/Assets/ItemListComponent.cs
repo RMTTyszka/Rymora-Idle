@@ -26,7 +26,7 @@ public class ItemListComponent : MonoBehaviour
             var tempTextBox = Instantiate(itemPrefab, Vector3.zero, transform.rotation) as InventoryItemComponent;
             //Parent to the panel
             tempTextBox.transform.SetParent(transform, false);
-            tempTextBox.Instantiate(item.Key, item.Value);
+            tempTextBox.Instantiate(item.Key, item.Value, this);
         }   
     }
 
@@ -34,5 +34,10 @@ public class ItemListComponent : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void RemoveItem(Item item, int quantity)
+    {
+        partyManager.CurrentHero.RemoveItem(item, quantity);
     }
 }
