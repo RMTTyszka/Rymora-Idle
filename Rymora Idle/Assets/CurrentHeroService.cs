@@ -16,9 +16,9 @@ public class CurrentHeroService : MonoBehaviour
     {
     }
 
-    public void HeroSelected(Hero hero)
+    public void HeroSelected(Party party)
     {
-        partyManager.PublishHeroSelected(hero);
+        partyManager.PublishHeroSelected(party);
     }
     public void HeroSelected(int heroIndex)
     {

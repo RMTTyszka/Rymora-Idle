@@ -12,7 +12,7 @@ public class CurrentHeroPanel : MonoBehaviour
 
 
     public PartyManager partyManager;
-    public Hero CurrentHero { get; set; }
+    public Party CurrentParty { get; set; }
 
     public Text heroName;
     public Text heroLevel;
@@ -27,17 +27,17 @@ public class CurrentHeroPanel : MonoBehaviour
         partyManager.OnActionUpdated += UpdateActions;
     }
 
-    public void UpdateCurrentInfoDisplayData(Hero hero)
+    public void UpdateCurrentInfoDisplayData(Party party)
     {
-        CurrentHero = hero;
-        heroName.text = hero.Name;
-        heroLevel.text = hero.Level.ToString();
-        UpdateActions(hero);
+        CurrentParty = party;
+        heroName.text = party.Hero.Name;
+        heroLevel.text = party.Hero.Level.ToString();
+        UpdateActions(party);
     }
 
-    private void UpdateActions(Hero hero)
+    private void UpdateActions(Party party)
     {
-        if (hero.Equals(CurrentHero))
+        if (party.Equals(CurrentParty))
         {
             foreach (var child in wayPointsPanel.GetComponentsInChildren<Text>())
             {
@@ -47,7 +47,7 @@ public class CurrentHeroPanel : MonoBehaviour
             title.transform.SetParent(wayPointsPanel.transform, false);
             title.fontSize = 16;
             title.text = $"Actions";
-            foreach (var action in CurrentHero.NextActions)
+            foreach (var action in CurrentParty.NextActions)
             {
                 var tempTextBox = Instantiate(textPrefab, Vector3.zero, transform.rotation) as Text;
                 //Parent to the panel
@@ -65,15 +65,15 @@ public class CurrentHeroPanel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (partyManager.CurrentHero.CurrentAction != null)
+        if (partyManager.CurrentParty.CurrentAction != null)
         {
-            if (partyManager.CurrentHero.EndActionTime.HasValue &&
-                partyManager.CurrentHero.CurrentActionTime.HasValue &&
-                partyManager.CurrentHero.EndActionTime.Value != 0)
+            if (partyManager.CurrentParty.EndActionTime.HasValue &&
+                partyManager.CurrentParty.CurrentActionTime.HasValue &&
+                partyManager.CurrentParty.EndActionTime.Value != 0)
             {
-                actionBar.BarValue = (float) (partyManager.CurrentHero.CurrentActionTime.Value / partyManager.CurrentHero.EndActionTime.Value * 100);
-                actionBar.CurrentSeconds = (float)partyManager.CurrentHero.CurrentActionTime.Value;
-                actionBar.TotalSeconds = partyManager.CurrentHero.CurrentAction.TimeToExecute;
+                actionBar.BarValue = (float) (partyManager.CurrentParty.CurrentActionTime.Value / partyManager.CurrentParty.EndActionTime.Value * 100);
+                actionBar.CurrentSeconds = (float)partyManager.CurrentParty.CurrentActionTime.Value;
+                actionBar.TotalSeconds = partyManager.CurrentParty.CurrentAction.TimeToExecute;
             }
             else
             {
@@ -82,7 +82,7 @@ public class CurrentHeroPanel : MonoBehaviour
                 actionBar.TotalSeconds = 0;
             }
 
-            actionBar.Title = partyManager.CurrentHero.CurrentAction.ActionName;
+            actionBar.Title = partyManager.CurrentParty.CurrentAction.ActionName;
         }
         else
         {

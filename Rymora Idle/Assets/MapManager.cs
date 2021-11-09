@@ -14,6 +14,8 @@ public class MapManager : MonoBehaviour
     public delegate void CitiesPopulated();
 
     public event CitiesPopulated OnCitiesPoulated;
+    
+    public GameManager GameManager { get; set; }
     public Vector3? CurrentMouseTile1 { get; set; }
     public MapTerrain CurrentMouseTile { get; set; }
     public MapTerrain CurrentPlayerTile { get; set; }
@@ -54,41 +56,43 @@ public class MapManager : MonoBehaviour
 
     private void Update()
     {
-        var mousePos = GetMousePosition();
-        if (Input.GetMouseButtonDown(1))
+        if (GameManager.CurrentScreen == ScreenState.Map)
         {
-            if (actionMenu.gameObject.activeInHierarchy)
+            var mousePos = GetMousePosition();
+            if (Input.GetMouseButtonDown(1))
             {
-                actionMenu.SetActive(false);
-            }
-
-
-            MapTerrain clickedTile = map.GetTile(mousePos.worldToCellPosition) as MapTerrain;
-            if (clickedTile != null)
-            {
-                Vector3Int cellPosition = map.LocalToCell(mousePos.worldToCellPosition);
-                var currentPosition = map.GetCellCenterLocal(cellPosition);
-                if (CurrentMouseTile1 != null && CurrentMouseTile1 == currentPosition)
+                if (actionMenu.gameObject.activeInHierarchy)
                 {
                     actionMenu.SetActive(false);
-                    CurrentMouseTile = null;
-                    CurrentMouseTile1 = null;
                 }
-                else
+
+
+                MapTerrain clickedTile = map.GetTile(mousePos.worldToCellPosition) as MapTerrain;
+                if (clickedTile != null)
                 {
-                    CurrentMouseTile1 = currentPosition;
-                    CurrentMouseTile = clickedTile;
-                    CurrentMapPosition =  mousePos.worldPosition;
-                    actionMenu.transform.position = Input.mousePosition;
-                    actionMenu.SetActive(true);  
+                    Vector3Int cellPosition = map.LocalToCell(mousePos.worldToCellPosition);
+                    var currentPosition = map.GetCellCenterLocal(cellPosition);
+                    if (CurrentMouseTile1 != null && CurrentMouseTile1 == currentPosition)
+                    {
+                        actionMenu.SetActive(false);
+                        CurrentMouseTile = null;
+                        CurrentMouseTile1 = null;
+                    }
+                    else
+                    {
+                        CurrentMouseTile1 = currentPosition;
+                        CurrentMouseTile = clickedTile;
+                        CurrentMapPosition =  mousePos.worldPosition;
+                        actionMenu.transform.position = Input.mousePosition;
+                        actionMenu.SetActive(true);  
+                    }
+
+
                 }
 
-
-            }
-
-        }      
-        if (Input.GetMouseButtonDown(0))
-        {
+            }      
+            if (Input.GetMouseButtonDown(0))
+            {
 /*            if (actionMenu.gameObject.activeInHierarchy)
             {
                 actionMenu.SetActive(false);
@@ -96,18 +100,21 @@ public class MapManager : MonoBehaviour
             CurrentMapPosition = new Vector3();
             }*/
 
-        }
-        if (!mousePos.Equals(previousMousePos))
-        {
-            hightlightMap.SetTile(previousMousePos, null);
-            MapTerrain clickedTile = map.GetTile(mousePos.worldToCellPosition) as MapTerrain;
-            if (clickedTile != null)
-            {
-                hightlightMap.SetTile(mousePos.worldToCellPosition, hoverTile);
-                previousMousePos = mousePos.worldToCellPosition;
             }
+            if (!mousePos.Equals(previousMousePos))
+            {
+                hightlightMap.SetTile(previousMousePos, null);
+                MapTerrain clickedTile = map.GetTile(mousePos.worldToCellPosition) as MapTerrain;
+                if (clickedTile != null)
+                {
+                    hightlightMap.SetTile(mousePos.worldToCellPosition, hoverTile);
+                    previousMousePos = mousePos.worldToCellPosition;
+                }
 
-        }  
+            }   
+        }
+
+        
 
     }
     (Vector3Int worldToCellPosition, Vector3 worldPosition) GetMousePosition () {

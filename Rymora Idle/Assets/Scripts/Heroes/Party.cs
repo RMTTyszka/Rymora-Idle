@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using Global;
 using Items.Metals;
 using Map;
 using UnityEngine;
@@ -9,15 +10,14 @@ using UnityEngine.Experimental.TerrainAPI;
 
 namespace Heroes
 {
-    public class Hero : MonoBehaviour
+    public class Party : MonoBehaviour
     {
-        public string Name { get; set; }
-        public int Level{ get; set; }
-    
-        public Inventory Inventory { get; set; }
+        public Creature Hero { get; set; }
+        
+        public List<Creature> Members { get; set; }
 
         public List<Vector3> WayPoints;
-        public MonsterMove Move { get; set; }
+        public MapMover Move { get; set; }
         [SerializeField] public MapTerrain CurrentTile;
 
         [SerializeField] private MapManager mapManager;
@@ -32,9 +32,9 @@ namespace Heroes
 
         public Skills Skills { get; set; }
 
-        public Hero()
+        public Party()
         {
-            Inventory = new Inventory();
+            Hero = new Creature();
             WayPoints = new List<Vector3>();
             Skills = new Skills();
             ActionPerformance = 1m;
@@ -43,13 +43,13 @@ namespace Heroes
 
         private void OnEnable()
         {
-            if (string.IsNullOrWhiteSpace(Name)) Name = gameObject.name;
-            if (Level == 0) Level= 1;
+            if (string.IsNullOrWhiteSpace(Hero.Name)) Hero.Name = gameObject.name;
+            if (Hero.Level == 0) Hero.Level= 1;
         }
 
         void Start()
         {
-            Move = GetComponent<MonsterMove>();
+            Move = GetComponent<MapMover>();
 
         }
 
@@ -187,13 +187,13 @@ namespace Heroes
 
         public void AddItem(Item item)
         {
-            Inventory.AddItem(item);
+            Hero.Inventory.AddItem(item);
             partyManager.PublishInventoryUpdate(this);
             print($"Acquired a {item.Name}");
         }      
         public void RemoveItem(Item item, int quantity)
         {
-            Inventory.RemoveItem(item, quantity);
+            Hero.Inventory.RemoveItem(item, quantity);
             partyManager.PublishInventoryUpdate(this);
             print($"Removed a {item.Name}");
         }      
@@ -236,8 +236,6 @@ namespace Heroes
                 }
             }
         }
-
-
 
     }
 }

@@ -7,41 +7,48 @@ using UnityEngine;
 
 public class PartyManager : MonoBehaviour
 {
+    
+    public Camera MapCamera { get; set; }
 
-    public delegate void HeroSelected(Hero hero);
+    public delegate void HeroSelected(Party party);
 
     public event HeroSelected OnHeroSelected;
     
-    public delegate void ActionUpdated(Hero hero);
+    public delegate void ActionUpdated(Party party);
 
     public event ActionUpdated OnActionUpdated; 
     
-    public delegate void InventoryUpdate(Hero hero);
+    public delegate void InventoryUpdate(Party party);
 
     public event InventoryUpdate OnInventoryUpdate;
 
     [SerializeField]
-    public List<Hero> heroes;
+    public List<Party> heroes;
 
-    public Hero CurrentHero { get; set; }
+    public Party CurrentParty { get; set; }
 
-    public void PublishHeroSelected(Hero hero)
+    private void Start()
     {
-        CurrentHero = hero;
-        OnHeroSelected?.Invoke(hero);
-        Vector3 position = Vector3Int.FloorToInt(new Vector3(hero.gameObject.transform.position.x, hero.gameObject.transform.position.y, Camera.main.transform.position.z));
-        Camera.main.transform.position = position;
+        MapCamera = Camera.main;
     }
 
-    public void PublishActionsUpdated(Hero hero)
+    public void PublishHeroSelected(Party party)
     {
-        OnActionUpdated?.Invoke(hero);
+        CurrentParty = party;
+        OnHeroSelected?.Invoke(party);
+        Vector3 position = Vector3Int.FloorToInt(new Vector3(party.gameObject.transform.position.x, party.gameObject.transform.position.y, MapCamera.transform.position.z));
+        MapCamera.transform.position = position;
+    }
+
+    public void PublishActionsUpdated(Party party)
+    {
+        OnActionUpdated?.Invoke(party);
     }   
-    public void PublishInventoryUpdate(Hero hero)
+    public void PublishInventoryUpdate(Party party)
     {
-        if (hero == CurrentHero)
+        if (party == CurrentParty)
         {
-            OnInventoryUpdate?.Invoke(hero);
+            OnInventoryUpdate?.Invoke(party);
         }
     }
 
