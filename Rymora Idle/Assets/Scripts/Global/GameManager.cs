@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Global;
+using Heroes;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -10,12 +11,20 @@ public class GameManager : MonoBehaviour
 
     public PartyManager partyManager;
     public MapManager mapManager;
+    public ScreenState CurrentScreen { get; set; }
+    public CombatManager CombatManager { get; set; }
+    public Camera worldCamera;
+    public Camera combatCamera;
     
-
     // Start is called before the first frame update
     void Start()
     {
-        partyManager.CurrentHero = partyManager.heroes[0];
+        CombatManager = GameObject.FindGameObjectWithTag("CombatManager").GetComponent<CombatManager>();
+        CurrentScreen = ScreenState.Map;
+        mapManager.GameManager = this;
+        worldCamera.gameObject.SetActive(true);
+        combatCamera.gameObject.SetActive(false);
+        partyManager.CurrentParty = partyManager.heroes[0];
         mapManager.OnCitiesPoulated += InitiateHero;
     }
 
@@ -31,4 +40,21 @@ public class GameManager : MonoBehaviour
     {
         
     }
+
+    public void InitiateCombat(Encounter encounter, Party party)
+    {
+        CombatManager.Monsters = encounter.Monsters.Select(monster => Creature.FromCreature(monster)).ToList();
+    }
+}
+
+public class Encounter
+{
+    public List<Creature> Monsters { get; set; }
+}
+
+
+public enum ScreenState
+{
+    Map = 0,
+    Combat = 1
 }

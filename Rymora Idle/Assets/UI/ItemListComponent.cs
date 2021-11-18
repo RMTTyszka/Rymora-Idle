@@ -15,13 +15,13 @@ public class ItemListComponent : MonoBehaviour
         partyManager.OnInventoryUpdate += UpdateList;
     }
 
-    public void UpdateList(Hero hero)
+    public void UpdateList(Party party)
     {
         foreach (var child in GetComponentsInChildren<InventoryItemComponent>())
         {
             Destroy(child.gameObject);
         }
-        foreach (var item in hero.Inventory.GroupedItems)
+        foreach (var item in party.Hero.Inventory.GroupedItems)
         {
             var tempTextBox = Instantiate(itemPrefab, Vector3.zero, transform.rotation) as InventoryItemComponent;
             //Parent to the panel
@@ -38,6 +38,6 @@ public class ItemListComponent : MonoBehaviour
 
     public void RemoveItem(Item item, int quantity)
     {
-        partyManager.CurrentHero.RemoveItem(item, quantity);
+        partyManager.CurrentParty.RemoveItem(item, quantity);
     }
 }

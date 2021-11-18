@@ -8,18 +8,18 @@ using UnityEngine.UI;
 public class SelectHeroButton : MonoBehaviour
 {
     [FormerlySerializedAs("_selectHeroService")] [SerializeField] private CurrentHeroService currentHeroService;
-    [SerializeField] private Hero hero;
+    [FormerlySerializedAs("hero")] [SerializeField] private Party party;
     private Text _heroNameText;
 
     // Start is called before the first frame update
     void Start()
     {
         _heroNameText = gameObject.GetComponentInChildren<Text>();
-        _heroNameText.text = hero.Name;
+        _heroNameText.text = party.Hero.Name;
     }
    
     public void HeroSelected()
     {
-        currentHeroService.HeroSelected(hero);
+        currentHeroService.HeroSelected(party);
     }
 }

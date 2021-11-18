@@ -22,7 +22,7 @@ public class Pathfinder : MonoBehaviour {
 		
 	}
 
-    public IEnumerator GetWaypoints(Vector2 origin, Vector2 target, MonsterMove monster) {
+    public IEnumerator GetWaypoints(Vector2 origin, Vector2 target, MapMover monster) {
         newWp = new List<Vector2Int>();
         frontier = new Queue<Vector2Int>();
         Vector2Int endPos = Vector2Int.FloorToInt(target);
@@ -69,7 +69,7 @@ public class Pathfinder : MonoBehaviour {
             monster.waypoint = monster.waypoints.Dequeue();
         }
         else {
-            monster.waypoint = monster.Hero.transform.position;
+            monster.waypoint = monster.Party.transform.position;
         }
 
 
