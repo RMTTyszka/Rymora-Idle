@@ -1,54 +1,57 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Global;
 using Heroes;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PartyManager : MonoBehaviour
 {
     
     public Camera MapCamera { get; set; }
 
-    public delegate void HeroSelected(Party party);
+    public delegate void HeroSelected(PartyNode partyNode);
 
     public event HeroSelected OnHeroSelected;
     
-    public delegate void ActionUpdated(Party party);
+    public delegate void ActionUpdated(PartyNode partyNode);
 
     public event ActionUpdated OnActionUpdated; 
     
-    public delegate void InventoryUpdate(Party party);
+    public delegate void InventoryUpdate(PartyNode partyNode);
 
     public event InventoryUpdate OnInventoryUpdate;
 
     [SerializeField]
-    public List<Party> heroes;
+    public List<PartyNode> parties;
 
-    public Party CurrentParty { get; set; }
+    public PartyNode CurrentPartyNode { get; set; }
 
     private void Start()
     {
         MapCamera = Camera.main;
+        PublishHeroSelected(parties.First());
     }
 
-    public void PublishHeroSelected(Party party)
+    public void PublishHeroSelected(PartyNode partyNode)
     {
-        CurrentParty = party;
-        OnHeroSelected?.Invoke(party);
-        Vector3 position = Vector3Int.FloorToInt(new Vector3(party.gameObject.transform.position.x, party.gameObject.transform.position.y, MapCamera.transform.position.z));
+        CurrentPartyNode = partyNode;
+        OnHeroSelected?.Invoke(partyNode);
+        Vector3 position = Vector3Int.FloorToInt(new Vector3(partyNode.gameObject.transform.position.x, partyNode.gameObject.transform.position.y, MapCamera.transform.position.z));
         MapCamera.transform.position = position;
     }
 
-    public void PublishActionsUpdated(Party party)
+    public void PublishActionsUpdated(PartyNode partyNode)
     {
-        OnActionUpdated?.Invoke(party);
+        OnActionUpdated?.Invoke(partyNode);
     }   
-    public void PublishInventoryUpdate(Party party)
+    public void PublishInventoryUpdate(PartyNode partyNode)
     {
-        if (party == CurrentParty)
+        if (partyNode == CurrentPartyNode)
         {
-            OnInventoryUpdate?.Invoke(party);
+            OnInventoryUpdate?.Invoke(partyNode);
         }
     }
 

@@ -12,7 +12,7 @@ public class MapMover : MonoBehaviour {
     public Queue<Vector3> waypoints;
     public Vector3 target;
     public Vector3 waypoint;
-    public Party Party { get; set; }
+    public PartyNode PartyNode { get; set; }
     private float waypointTimer = 0f;
     private bool hasArrived = false;
 
@@ -20,7 +20,7 @@ public class MapMover : MonoBehaviour {
     // Use this for initialization
     void Start () {
         Pathfinder = GameObject.FindGameObjectWithTag("Pathfinder").GetComponent<Pathfinder>();
-        Party = GetComponent<Party>();
+        PartyNode = GetComponent<PartyNode>();
         waypoints = new Queue<Vector3>();
     }
 
@@ -70,7 +70,7 @@ public class MapMover : MonoBehaviour {
     public void MoveToTarget(Vector3 wp) {
         MapTerrain floor = Pathfinder.ground.GetTile(Vector3Int.FloorToInt(transform.position)) as MapTerrain;
 
-        Party.transform.position = Vector3.MoveTowards(transform.position, wp, Party.Speed(floor.moveSpeed) * Time.deltaTime * (float)floor.moveSpeed);
+        PartyNode.transform.position = Vector3.MoveTowards(transform.position, wp, PartyNode.Speed(floor.moveSpeed) * Time.deltaTime * (float)floor.moveSpeed);
     }
 
 }

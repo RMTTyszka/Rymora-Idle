@@ -1,3 +1,4 @@
+using Heroes;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,10 +9,13 @@ namespace Global
         public string Name { get; set; }
         public int Level{ get; set; }
         public Inventory Inventory { get; set; }
+        public Skills Skills { get; set; }
+
 
         public Creature()
         {
             Inventory = new Inventory();
+            Skills = new Skills();
         }
 
         public static Creature FromCreature(Creature creatureTemplate)

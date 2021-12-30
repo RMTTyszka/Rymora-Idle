@@ -2,26 +2,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using DefaultNamespace;
 using Global;
 using Items.Metals;
 using Map;
 using UnityEngine;
 using UnityEngine.Experimental.TerrainAPI;
+using UnityEngine.Serialization;
 
 namespace Heroes
 {
-    public class Party : MonoBehaviour
+    public class PartyNode : MonoBehaviour
     {
-        public Creature Hero { get; set; }
-        
-        public List<Creature> Members { get; set; }
+        public Party Party { get; set; }
 
-        public List<Vector3> WayPoints;
-        public MapMover Move { get; set; }
-        [SerializeField] public MapTerrain CurrentTile;
+        public List<Vector3> WayPoints { get; set; }
+        private MapMover Move { get; set; }
+        public MapTerrain CurrentTile { get; set; }
 
-        [SerializeField] private MapManager mapManager;
-        [SerializeField] private PartyManager partyManager;
+        private MapManager MapManager { get; set; }
+        private PartyManager PartyManager { get; set; }
+        public Camera combatCamera;
         
         public decimal? CurrentActionTime{ get; set; } 
         public decimal? EndActionTime { get; set; } 
@@ -30,26 +31,26 @@ namespace Heroes
         public HeroAction CurrentAction { get; set; }
         public Queue<HeroAction> NextActions { get; set; }
 
-        public Skills Skills { get; set; }
 
-        public Party()
+        public PartyNode()
         {
-            Hero = new Creature();
+            Party = new Party();
             WayPoints = new List<Vector3>();
-            Skills = new Skills();
             ActionPerformance = 1m;
             NextActions = new Queue<HeroAction>();
         }
 
         private void OnEnable()
         {
-            if (string.IsNullOrWhiteSpace(Hero.Name)) Hero.Name = gameObject.name;
-            if (Hero.Level == 0) Hero.Level= 1;
+            if (string.IsNullOrWhiteSpace(Party.Hero.Name)) Party.Hero.Name = gameObject.name;
+            if (Party.Hero.Level == 0) Party.Hero.Level= 1;
         }
 
         void Start()
         {
             Move = GetComponent<MapMover>();
+            MapManager = GameObject.FindGameObjectWithTag("MapManager").GetComponent<MapManager>();
+            PartyManager = GameObject.FindGameObjectWithTag("PartyManager").GetComponent<PartyManager>();
 
         }
 
@@ -107,25 +108,25 @@ namespace Heroes
                 if (isCloseEnough)
                 {
                     WayPoints.RemoveAt(0);
-                    partyManager.PublishActionsUpdated(this);
+                    PartyManager.PublishActionsUpdated(this);
                     transform.position = waypoint;
                     CurrentAction = null;
                 }
                 else
                 {
-                    var x = mapManager.map.WorldToCell(transform.position);
-                    CurrentTile = mapManager.map.GetTile(x) as MapTerrain;
+                    var x = MapManager.map.WorldToCell(transform.position);
+                    CurrentTile = MapManager.map.GetTile(x) as MapTerrain;
                     if (CurrentTile == null)
                     {
                         WayPoints.Clear();
-                        partyManager.PublishActionsUpdated(this);
+                        PartyManager.PublishActionsUpdated(this);
                         CurrentAction = null;
                         NextActions.Clear();
                     }
                     else
                     {
                         var newPosition = Vector3.MoveTowards(transform.position, waypoint, (float)Speed(CurrentTile.moveSpeed) * Time.deltaTime);
-                        var newTile = mapManager.map.GetTile(mapManager.map.WorldToCell(newPosition)) as MapTerrain;
+                        var newTile = MapManager.map.GetTile(MapManager.map.WorldToCell(newPosition)) as MapTerrain;
                         if (newTile != null)
                         {
                             transform.position = newPosition;
@@ -133,7 +134,7 @@ namespace Heroes
                         else
                         {
                             WayPoints.Clear();
-                            partyManager.PublishActionsUpdated(this);
+                            PartyManager.PublishActionsUpdated(this);
                             CurrentAction = null;
                             NextActions.Clear();
                         }
@@ -163,7 +164,7 @@ namespace Heroes
                 var mine = CurrentTile as Mountain;
                 var metal = mine.GetMetal();
                 CurrentMaterial = metal;
-                var rollValue = Skills.Mine.Roll();
+                var rollValue = Party.Hero.Skills.Mine.Roll();
                 var difficult = metal.Level * 10 + 50;
                 var actionProficient = rollValue - difficult;
                 ActionPerformance = actionProficient / 100 + 1;
@@ -174,8 +175,8 @@ namespace Heroes
         }
         public void Mine()
         {
-            var rollValue = Skills.Mine.Roll();
-            var difficult = CurrentMaterial.Level * 10 + 50;
+            var rollValue = Party.Hero.Skills.Mine.Roll();
+            var difficult = CurrentMaterial.Difficulty;
             if (rollValue > difficult)
             {
                 AddItem(CurrentMaterial);
@@ -187,14 +188,14 @@ namespace Heroes
 
         public void AddItem(Item item)
         {
-            Hero.Inventory.AddItem(item);
-            partyManager.PublishInventoryUpdate(this);
+            Party.Hero.Inventory.AddItem(item);
+            PartyManager.PublishInventoryUpdate(this);
             print($"Acquired a {item.Name}");
         }      
         public void RemoveItem(Item item, int quantity)
         {
-            Hero.Inventory.RemoveItem(item, quantity);
-            partyManager.PublishInventoryUpdate(this);
+            Party.Hero.Inventory.RemoveItem(item, quantity);
+            PartyManager.PublishInventoryUpdate(this);
             print($"Removed a {item.Name}");
         }      
 

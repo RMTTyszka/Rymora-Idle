@@ -24,15 +24,15 @@ public class GameManager : MonoBehaviour
         mapManager.GameManager = this;
         worldCamera.gameObject.SetActive(true);
         combatCamera.gameObject.SetActive(false);
-        partyManager.CurrentParty = partyManager.heroes[0];
+        partyManager.CurrentPartyNode = partyManager.parties[0];
         mapManager.OnCitiesPoulated += InitiateHero;
     }
 
     private void InitiateHero()
     {
-        partyManager.heroes[0].transform.position = mapManager.map.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[0]));
-        partyManager.heroes[1].transform.position = mapManager.map.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[1]));
-        partyManager.heroes[2].transform.position = mapManager.map.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[2]));
+        partyManager.parties[0].transform.position = mapManager.map.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[0]));
+        partyManager.parties[1].transform.position = mapManager.map.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[1]));
+        partyManager.parties[2].transform.position = mapManager.map.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[2]));
     }
 
     // Update is called once per frame
@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void InitiateCombat(Encounter encounter, Party party)
+    public void InitiateCombat(Encounter encounter, PartyNode partyNode)
     {
         CombatManager.Monsters = encounter.Monsters.Select(monster => Creature.FromCreature(monster)).ToList();
     }

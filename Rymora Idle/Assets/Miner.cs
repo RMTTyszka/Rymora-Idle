@@ -6,14 +6,14 @@ using UnityEngine;
 
 public class Miner
 {
-    public void Mine(Party party)
+    public void Mine(PartyNode partyNode)
     {
-        var mapTerrain = party.CurrentTile;
+        var mapTerrain = partyNode.CurrentTile;
         if (mapTerrain.CanMine())
         {
             var mine = mapTerrain as Mine;
             var mineRoll = Random.Range(1, 101);
-            var total = mineRoll + party.Skills.Mine.TotalValue();
+            var total = mineRoll + partyNode.Party.Hero.Skills.Mine.TotalValue();
         }
     }
 }

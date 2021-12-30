@@ -7,7 +7,7 @@ public class UIManager : MonoBehaviour
     public GameObject heroDetailsContainer;
     public GameManager GameManager { get; set;}
     public Camera worldCamera;
-    public Camera combatCamera;
+    public bool CombatOn { get; set; }
 
     private void Start()
     {
@@ -20,9 +20,30 @@ public class UIManager : MonoBehaviour
     }  
     public void ToggleCombat()
     {
-      
-        GameManager.CurrentScreen = !combatCamera.gameObject.activeSelf ? ScreenState.Combat : ScreenState.Map;
-        worldCamera.gameObject.SetActive(!worldCamera.gameObject.activeSelf);
-        combatCamera.gameObject.SetActive(!combatCamera.gameObject.activeSelf);
+
+        if (CombatOn)
+        {
+            GameManager.CurrentScreen = ScreenState.Map;
+            worldCamera.gameObject.SetActive(true);
+            foreach (var party in GameManager.partyManager.parties)
+            {
+                party.combatCamera.gameObject.SetActive(false);
+            }
+            CombatOn = false;
+        }
+        else
+        {
+            GameManager.CurrentScreen = ScreenState.Combat;
+            worldCamera.gameObject.SetActive(false);
+            SetCombatCamera();
+ 
+            CombatOn = true;
+        }
+
+    }
+
+    private void SetCombatCamera()
+    {
+        GameManager.partyManager.CurrentPartyNode.combatCamera.gameObject.SetActive(true);
     }
 }

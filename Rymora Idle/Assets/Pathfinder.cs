@@ -69,7 +69,7 @@ public class Pathfinder : MonoBehaviour {
             monster.waypoint = monster.waypoints.Dequeue();
         }
         else {
-            monster.waypoint = monster.Party.transform.position;
+            monster.waypoint = monster.PartyNode.transform.position;
         }
 
 

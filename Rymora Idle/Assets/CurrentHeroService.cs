@@ -16,13 +16,13 @@ public class CurrentHeroService : MonoBehaviour
     {
     }
 
-    public void HeroSelected(Party party)
+    public void HeroSelected(PartyNode partyNode)
     {
-        partyManager.PublishHeroSelected(party);
+        partyManager.PublishHeroSelected(partyNode);
     }
     public void HeroSelected(int heroIndex)
     {
-        partyManager.PublishHeroSelected(partyManager.heroes[heroIndex]);
+        partyManager.PublishHeroSelected(partyManager.parties[heroIndex]);
     }
 
 

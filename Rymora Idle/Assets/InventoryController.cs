@@ -23,8 +23,8 @@ public class InventoryController : MonoBehaviour
         
     }
 
-    public void UpdateWeight(Party party)
+    public void UpdateWeight(PartyNode partyNode)
     {
-        weightText.text = $"Weight: {PartyManager.CurrentParty.Hero.Inventory.Items.Sum(item => item.Weight)}";
+        weightText.text = $"Weight: {PartyManager.CurrentPartyNode.Party.Hero.Inventory.Items.Sum(item => item.Weight)}";
     }
 }

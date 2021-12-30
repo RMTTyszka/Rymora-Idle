@@ -36,17 +36,17 @@ public class ActionMenu : MonoBehaviour
 
     public void Move()
     {
-        partyManager.CurrentParty.InitiateMovement(mapManager.CurrentMapPosition);
+        partyManager.CurrentPartyNode.InitiateMovement(mapManager.CurrentMapPosition);
         gameObject.SetActive(false);
-        partyManager.PublishActionsUpdated(partyManager.CurrentParty);
+        partyManager.PublishActionsUpdated(partyManager.CurrentPartyNode);
     }    
     public void Mine()
     {
 
-        var isAlreadyOnMapTile = partyManager.CurrentParty.transform.position == mapManager.CurrentMapPosition;
+        var isAlreadyOnMapTile = partyManager.CurrentPartyNode.transform.position == mapManager.CurrentMapPosition;
         if (!isAlreadyOnMapTile)
         {
-            partyManager.CurrentParty.InitiateMovement(mapManager.CurrentMapPosition);
+            partyManager.CurrentPartyNode.InitiateMovement(mapManager.CurrentMapPosition);
         }
 
         var heroAction = new HeroAction
@@ -62,9 +62,9 @@ public class ActionMenu : MonoBehaviour
             Terrain = mapManager.CurrentMouseTile,
             ActionName = "Mine"
         };
-        partyManager.CurrentParty.InitiateMining(heroAction);
+        partyManager.CurrentPartyNode.InitiateMining(heroAction);
         gameObject.SetActive(false);
-        partyManager.PublishActionsUpdated(partyManager.CurrentParty);
+        partyManager.PublishActionsUpdated(partyManager.CurrentPartyNode);
     }
 
 }

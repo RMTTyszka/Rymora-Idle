@@ -8,6 +8,8 @@ TagManager:
   - Pathfinder
   - GameManager
   - CombatManager
+  - MapManager
+  - PartyManager
   layers:
   - Default
   - TransparentFX
@@ -26,9 +28,9 @@ TagManager:
   - 
   - 
   - 
-  - Combat
-  - 
-  - 
+  - Combat1
+  - Combat2
+  - Combat3
   - 
   - 
   - 
