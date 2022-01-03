@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 public class DragCamera2D : MonoBehaviour
@@ -171,7 +169,7 @@ public class DragCamera2D : MonoBehaviour
 
             dolly.allWaypoints = dc2dwaypoints;
 
-            this.dollyRail = dolly;
+            dollyRail = dolly;
 
             Selection.activeGameObject = go;
             SceneView.FrameLastActiveSceneView();
@@ -184,7 +182,7 @@ public class DragCamera2D : MonoBehaviour
             CameraBounds cb = go.AddComponent<CameraBounds>();
             cb.guiColour = new Color(0,0,1f,0.1f);
             cb.pointa = new Vector3(20,20,0);
-            this.bounds = cb;
+            bounds = cb;
             EditorUtility.SetDirty(this);
         }
     }

@@ -10,6 +10,7 @@ TagManager:
   - CombatManager
   - MapManager
   - PartyManager
+  - EncounterNode
   layers:
   - Default
   - TransparentFX
@@ -58,4 +59,7 @@ TagManager:
     locked: 0
   - name: Heros
     uniqueID: 1740841801
+    locked: 0
+  - name: EncountersMap
+    uniqueID: 3877344277
     locked: 0

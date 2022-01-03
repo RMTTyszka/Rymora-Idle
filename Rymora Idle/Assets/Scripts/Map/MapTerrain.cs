@@ -1,6 +1,5 @@
 using System;
 using Global;
-using UnityEngine;
 using UnityEngine.Tilemaps;
 
 namespace Map

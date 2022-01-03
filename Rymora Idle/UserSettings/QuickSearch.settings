@@ -17,7 +17,7 @@ filters = {
 }
 scopes = {
 	"last_search.AB59B443" = "Grid Layout"
-	"last_search.00000000" = "progress bar"
+	"last_search.00000000" = "Tilemap"
 }
 providers = {
 	asset = {

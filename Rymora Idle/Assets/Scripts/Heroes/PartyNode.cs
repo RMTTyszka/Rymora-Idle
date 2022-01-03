@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using DefaultNamespace;
-using Global;
 using Items.Metals;
 using Map;
 using UnityEngine;
-using UnityEngine.Experimental.TerrainAPI;
-using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 namespace Heroes
 {
     public class PartyNode : MonoBehaviour
     {
         public Party Party { get; set; }
+
+        public CombatManager combatManager;
 
         public List<Vector3> WayPoints { get; set; }
         private MapMover Move { get; set; }
@@ -31,6 +30,7 @@ namespace Heroes
         public HeroAction CurrentAction { get; set; }
         public Queue<HeroAction> NextActions { get; set; }
 
+        public bool InCombat { get; set; }
 
         public PartyNode()
         {
@@ -115,7 +115,17 @@ namespace Heroes
                 else
                 {
                     var x = MapManager.map.WorldToCell(transform.position);
-                    CurrentTile = MapManager.map.GetTile(x) as MapTerrain;
+                    var newTile = MapManager.map.GetTile(x) as MapTerrain;
+                    if (newTile != CurrentTile)
+                    {
+                        CheckCombat();
+                    }
+                    CurrentTile = newTile;
+                    if (InCombat)
+                    {
+                        return;
+                    }
+
                     if (CurrentTile == null)
                     {
                         WayPoints.Clear();
@@ -126,7 +136,6 @@ namespace Heroes
                     else
                     {
                         var newPosition = Vector3.MoveTowards(transform.position, waypoint, (float)Speed(CurrentTile.moveSpeed) * Time.deltaTime);
-                        var newTile = MapManager.map.GetTile(MapManager.map.WorldToCell(newPosition)) as MapTerrain;
                         if (newTile != null)
                         {
                             transform.position = newPosition;
@@ -145,6 +154,45 @@ namespace Heroes
             }
         }
 
+        private void CheckCombat()
+        {
+            var roll = Random.Range(1, 199);
+            if (roll > 80)
+            {
+                InCombat = true;
+                InitiateCombat();
+            }
+        }
+
+
+        public void InitiateCombat()
+        {
+            var encounterNodes = GameObject.FindGameObjectsWithTag("EncounterNode").Select(e => e.GetComponent<EncounterTile>());
+            EncounterTile encounterTemplate = null;
+            var closestDistanceSqr = Mathf.Infinity;
+            var currentPosition = transform.position;
+            foreach(var encounterNode in encounterNodes)
+            {
+                var directionToTarget = encounterNode.transform.position - currentPosition;
+                var dSqrToTarget = directionToTarget.sqrMagnitude;
+                if (dSqrToTarget > 0.25) continue;
+                if (dSqrToTarget < closestDistanceSqr)
+                {
+                    closestDistanceSqr = dSqrToTarget;
+                    encounterTemplate = encounterNode;
+                    Debug.Log("FoundEncounter");
+                }
+            }
+
+            if (encounterTemplate != null)
+            {
+                var encounter = encounterTemplate.encounters[Random.Range(0, encounterTemplate.encounters.Count - 1)];
+                combatManager.InitiateCombat(encounter);
+            }
+
+
+
+        }
 
         public float Speed(MoveSpeed moveSpeed)
         {
@@ -164,7 +212,7 @@ namespace Heroes
                 var mine = CurrentTile as Mountain;
                 var metal = mine.GetMetal();
                 CurrentMaterial = metal;
-                var rollValue = Party.Hero.Skills.Mine.Roll();
+                var rollValue = Party.Hero.Skills.Mining.Roll();
                 var difficult = metal.Level * 10 + 50;
                 var actionProficient = rollValue - difficult;
                 ActionPerformance = actionProficient / 100 + 1;
@@ -175,7 +223,7 @@ namespace Heroes
         }
         public void Mine()
         {
-            var rollValue = Party.Hero.Skills.Mine.Roll();
+            var rollValue = Party.Hero.Skills.Mining.Roll();
             var difficult = CurrentMaterial.Difficulty;
             if (rollValue > difficult)
             {

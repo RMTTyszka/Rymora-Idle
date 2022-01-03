@@ -2,10 +2,11 @@ namespace Heroes
 {
     public enum BonusType
     {
-        Innate = 0,
-        Magic = 1,
-        Equipment = 2,
-        Food = 3,
-        Furniture = 4
+        Innate = 0, // Max
+        Magic = 1, // Max
+        Equipment = 2, // Sum
+        Consumable = 3, // Max
+        Furniture = 4, // Max
+        Race = 5, // Max
     }
 }

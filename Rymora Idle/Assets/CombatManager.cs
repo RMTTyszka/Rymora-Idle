@@ -1,13 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using DefaultNamespace;
 using Global;
-using Heroes;
 using UnityEngine;
 
 public class CombatManager : MonoBehaviour
 {
-    public PartyNode PartyNode { get; set; }
+    public Party Party { get; set; }
+    public int partyIndex;
+    public int Level { get; set; }
+    public PartyManager PartyManager { get; set; }
     public List<Creature> Monsters { get; set; }
 
     public CreatureSpawner monsterSpawner1;
@@ -23,9 +25,14 @@ public class CombatManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        PartyManager = GameObject.FindGameObjectWithTag("PartyManager").GetComponent<PartyManager>();
+        Party = PartyManager.parties[partyIndex].Party;
         SetHero(heroSpawner1,0);
         SetHero(heroSpawner2,1);
         SetHero(heroSpawner3,2);
+        
+        Monsters = new List<Creature>();
+        
         SetMonster(monsterSpawner1, 0);
         SetMonster(monsterSpawner2, 1);
         SetMonster(monsterSpawner3, 2);
@@ -33,9 +40,17 @@ public class CombatManager : MonoBehaviour
         SetMonster(animalSpawner, 0);
     }
 
+    public void InitiateCombat(Encounter encounter)
+    {
+        foreach (var monster in encounter.Monsters)
+        {
+            var newMonster = monster.InstantiateMonster(Level);
+        }
+    }
+
     private void SetHero(CreatureSpawner creatureSpawner, int index)
     {
-        var hero = PartyNode.Party.Members.ElementAtOrDefault(index);
+        var hero = Party.Members.ElementAtOrDefault(index);
         if (hero != null)
         {
             creatureSpawner.Add(hero);

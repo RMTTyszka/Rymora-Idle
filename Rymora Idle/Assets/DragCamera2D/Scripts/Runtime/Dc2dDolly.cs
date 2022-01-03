@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Dc2dDolly : MonoBehaviour
 {
@@ -68,7 +66,7 @@ public class Dc2dDolly : MonoBehaviour
 
     private void Start() {
         if (!lineRenderer) {
-            lineRenderer = this.gameObject.AddComponent<LineRenderer>();
+            lineRenderer = gameObject.AddComponent<LineRenderer>();
         }
         lineRenderer.sortingLayerID = 0;
         lineRenderer.material = new Material(Shader.Find("Transparent/Diffuse"));

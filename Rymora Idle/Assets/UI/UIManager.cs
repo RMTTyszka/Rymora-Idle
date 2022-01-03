@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class UIManager : MonoBehaviour
@@ -25,7 +23,7 @@ public class UIManager : MonoBehaviour
         {
             GameManager.CurrentScreen = ScreenState.Map;
             worldCamera.gameObject.SetActive(true);
-            foreach (var party in GameManager.partyManager.parties)
+            foreach (var party in GameManager.PartyManager.parties)
             {
                 party.combatCamera.gameObject.SetActive(false);
             }
@@ -44,6 +42,6 @@ public class UIManager : MonoBehaviour
 
     private void SetCombatCamera()
     {
-        GameManager.partyManager.CurrentPartyNode.combatCamera.gameObject.SetActive(true);
+        GameManager.PartyManager.CurrentPartyNode.combatCamera.gameObject.SetActive(true);
     }
 }
