@@ -1,14 +1,13 @@
 using System;
 using Global;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class MonsterTemplate : MonoBehaviour
 {
-    public Creature Creature { get; set; }
-
     public Sprite image;
-    public string name;
+    public string monsterName;
 
     public AttributeQuality strength;
     public AttributeQuality agility;
@@ -21,9 +20,10 @@ public class MonsterTemplate : MonoBehaviour
     public Creature InstantiateMonster(int level)
     {
         var creature = new Creature();
-        creature.Name = name;
+        creature.Name = monsterName;
         creature.Level = level;
         UpdateAttributes(creature);
+        creature.Image = image;
         return creature;
     }
 

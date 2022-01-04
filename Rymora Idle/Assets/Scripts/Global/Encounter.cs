@@ -3,6 +3,6 @@ using UnityEngine;
 
 public class Encounter : MonoBehaviour
 {
-    
-    public List<MonsterTemplate> Monsters { get; set; }
+
+    public List<MonsterTemplate> Monsters;
 }

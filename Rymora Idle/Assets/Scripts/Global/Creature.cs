@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Global
 {
     public class Creature
@@ -7,6 +9,9 @@ namespace Global
         public Inventory Inventory { get; set; }
         public Skills Skills { get; set; }
         public Attributes Attributes { get; set; }
+        
+        
+        public Sprite Image { get; set; }
 
 
         public Creature()

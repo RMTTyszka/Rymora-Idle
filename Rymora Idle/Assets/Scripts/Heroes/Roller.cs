@@ -15,13 +15,18 @@ public class Roller{
 		Bonuses = new List<Bonus>();
 		TotalBonus = GetTotalBonus();
 	}
-	public  int Roll() {
+	public virtual int RollForModifier() {
 		//Debug.Log("roller roll called");
 		int sum = 0;
 		for (int x = 0; x < Value; x++) {
 			sum += Random.Range(0,2);
 		} 
 		return sum;
+	}
+	public int Roll()
+	{
+		var rollValue = Random.Range(1, 101);
+		return rollValue + TotalPoints;
 	}
 	public int GetTotalBonus()
 	{

@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
         CurrentScreen = ScreenState.Map;
         MapManager.GameManager = this;
         worldCamera.gameObject.SetActive(true);
-        combatCamera.gameObject.SetActive(false);
+        combatCamera.gameObject.SetActive(true);
         PartyManager.CurrentPartyNode = PartyManager.parties[0];
         MapManager.OnCitiesPoulated += InitiateHero;
     }

@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class PartyManager : MonoBehaviour
 {
+    [SerializeField]
+    public List<PartyNode> parties;
+
+    public PartyNode CurrentPartyNode { get; set; }
+    
     
     public Camera MapCamera { get; set; }
 
@@ -20,14 +25,16 @@ public class PartyManager : MonoBehaviour
 
     public event InventoryUpdate OnInventoryUpdate;
 
-    [SerializeField]
-    public List<PartyNode> parties;
 
-    public PartyNode CurrentPartyNode { get; set; }
 
     private void Start()
     {
         MapCamera = Camera.main;
+        foreach (var partyNode in parties)
+        {
+            var image = partyNode.GetComponent<SpriteRenderer>();
+            partyNode.Party.Hero.Image = image.sprite;
+        }
         PublishHeroSelected(parties.First());
     }
 

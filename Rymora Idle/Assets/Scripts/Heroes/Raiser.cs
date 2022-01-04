@@ -9,11 +9,15 @@ public class Raiser : Roller {
 	public Raiser(int diff, int baseVal, int modifier) : base(baseVal, modifier) {
 		RaiseDifficult = diff;
 	}
-	public  int Roll(int lvl) {
+	public int RollForModifier(int lvl) {
+		//Debug.Log("Raiser roll called");
+		RollForRaise(lvl);
+		return base.RollForModifier();
+	}	
+	public int Roll(int lvl) {
 		//Debug.Log("Raiser roll called");
 		RollForRaise(lvl);
 		return base.Roll();
-
 	}
 
 	private void RollForRaise(int lvl) {

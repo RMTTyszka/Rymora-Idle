@@ -103,6 +103,7 @@ namespace Heroes
         {
             if (WayPoints.Any())
             {
+                var currentPosition = transform.position;
                 var waypoint = WayPoints.First();
                 var isCloseEnough = Vector3.Distance(waypoint, transform.position) <= 0.05f;
                 if (isCloseEnough)
@@ -114,10 +115,13 @@ namespace Heroes
                 }
                 else
                 {
-                    var x = MapManager.map.WorldToCell(transform.position);
-                    var newTile = MapManager.map.GetTile(x) as MapTerrain;
-                    if (newTile != CurrentTile)
+                    var x = MapManager.map.WorldToCell(currentPosition);
+                    var newTile = MapManager.map.GetTile<MapTerrain>(x);
+                    var distanceSinceLastCombatCheck = LastCombatCheckPosition - currentPosition;
+                    if (distanceSinceLastCombatCheck.sqrMagnitude > 0.5)
                     {
+                        Debug.Log($"distance between checks = {distanceSinceLastCombatCheck.sqrMagnitude}");
+                        LastCombatCheckPosition = currentPosition;
                         CheckCombat();
                     }
                     CurrentTile = newTile;
@@ -135,7 +139,7 @@ namespace Heroes
                     }
                     else
                     {
-                        var newPosition = Vector3.MoveTowards(transform.position, waypoint, (float)Speed(CurrentTile.moveSpeed) * Time.deltaTime);
+                        var newPosition = Vector3.MoveTowards(currentPosition, waypoint, (float)Speed(CurrentTile.moveSpeed) * Time.deltaTime);
                         if (newTile != null)
                         {
                             transform.position = newPosition;
@@ -154,18 +158,20 @@ namespace Heroes
             }
         }
 
+        public Vector3 LastCombatCheckPosition { get; set; }
+
         private void CheckCombat()
         {
-            var roll = Random.Range(1, 199);
-            if (roll > 80)
+            var roll = Random.Range(1, 101);
+            Debug.Log($"{roll}");
+            if (roll > 10)
             {
-                InCombat = true;
-                InitiateCombat();
+                 InCombat = InitiateCombat();
             }
         }
 
 
-        public void InitiateCombat()
+        public bool InitiateCombat()
         {
             var encounterNodes = GameObject.FindGameObjectsWithTag("EncounterNode").Select(e => e.GetComponent<EncounterTile>());
             EncounterTile encounterTemplate = null;
@@ -188,7 +194,10 @@ namespace Heroes
             {
                 var encounter = encounterTemplate.encounters[Random.Range(0, encounterTemplate.encounters.Count - 1)];
                 combatManager.InitiateCombat(encounter);
+                return true;
             }
+
+            return false;
 
 
 
@@ -212,7 +221,7 @@ namespace Heroes
                 var mine = CurrentTile as Mountain;
                 var metal = mine.GetMetal();
                 CurrentMaterial = metal;
-                var rollValue = Party.Hero.Skills.Mining.Roll();
+                var rollValue = Party.Hero.Skills.Mining.Roll(metal.Level);
                 var difficult = metal.Level * 10 + 50;
                 var actionProficient = rollValue - difficult;
                 ActionPerformance = actionProficient / 100 + 1;

@@ -27,17 +27,10 @@ public class CombatManager : MonoBehaviour
     {
         PartyManager = GameObject.FindGameObjectWithTag("PartyManager").GetComponent<PartyManager>();
         Party = PartyManager.parties[partyIndex].Party;
-        SetHero(heroSpawner1,0);
-        SetHero(heroSpawner2,1);
-        SetHero(heroSpawner3,2);
+
         
         Monsters = new List<Creature>();
-        
-        SetMonster(monsterSpawner1, 0);
-        SetMonster(monsterSpawner2, 1);
-        SetMonster(monsterSpawner3, 2);
-        SetMonster(monsterSpawner4, 3);
-        SetMonster(animalSpawner, 0);
+
     }
 
     public void InitiateCombat(Encounter encounter)
@@ -45,7 +38,19 @@ public class CombatManager : MonoBehaviour
         foreach (var monster in encounter.Monsters)
         {
             var newMonster = monster.InstantiateMonster(Level);
+            Monsters.Add(newMonster);
         }
+        SetHero(heroSpawner1,0);
+        SetHero(heroSpawner2,1);
+        SetHero(heroSpawner3,2);
+                
+        SetMonster(monsterSpawner1, 0);
+        SetMonster(monsterSpawner2, 1);
+        SetMonster(monsterSpawner3, 2);
+        SetMonster(monsterSpawner4, 3);
+     //   SetMonster(animalSpawner, 0);
+        
+        
     }
 
     private void SetHero(CreatureSpawner creatureSpawner, int index)

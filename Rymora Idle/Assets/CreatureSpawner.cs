@@ -20,6 +20,8 @@ public class CreatureSpawner : MonoBehaviour
     public void Add(Creature creature)
     {
         Creature = creature;
+        var spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = Creature.Image;
     }
 
     private void OnDrawGizmos()
