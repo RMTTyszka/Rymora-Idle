@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Items.Equipables.Weapons;
+using JetBrains.Annotations;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -87,8 +88,9 @@ namespace Global
 
         }
 
-        public void ProcessAttack(List<Creature> monsters)
+        public List<CombatActionResult> ProcessAttack(List<Creature> monsters)
         {
+            var actions = new List<CombatActionResult>();
             var hasMainWeapon = Equipment.MainWeapon != null;
             if (hasMainWeapon)
             {
@@ -109,10 +111,13 @@ namespace Global
                     Equipment.OffWeaponAttackCooldown += Equipment.OffWeapon.AttackSpeed;
                 }
             }
+
+            return actions;
         }
 
-        private void DoAttack(Weapon weapon, List<Creature> monsters, bool isCounter)
+        private List<CombatActionResult> DoAttack(Weapon weapon, List<Creature> monsters, bool isCounter)
         {
+            var actions = new List<CombatActionResult>();
             if (IsActive && !IsCasting)
             {
                 var target = GetAttackTarget(monsters);
@@ -125,22 +130,39 @@ namespace Global
                 var evadeRoll = target.EvadeRoll(Level);
                 //Debug.Log("attacking " + attkRoll + " x " + evadeRoll );
                 if (attkRoll >= evadeRoll) {
+                    var action  = new CombatActionResult
+                    {
+                        Target = target,
+                        Performer = this,
+                        ActionType = isCounter ? CombatActionType.CounterPhysicalDamage : CombatActionType.PhysicalDamage
+                    };
                     var isCritical = CriticalRoll(weapon, target);
+                    if (isCritical)
+                    {
+                        action.ActionType = isCounter ? CombatActionType.CounterCriticalDamage : CombatActionType.CriticalDamage;
+                    }
+
                     float damage = Damage(target ,weapon, isCritical);
+                    action.Value = damage;
                     target.TakeDamage(damage, isCritical, isCounter);
+                    actions.Add(action);
                 } else if (!isCounter){
-                    target.CheckForCounter(weapon, this);
+                    var counterResult = target.CheckForCounter(weapon, this);
+                    actions.AddRange(counterResult);
                 }
             }
+
+            return actions;
         }
 
-        private void CheckForCounter(Weapon weapon, Creature target)
+        private List<CombatActionResult> CheckForCounter(Weapon weapon, Creature target)
         {
+            var actions = new List<CombatActionResult>();
             int counter = weapon.CounterRating + Properties.CounterAttackRating.TotalBonus;
             counter += CheckForArmorAndWeaponCounter(weapon, target);
             int roll = Random.Range(0,100);
             if (roll <= counter) {
-                DoAttack( weapon, new List<Creature>{target}, true);
+                actions = DoAttack( weapon, new List<Creature>{target}, true);
     //			int lvlDif = target.C.lvl;
     //			//StartCoroutine(CounterAnim(target));
     //			//Debug.Log("Target is: "+attackTarget);
@@ -160,6 +182,8 @@ namespace Global
     //				} 
     //			}
 		    }
+
+            return actions;
         }
         public int CheckForArmorAndWeaponCounter(Weapon weapon, Creature target)
         {
@@ -306,20 +330,25 @@ namespace Global
             //Destroy(this.gameObject);
         }
 
-        public void PerformCombatAction(List<Creature> allies, List<Creature> enemies)
+        [CanBeNull]
+        public List<CombatActionResult> PerformCombatAction(List<Creature> allies, List<Creature> enemies)
         {
+            var actions = new List<CombatActionResult>();
             if (IsAlive)
             {
                 if (!IsCasting)
                 {
                     ProcessAttackCooldown();
-                    ProcessAttack(enemies);
+                    var attackResult = ProcessAttack(enemies);
+                    actions.AddRange(attackResult);
                 }
                 else
                 {
                     // TODO process casting
                 }
             }
+
+            return actions;
         }
     }
 

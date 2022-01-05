@@ -11,6 +11,7 @@ public class CombatManager : MonoBehaviour
     public int Level { get; set; }
     public PartyManager PartyManager { get; set; }
     public List<Creature> Monsters { get; set; }
+    public Dictionary<Creature, CreatureSpawner> SpawwnerByCreature { get; set; }
 
     public CreatureSpawner monsterSpawner1;
     public CreatureSpawner monsterSpawner2;
@@ -31,11 +32,13 @@ public class CombatManager : MonoBehaviour
 
         
         Monsters = new List<Creature>();
+        SpawwnerByCreature = new Dictionary<Creature, CreatureSpawner>();
 
     }
 
     public void InitiateCombat(Encounter encounter)
     {
+        SpawwnerByCreature = new Dictionary<Creature, CreatureSpawner>();
         foreach (var monster in encounter.Monsters)
         {
             var newMonster = monster.InstantiateMonster(Level);
@@ -68,6 +71,7 @@ public class CombatManager : MonoBehaviour
         if (hero != null)
         {
             creatureSpawner.Add(hero);
+            SpawwnerByCreature[hero] = creatureSpawner;
         }
 
     }    
@@ -77,6 +81,7 @@ public class CombatManager : MonoBehaviour
         if (monster != null)
         {
             creatureSpawner.Add(monster);
+            SpawwnerByCreature[monster] = creatureSpawner;
         }
     }      
     private void SetAnimal(CreatureSpawner creatureSpawner, int index)
@@ -95,11 +100,13 @@ public class CombatManager : MonoBehaviour
         {
             foreach (var hero in Party.Members)
             {
-                hero.PerformCombatAction(Party.Members, Monsters);
+                var actionsPerformed = hero.PerformCombatAction(Party.Members, Monsters);
+                // TODO animations
             }      
             foreach (var monster in Monsters)
             {
-                monster.PerformCombatAction(Monsters, Party.Members);
+                var actionsPerformed = monster.PerformCombatAction(Monsters, Party.Members);
+                // TODO animations
             }
         }
     }
