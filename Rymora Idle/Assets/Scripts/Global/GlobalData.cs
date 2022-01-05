@@ -8,7 +8,7 @@ public enum AttributeType{
 						Intuition, 
 						Charisma
 						};
-public enum Skills {
+public enum SkillType {
 						Alchemy, 
 						Anatomy, 
 						AnimalTaming, 

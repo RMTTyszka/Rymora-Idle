@@ -22,6 +22,7 @@ public class CombatManager : MonoBehaviour
     public CreatureSpawner heroSpawner2;
     public CreatureSpawner heroSpawner3;
     public CreatureSpawner animalSpawner;
+    private bool CombatStarted { get; set; }
     // Start is called before the first frame update
     void Start()
     {
@@ -49,8 +50,16 @@ public class CombatManager : MonoBehaviour
         SetMonster(monsterSpawner3, 2);
         SetMonster(monsterSpawner4, 3);
      //   SetMonster(animalSpawner, 0);
+     
+     // TODO reset combat status
+
+
         
         
+    }
+
+    private void Attack(Creature hero, List<Creature> monsters)
+    {
     }
 
     private void SetHero(CreatureSpawner creatureSpawner, int index)
@@ -82,6 +91,16 @@ public class CombatManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (CombatStarted)
+        {
+            foreach (var hero in Party.Members)
+            {
+                hero.PerformCombatAction(Party.Members, Monsters);
+            }      
+            foreach (var monster in Monsters)
+            {
+                monster.PerformCombatAction(Monsters, Party.Members);
+            }
+        }
     }
 }
