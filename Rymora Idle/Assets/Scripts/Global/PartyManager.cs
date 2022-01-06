@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Heroes;
+using Items.Equipables.Weapons;
 using UnityEngine;
 
 public class PartyManager : MonoBehaviour
@@ -34,6 +35,8 @@ public class PartyManager : MonoBehaviour
         {
             var image = partyNode.GetComponent<SpriteRenderer>();
             partyNode.Party.Hero.Image = image.sprite;
+            partyNode.Party.Hero.Equipment.MainWeapon =
+                Weapon.FromSizeAndDamageType(Weapon.WeaponsSize.Medium, Weapon.WeaponsDamageType.Cutting);
         }
         PublishHeroSelected(parties.First());
     }

@@ -18,5 +18,5 @@ namespace Global
         CounterPhysicalDamage = 5,
         CounterCriticalDamage = 6
         // TODO
-    }
+    }   
 }

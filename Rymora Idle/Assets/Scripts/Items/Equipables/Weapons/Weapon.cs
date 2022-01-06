@@ -21,8 +21,12 @@ namespace Items.Equipables.Weapons
         public AttributeType AttackAttribute{ get; set; }
         public AttributeType DamageAttribute{ get; set; }
 
+        public Weapon() : base()
+        {
+            
+        }
 
-        public Weapon FromSizeAndDamageType(WeaponsSize size, WeaponsDamageType damageType)
+        public static Weapon FromSizeAndDamageType(WeaponsSize size, WeaponsDamageType damageType)
         {
             var weapon = new Weapon();
             switch (size)
@@ -43,7 +47,7 @@ namespace Items.Equipables.Weapons
                     weapon.Size = WeaponsSize.Light;
                     weapon.MinimumDamage = 8;
                     weapon.MaxDamage = 18;
-                    weapon.AttackSpeed = 19;
+                    weapon.AttackSpeed = 10;
                     weapon.HitModifier = 0;
                     weapon.ArmorPenetration = 1;
                     weapon.BaseDamageMultiplier = 2;

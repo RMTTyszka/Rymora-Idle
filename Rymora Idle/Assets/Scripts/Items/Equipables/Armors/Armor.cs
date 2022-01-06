@@ -69,7 +69,6 @@ public class Armor : Equipable {
 
 	public ArmorBases BaseArmor { get; set; }
 	public ArmorSize Size { get; set; }
-	public int Level { get; set; }
 	public int Protection { get; set; }
 	public int Evasion { get; set; }
 
@@ -79,7 +78,7 @@ public class Armor : Equipable {
 
 	}
 
-	public Armor FromBaseArmor(ArmorBases armorBase, int level)
+	public static Armor FromBaseArmor(ArmorBases armorBase, int level)
 	{
 		var armor = new Armor();
 		armor.Level = level;
@@ -122,7 +121,7 @@ public class Armor : Equipable {
 		return armor;
 	}
 
-	private Armor FromSize(Armor armor, ArmorSize size)
+	private static Armor FromSize(Armor armor, ArmorSize size)
 	{
 		switch (size)
 		{

@@ -56,9 +56,30 @@ public class CombatManager : MonoBehaviour
      
      // TODO reset combat status
 
+     foreach (var partyMember in Party.Members)
+     {
+         partyMember.IsActive = true;
+         partyMember.Equipment.MainWeaponAttackCooldown = partyMember.Equipment.MainWeapon != null
+             ? partyMember.Equipment.MainWeapon.AttackSpeed
+             : 0;      
+         partyMember.Equipment.OffWeaponAttackCooldown = partyMember.Equipment.OffWeapon != null
+             ? partyMember.Equipment.OffWeapon.AttackSpeed
+             : 0;
+     }     
+     foreach (var monster in Monsters)
+     {
+         monster.IsActive = true;
+         monster.Equipment.MainWeaponAttackCooldown = monster.Equipment.MainWeapon != null
+             ? monster.Equipment.MainWeapon.AttackSpeed
+             : 0;      
+         monster.Equipment.OffWeaponAttackCooldown = monster.Equipment.OffWeapon != null
+             ? monster.Equipment.OffWeapon.AttackSpeed
+             : 0;
+     }
+     CombatStarted = true;
 
-        
-        
+
+
     }
 
     private void Attack(Creature hero, List<Creature> monsters)
@@ -102,11 +123,21 @@ public class CombatManager : MonoBehaviour
             {
                 var actionsPerformed = hero.PerformCombatAction(Party.Members, Monsters);
                 // TODO animations
+                foreach (var actionResult in actionsPerformed)
+                {
+                    var creatureSpawner = SpawwnerByCreature[actionResult.Target];
+                    creatureSpawner.ProcessAction(actionResult);
+                }
             }      
             foreach (var monster in Monsters)
             {
                 var actionsPerformed = monster.PerformCombatAction(Monsters, Party.Members);
                 // TODO animations
+                foreach (var actionResult in actionsPerformed)
+                {
+                    var creatureSpawner = SpawwnerByCreature[actionResult.Target];
+                    creatureSpawner.ProcessAction(actionResult);
+                };
             }
         }
     }

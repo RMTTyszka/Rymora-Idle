@@ -8,6 +8,11 @@ public abstract class Equipable : Item
     public Slots Slot;
     public List<Bonus> Bonuses;
 
+    public Equipable()
+    {
+	    Bonuses = new List<Bonus>();
+    }
+
     public void Equip(Creature target) {
 		
     }
