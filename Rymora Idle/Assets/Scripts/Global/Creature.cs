@@ -20,7 +20,7 @@ namespace Global
         
         public Sprite Image { get; set; }
 
-        public int CurrentLife;
+        public int CurrentLife { get; set; }
         public int MaxLife() 
         {
             int baseLife = 500;
@@ -35,7 +35,6 @@ namespace Global
             Attributes = new Attributes();
             Properties = new Properties();
             Equipment = new Equipment();
-
             IsAlive = true;
         }
 
@@ -66,8 +65,6 @@ namespace Global
             }
 
         }
-
-        
 
         [CanBeNull]
         public List<CombatActionResult> PerformCombatAction(List<Creature> allies, List<Creature> enemies)
@@ -178,6 +175,63 @@ namespace Global
         public Equipment()
         {
             Armor = Armor.FromBaseArmor(Armor.ArmorBases.None, 1);
+        }
+
+        public void Equip(Equipable equipable, Slot slot)
+        {
+            switch (slot)
+            {
+                case Slot.None:
+                    break;
+                case Slot.Mainhand:
+                    var mainWeapon = equipable as Weapon;
+                    EquipMainWeapon(mainWeapon);
+                    break;
+                case Slot.Offhand:
+                    var offWeapon = equipable as Weapon;
+                    EquipOffWeapon(offWeapon);
+                    break;
+                case Slot.Head:
+                    break;
+                case Slot.Neck:
+                    break;
+                case Slot.Chest:
+                    var armor = equipable as Armor;
+                    EquipArmor(armor);
+                    break;
+                case Slot.Wrist:
+                    break;
+                case Slot.Hand:
+                    break;
+                case Slot.FingerLeft:
+                    break;
+                case Slot.FingerRight:
+                    break;
+                case Slot.Waist:
+                    break;
+                case Slot.Feet:
+                    break;
+                case Slot.Extra:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(slot), slot, null);
+            }
+            // TODO treat hands
+        }
+
+        private void EquipArmor(Armor armor)
+        {
+            Armor = armor;
+        }
+
+        private void EquipOffWeapon(Weapon weapon)
+        {
+            OffWeapon = weapon;
+        }
+
+        private void EquipMainWeapon(Weapon weapon)
+        {
+            MainWeapon = weapon;
         }
     }
 }

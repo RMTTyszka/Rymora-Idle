@@ -23,7 +23,7 @@ public class CombatManager : MonoBehaviour
     public CreatureSpawner heroSpawner2;
     public CreatureSpawner heroSpawner3;
     public CreatureSpawner animalSpawner;
-    private bool CombatStarted { get; set; }
+    public bool CombatStarted { get; set; }
     // Start is called before the first frame update
     void Start()
     {

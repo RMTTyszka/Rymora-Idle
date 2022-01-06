@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Global;
 using Heroes;
 using Items.Equipables.Weapons;
 using UnityEngine;
@@ -35,10 +36,18 @@ public class PartyManager : MonoBehaviour
         {
             var image = partyNode.GetComponent<SpriteRenderer>();
             partyNode.Party.Hero.Image = image.sprite;
-            partyNode.Party.Hero.Equipment.MainWeapon =
-                Weapon.FromSizeAndDamageType(Weapon.WeaponsSize.Medium, Weapon.WeaponsDamageType.Cutting);
+            InitiateHero(partyNode.Party.Hero);
+
         }
         PublishHeroSelected(parties.First());
+    }
+
+    private void InitiateHero(Creature hero)
+    {
+        hero.Level = 1;
+        hero.Equipment.MainWeapon =
+                Weapon.FromSizeAndDamageType(Weapon.WeaponsSize.Medium, Weapon.WeaponsDamageType.Cutting, 1);
+        hero.CurrentLife = hero.MaxLife();
     }
 
     public void PublishHeroSelected(PartyNode partyNode)

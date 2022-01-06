@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Items.Equipables.Weapons;
+using Random = UnityEngine.Random;
 
 public class Armor : Equipable {
 
@@ -29,6 +30,14 @@ public class Armor : Equipable {
 			{ArmorStats.Evasion, 0}
 		}},
 	};
+
+	public static ArmorBases FromSize(ArmorSize size)
+	{
+		var list = ArmorList[size].Keys.ToList();
+		var armor = list[Random.Range(0, list.Count())];
+		return armor;
+	}
+
 	public static Dictionary<ArmorSize, Dictionary<ArmorBases, Dictionary<string, Weapon.WeaponsDamageType>>> ArmorList = new Dictionary<ArmorSize, Dictionary<ArmorBases, Dictionary<string, Weapon.WeaponsDamageType>>>() {
 		//{ArmorCat.None, new Dictionary<ArmorBases, Dictionary<string, Weapon.WeaponsDamageType>>(){
 			//{ArmorBases.None, new Dictionary<string, Weapon.WeaponsDamageType>() {
@@ -73,7 +82,7 @@ public class Armor : Equipable {
 	public int Evasion { get; set; }
 
 	public Armor(){
-        Slot = Slots.Chest;
+        Slot = Slot.Chest;
 		getArmorStats(BaseArmor, Level);
 
 	}
@@ -85,34 +94,34 @@ public class Armor : Equipable {
 		switch (armorBase)
 		{
 			case ArmorBases.None:
-				armor = FromSize(armor, ArmorSize.Light);
+				armor = PopulateSizeProperties(armor, ArmorSize.Light);
 				break;
 			case ArmorBases.Cloth:
-				armor = FromSize(armor, ArmorSize.Light);
+				armor = PopulateSizeProperties(armor, ArmorSize.Light);
 				break;
 			case ArmorBases.Robe:
-				armor = FromSize(armor, ArmorSize.Light);
+				armor = PopulateSizeProperties(armor, ArmorSize.Light);
 				break;
 			case ArmorBases.Leather:
-				armor = FromSize(armor, ArmorSize.Light);
+				armor = PopulateSizeProperties(armor, ArmorSize.Light);
 				break;
 			case ArmorBases.Chainmail:
-				armor = FromSize(armor, ArmorSize.Medium);
+				armor = PopulateSizeProperties(armor, ArmorSize.Medium);
 				break;
 			case ArmorBases.StuddedLeather:
-				armor = FromSize(armor, ArmorSize.Medium);
+				armor = PopulateSizeProperties(armor, ArmorSize.Medium);
 				break;
 			case ArmorBases.Halfplate:
-				armor = FromSize(armor, ArmorSize.Medium);
+				armor = PopulateSizeProperties(armor, ArmorSize.Medium);
 				break;
 			case ArmorBases.Fullplate:
-				armor = FromSize(armor, ArmorSize.Heavy);
+				armor = PopulateSizeProperties(armor, ArmorSize.Heavy);
 				break;
 			case ArmorBases.Scale:
-				armor = FromSize(armor, ArmorSize.Heavy);
+				armor = PopulateSizeProperties(armor, ArmorSize.Heavy);
 				break;
 			case ArmorBases.Splitmail:
-				armor = FromSize(armor, ArmorSize.Heavy);
+				armor = PopulateSizeProperties(armor, ArmorSize.Heavy);
 				break;
 			default:
 				throw new ArgumentOutOfRangeException(nameof(armorBase), armorBase, null);
@@ -121,7 +130,7 @@ public class Armor : Equipable {
 		return armor;
 	}
 
-	private static Armor FromSize(Armor armor, ArmorSize size)
+	private static Armor PopulateSizeProperties(Armor armor, ArmorSize size)
 	{
 		switch (size)
 		{

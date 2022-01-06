@@ -5,7 +5,7 @@ using Heroes;
 
 public abstract class Equipable : Item
 {
-    public Slots Slot;
+    public Slot Slot;
     public List<Bonus> Bonuses;
 
     public Equipable()

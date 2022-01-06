@@ -71,6 +71,6 @@ public class CreatureSpawner : MonoBehaviour
         CBT.GetComponent<Text>().text = text;
 
         CBT.GetComponent<Animator>().SetTrigger(trigger);
-       // Destroy(CBT, 2f);
+        Destroy(CBT, 2f);
     }
 }

@@ -42,7 +42,7 @@ public enum SkillType {
 						Wrestling
 						};
 
-public enum Slots {
+public enum Slot {
                         None,
 						Mainhand,
 						Offhand, 

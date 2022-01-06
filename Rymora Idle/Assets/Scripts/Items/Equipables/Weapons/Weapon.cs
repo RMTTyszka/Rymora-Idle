@@ -26,9 +26,10 @@ namespace Items.Equipables.Weapons
             
         }
 
-        public static Weapon FromSizeAndDamageType(WeaponsSize size, WeaponsDamageType damageType)
+        public static Weapon FromSizeAndDamageType(WeaponsSize size, WeaponsDamageType damageType, int level)
         {
             var weapon = new Weapon();
+            weapon.Level = level;
             switch (size)
             {
                 case WeaponsSize.Light:
