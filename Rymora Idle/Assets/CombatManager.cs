@@ -1,12 +1,14 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DefaultNamespace;
 using Global;
+using Heroes;
 using UnityEngine;
 
 public class CombatManager : MonoBehaviour
 {
-    public Party Party { get; set; }
+    public PartyNode PartyNode { get; set; }
     public int partyIndex;
     public int Level { get; set; }
     public PartyManager PartyManager { get; set; }
@@ -28,7 +30,7 @@ public class CombatManager : MonoBehaviour
     void Start()
     {
         PartyManager = GameObject.FindGameObjectWithTag("PartyManager").GetComponent<PartyManager>();
-        Party = PartyManager.parties[partyIndex].Party;
+        PartyNode = PartyManager.parties[partyIndex];
 
         
         Monsters = new List<Creature>();
@@ -39,6 +41,7 @@ public class CombatManager : MonoBehaviour
     public void InitiateCombat(Encounter encounter)
     {
         SpawwnerByCreature = new Dictionary<Creature, CreatureSpawner>();
+        Monsters.Clear();
         foreach (var monster in encounter.Monsters)
         {
             var newMonster = monster.InstantiateMonster(Level);
@@ -56,7 +59,7 @@ public class CombatManager : MonoBehaviour
      
      // TODO reset combat status
 
-     foreach (var partyMember in Party.Members)
+     foreach (var partyMember in PartyNode.Party.Members)
      {
          partyMember.IsActive = true;
          partyMember.Equipment.MainWeaponAttackCooldown = partyMember.Equipment.MainWeapon != null
@@ -65,6 +68,8 @@ public class CombatManager : MonoBehaviour
          partyMember.Equipment.OffWeaponAttackCooldown = partyMember.Equipment.OffWeapon != null
              ? partyMember.Equipment.OffWeapon.AttackSpeed
              : 0;
+         partyMember.CurrentLife = partyMember.MaxLife();
+         partyMember.IsAlive = true;
      }     
      foreach (var monster in Monsters)
      {
@@ -88,7 +93,7 @@ public class CombatManager : MonoBehaviour
 
     private void SetHero(CreatureSpawner creatureSpawner, int index)
     {
-        var hero = Party.Members.ElementAtOrDefault(index);
+        var hero = PartyNode.Party.Members.ElementAtOrDefault(index);
         if (hero != null)
         {
             creatureSpawner.Add(hero);
@@ -119,9 +124,9 @@ public class CombatManager : MonoBehaviour
     {
         if (CombatStarted)
         {
-            foreach (var hero in Party.Members)
+            foreach (var hero in PartyNode.Party.Members)
             {
-                var actionsPerformed = hero.PerformCombatAction(Party.Members, Monsters);
+                var actionsPerformed = hero.PerformCombatAction(PartyNode.Party.Members, Monsters);
                 // TODO animations
                 foreach (var actionResult in actionsPerformed)
                 {
@@ -131,7 +136,7 @@ public class CombatManager : MonoBehaviour
             }      
             foreach (var monster in Monsters)
             {
-                var actionsPerformed = monster.PerformCombatAction(Monsters, Party.Members);
+                var actionsPerformed = monster.PerformCombatAction(Monsters, PartyNode.Party.Members);
                 // TODO animations
                 foreach (var actionResult in actionsPerformed)
                 {
@@ -139,6 +144,43 @@ public class CombatManager : MonoBehaviour
                     creatureSpawner.ProcessAction(actionResult);
                 };
             }
+
+            CheckForCombatEnd();
         }
+    }
+
+    private void CheckForCombatEnd()
+    {
+        if (Monsters.TrueForAll(monster => !monster.IsAlive))
+        {
+            EndCombat();
+        }       
+        if (PartyNode.Party.Members.TrueForAll(hero => !hero.IsAlive))
+        {
+            EndCombat();
+        }
+    }
+
+    private void EndCombat()
+    {
+        // TODO show loot
+        CombatStarted = false;
+        foreach (var spawner in Spawners())
+        {
+            spawner.Reset();
+        }
+
+        PartyNode.InCombat = false;
+    }
+
+    private IEnumerable<CreatureSpawner> Spawners()
+    {
+        yield return heroSpawner1;
+        yield return heroSpawner2;
+        yield return heroSpawner3;
+        yield return monsterSpawner1;
+        yield return monsterSpawner2;
+        yield return monsterSpawner3;
+        yield return monsterSpawner4;
     }
 }

@@ -57,7 +57,7 @@ namespace Global
         {
             if (Equipment.MainWeapon != null)
             {
-                Equipment.MainWeaponAttackCooldown -= Time.deltaTime * (1 + Properties.AttackSpeed.TotalBonus/100f);
+                Equipment.MainWeaponAttackCooldown -= 10 * Time.deltaTime * (1 + Properties.AttackSpeed.TotalBonus/100f);
             }    
             if (Equipment.OffWeapon != null)
             {

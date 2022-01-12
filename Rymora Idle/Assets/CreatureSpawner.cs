@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Global;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,11 +8,27 @@ public class CreatureSpawner : MonoBehaviour
 {
     public Creature Creature { get; set; }
     public GameObject CBTpref;
+    public bool Active { get; set; }
+    public SpriteRenderer SpriteRenderer { get; set; }
+    public CombatNodeCanvas CombatNodeCanvas { get; set; }
 
     // Start is called before the first frame update
     void Start()
     {
-        InitCBT(12.ToString(), "Heal");
+        SpriteRenderer = GetComponent<SpriteRenderer>();
+        CombatNodeCanvas = GetComponentInChildren<CombatNodeCanvas>(true);
+        Reset();
+
+    }
+
+    public void Reset()
+    {
+        if (gameObject.activeSelf)
+        {
+            Creature = null;
+            SpriteRenderer.sprite = null;
+            CombatNodeCanvas.gameObject.SetActive(false);  
+        }
     }
 
     // Update is called once per frame
@@ -23,8 +40,8 @@ public class CreatureSpawner : MonoBehaviour
     public void Add(Creature creature)
     {
         Creature = creature;
-        var spriteRenderer = GetComponent<SpriteRenderer>();
-        spriteRenderer.sprite = Creature.Image;
+        SpriteRenderer.sprite = Creature.Image;
+        CombatNodeCanvas.gameObject.SetActive(true);
     }
 
     private void OnDrawGizmos()
@@ -64,7 +81,7 @@ public class CreatureSpawner : MonoBehaviour
     public void InitCBT(string text, string trigger) {
         GameObject CBT = Instantiate(CBTpref);
         RectTransform CBTRect = CBT.GetComponent<RectTransform>();
-        CBT.transform.SetParent(transform.Find("CombatNodeCanvas"));
+        CBT.transform.SetParent(CombatNodeCanvas.transform);
         CBTRect.transform.localPosition = CBTpref.transform.localPosition;
     //    CBTRect.transform.localScale = CBTpref.transform.localScale;
         CBTRect.transform.localRotation = CBTpref.transform.localRotation;
