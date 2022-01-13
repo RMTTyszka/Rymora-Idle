@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using DefaultNamespace;
+using Global;
 using Items.Metals;
 using Map;
 using UnityEngine;
@@ -29,6 +30,9 @@ namespace Heroes
         public Metal CurrentMaterial { get; set; }
         public HeroAction CurrentAction { get; set; }
         public Queue<HeroAction> NextActions { get; set; }
+        
+        public List<CombatAction> CombatActions = new List<CombatAction>();
+
 
         public bool InCombat { get; set; }
 
@@ -246,13 +250,13 @@ namespace Heroes
         public void AddItem(Item item)
         {
             Party.Hero.Inventory.AddItem(item);
-            PartyManager.PublishInventoryUpdate(this);
+            PartyManager.PublishInventoryUpdate(Party.Hero);
             print($"Acquired a {item.Name}");
         }      
         public void RemoveItem(Item item, int quantity)
         {
             Party.Hero.Inventory.RemoveItem(item, quantity);
-            PartyManager.PublishInventoryUpdate(this);
+            PartyManager.PublishInventoryUpdate(Party.Hero);
             print($"Removed a {item.Name}");
         }      
 

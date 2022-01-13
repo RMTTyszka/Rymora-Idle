@@ -18,7 +18,7 @@ public class CurrentHeroPanel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        partyManager.OnHeroSelected += UpdateCurrentInfoDisplayData;
+        partyManager.OnPartySelected += UpdateCurrentInfoDisplayData;
         partyManager.OnActionUpdated += UpdateActions;
     }
 

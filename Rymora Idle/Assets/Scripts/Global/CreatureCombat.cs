@@ -271,5 +271,15 @@ namespace Global
         {
             //Destroy(this.gameObject);
         }
+
+        public void TakeHealing(float healAmount)
+        {
+            CurrentLife += Mathf.RoundToInt(healAmount);
+            if (CurrentLife > MaxLife()) {
+                CurrentLife = MaxLife();
+                IsAlive = true;
+                //Destroy(gameObject);
+            }
+        }
     }
 }

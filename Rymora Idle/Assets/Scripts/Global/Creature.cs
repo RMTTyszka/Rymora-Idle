@@ -17,6 +17,7 @@ namespace Global
         public Properties Properties { get; set; }
         public Equipment Equipment { get; set; }
         
+        public List<CombatAction> CombatActions { get; set; } = new List<CombatAction>();
         
         public Sprite Image { get; set; }
 
@@ -87,6 +88,21 @@ namespace Global
             return actions;
         }
     }
+
+    [System.Serializable]
+    public class CombatAction
+    {
+        public TargetType target;
+        public CombatAIChecker checker;
+        public CombatAICondition condition;
+        public CombatAIValues value;
+        public Power power;
+    }
+    public enum CombatAIChecker {Life, Mana, Armor, Effect};
+    public enum CombatAICondition {Lesser, Higher, Equal};
+    public enum CombatAIValues {_100 = 100, _90 = 90,  _80 = 80, _70 = 70, _60 = 60, _50 = 50, _40 = 40, _30 = 30, _20 = 20, _10 = 10, _0 = 0,
+        Dead, Stunned, Frozen, Poison};
+    public enum TargetType {Enemies, Allies};
 
 
     public class Attributes

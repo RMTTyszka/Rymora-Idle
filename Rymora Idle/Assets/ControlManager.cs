@@ -3,7 +3,7 @@ using UnityEngine.Serialization;
 
 public class ControlManager : MonoBehaviour
 {
-    [FormerlySerializedAs("_selectHeroService")] [SerializeField] private CurrentHeroService currentHeroService;
+    private PartyManager PartyManager { get; set; }
     // Start is called before the first frame update
     void Start()
     {
@@ -15,15 +15,15 @@ public class ControlManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            currentHeroService.HeroSelected(0);
+            PartyManager.PublishPartySelected(0);
         }    
         else if (Input.GetKeyDown(KeyCode.F2))
         {
-            currentHeroService.HeroSelected(1);
+            PartyManager.PublishPartySelected(1);
         }       
         else if (Input.GetKeyDown(KeyCode.F3))
         {
-            currentHeroService.HeroSelected(2);
+            PartyManager.PublishPartySelected(2);
         }
 
     }

@@ -1,3 +1,4 @@
+using Global;
 using Heroes;
 using UnityEngine;
 
@@ -12,13 +13,13 @@ public class ItemListComponent : MonoBehaviour
         partyManager.OnInventoryUpdate += UpdateList;
     }
 
-    public void UpdateList(PartyNode partyNode)
+    public void UpdateList(Creature hero)
     {
         foreach (var child in GetComponentsInChildren<InventoryItemComponent>())
         {
             Destroy(child.gameObject);
         }
-        foreach (var item in partyNode.Party.Hero.Inventory.GroupedItems)
+        foreach (var item in hero.Inventory.GroupedItems)
         {
             var tempTextBox = Instantiate(itemPrefab, Vector3.zero, transform.rotation) as InventoryItemComponent;
             //Parent to the panel

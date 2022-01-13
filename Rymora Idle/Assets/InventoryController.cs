@@ -1,4 +1,5 @@
 using System.Linq;
+using Global;
 using Heroes;
 using UnityEngine;
 using UnityEngine.UI;
@@ -20,8 +21,8 @@ public class InventoryController : MonoBehaviour
         
     }
 
-    public void UpdateWeight(PartyNode partyNode)
+    public void UpdateWeight(Creature hero)
     {
-        weightText.text = $"Weight: {PartyManager.CurrentPartyNode.Party.Hero.Inventory.Items.Sum(item => item.Weight)}";
+        weightText.text = $"Weight: {hero.Inventory.Items.Sum(item => item.Weight)}";
     }
 }
