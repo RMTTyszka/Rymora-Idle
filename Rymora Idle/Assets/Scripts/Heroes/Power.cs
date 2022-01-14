@@ -1,4 +1,5 @@
-﻿using Global;
+﻿using System.Collections.Generic;
+using Global;
 using UnityEngine;
 
 public abstract class Power : ScriptableObject {
@@ -11,12 +12,12 @@ public abstract class Power : ScriptableObject {
 	public float range;
     
 
-	public void usePower (Creature caster, Creature target) {
+	public List<CombatActionResult> Cast (Creature caster, Creature target) {
 		Creature[] targets = {target};
-		usePower(caster,targets);
+		return Cast(caster,targets);
 	}
-	public virtual void usePower(Creature caster, Creature[] targets) {
-		
+	public virtual List<CombatActionResult> Cast(Creature caster, Creature[] targets) {
+		return new List<CombatActionResult>();
 	}
 
 

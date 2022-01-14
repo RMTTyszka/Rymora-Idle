@@ -31,7 +31,8 @@ public class CombatNodeCanvas : MonoBehaviour
             castingBar.gameObject.SetActive(true); 
             attackSlider.maxValue = combatChar.Equipment.MainWeapon.AttackSpeed;
             attackSlider.value = attackSlider.maxValue - combatChar.Equipment.MainWeaponAttackCooldown;
-
+            castingSlider.maxValue = combatChar.CastingPower?.castingTime ?? 0;
+            castingSlider.value = castingSlider.maxValue - combatChar.CastingTimer;
 /*            if (combatChar.chargedPower != null) {
                 castingSlider.maxValue = combatChar.chargedPower.castingTime;
                 castingSlider.value = castingSlider.maxValue - combatChar.castingTimer;
@@ -45,5 +46,6 @@ public class CombatNodeCanvas : MonoBehaviour
         }
 
         lifeSlider.value = combatChar.LifePercent / 100f;
+        spiritSlider.value = combatChar.SpiritPercent / 100f;
     }
 }

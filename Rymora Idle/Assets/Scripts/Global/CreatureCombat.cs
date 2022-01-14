@@ -1,11 +1,19 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Items.Equipables.Weapons;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Global
 {
     public partial class Creature
     {
+        
+        public Creature CastingTarget { get; set; }
+        public float CastingTimer { get; set; }
+
+        public Power CastingPower { get; set; }
         public float GetAggro() {
             // Less health == More Aggro, and bonus
             return ((1f-LifePercent)*10 + Properties.Threat.TotalBonus);
@@ -281,6 +289,169 @@ namespace Global
                 //Destroy(gameObject);
             }
         }
+        public List<CombatActionResult> PerformCombatAction(List<Creature> allies, List<Creature> enemies)
+        {
+            var actions = new List<CombatActionResult>();
+            if (IsAlive)
+            {
+                if (!IsCasting)
+                {
+                    foreach (var action in CombatActions)
+                    {
+                        var target = CheckTactics(action, allies, enemies);
+                        if (target != null)
+                        {
+                            CastingTarget = target;
+                            CastingPower = action.power;
+                            CastingTimer = action.power.castingTime;
+                            IsCasting = true;
+                        }
+                    }
+                }
 
+                if (!IsCasting)
+                {
+                    ProcessAttackCooldown();
+                    var attackResult = ProcessAttack(enemies);
+                    actions.AddRange(attackResult);
+                }
+                else
+                {
+                    // TODO process casting
+                    ProcessCastingCooldown();
+                    var castResult = DoCast();
+                    actions.AddRange(castResult);
+                }
+            }
+
+            return actions;
+        }
+
+        private List<CombatActionResult> DoCast()
+        {
+            var actions = new List<CombatActionResult>();
+            if (IsCasting && CastingTarget != null && CastingTimer <= 0)
+            {
+                actions = CastingPower.Cast(this, CastingTarget);
+                IsCasting = false;
+                CastingTarget = null;
+                CastingTarget = null;
+            }
+
+            return actions;
+        }
+
+        private void ProcessCastingCooldown()
+        {
+            if (IsCasting)
+            {
+                CastingTimer -= Time.deltaTime * (1 + Properties.CastingSpeed.TotalBonus / 100f);
+            }
+        }
+        public void ProcessAttackCooldown()
+        {
+            if (Equipment.MainWeapon != null)
+            {
+                Equipment.MainWeaponAttackCooldown -= Time.deltaTime * (1 + Properties.AttackSpeed.TotalBonus/100f);
+            }    
+            if (Equipment.OffWeapon != null)
+            {
+                Equipment.OffWeaponAttackCooldown -= Time.deltaTime * (1 + Properties.AttackSpeed.TotalBonus/100f);
+            }
+
+        }
+
+        private Creature CheckTactics(CombatAction action, List<Creature> allies, List<Creature> enemies)
+        {
+            var targets = action.target == TargetType.Allies ? allies : enemies;
+            switch (action.checker)
+            {
+                case CombatAIChecker.Life:
+                    return CheckLife((int) action.value, action.condition, targets);
+                case CombatAIChecker.Spirit:
+                    return CheckSpirit((int) action.value, action.condition, targets);
+                case CombatAIChecker.Armor:
+                    return CheckArmor(action.value, action.condition, targets);
+                case CombatAIChecker.Effect:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return null;
+        }
+
+        private Creature CheckArmor(CombatAIValues value, CombatAICondition condition, List<Creature> targets)
+        {
+            Creature target;
+            switch (condition)
+            {
+                case CombatAICondition.Lesser:
+                    return null;
+                case CombatAICondition.Higher:
+                    return null;
+                case CombatAICondition.Equal:
+                    Armor.ArmorSize armorSize;
+                    switch (value)
+                    {
+                        case CombatAIValues.Light:
+                            armorSize = Armor.ArmorSize.Light;
+                            break;
+                        case CombatAIValues.Medium:
+                            armorSize = Armor.ArmorSize.Medium;   
+                            break;
+                        case CombatAIValues.Heavy:
+                            armorSize = Armor.ArmorSize.Heavy; 
+                            break;
+                        default:
+                            return null;
+                    }
+                    target = targets.OrderByDescending(creature => creature.GetAggro()).FirstOrDefault(creature => creature.Equipment.Armor.Size == armorSize);
+                    return target;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(condition), condition, null);
+            }
+        }
+
+        private Creature CheckLife(int value, CombatAICondition condition, List<Creature> targets)
+        {
+            targets = targets.Where(creature => creature.IsAlive).ToList();
+            Creature target;
+            switch (condition)
+            {
+                case CombatAICondition.Lesser:
+                    target = targets.FirstOrDefault(creature => creature.LifePercent < value);
+                    return target;
+                case CombatAICondition.Higher:
+                    target = targets.FirstOrDefault(creature => creature.LifePercent > value);
+                    return target;         
+                case CombatAICondition.Equal:
+                    target = targets.FirstOrDefault(creature => Math.Abs(creature.LifePercent - (float)value) < 0.5);
+                    return target;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(condition), condition, null);
+            }
+            
+        }
+
+        private Creature CheckSpirit(int value, CombatAICondition condition, List<Creature> targets)
+        {
+            targets = targets.Where(creature => creature.IsAlive).ToList();
+            Creature target;
+            switch (condition)
+            {
+                case CombatAICondition.Lesser:
+                    target = targets.FirstOrDefault(creature => creature.SpiritPercent < value);
+                    return target;
+                case CombatAICondition.Higher:
+                    target = targets.FirstOrDefault(creature => creature.SpiritPercent > value);
+                    return target;         
+                case CombatAICondition.Equal:
+                    target = targets.FirstOrDefault(creature => Math.Abs(creature.SpiritPercent - (float)value) < 0.5);
+                    return target;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(condition), condition, null);
+            }
+        }
     }
 }

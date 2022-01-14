@@ -24,6 +24,7 @@ namespace Global
         public Sprite Image { get; set; }
 
         public int CurrentLife { get; set; }
+        public int CurrentSpirit{ get; set; }
         public int MaxLife() 
         {
             int baseLife = 500;
@@ -53,43 +54,19 @@ namespace Global
         
        
         public float LifePercent => CurrentLife/((float)MaxLife())*100;
+        public int MaxSpirit() {
+            var baseSP = 50;
+            var intSP = this.Attributes.Intuition.Value * 10;
+            return baseSP + intSP;
+        }
+        public float SpiritPercent  => CurrentSpirit / MaxSpirit() * 100;
         public bool IsAlive { get; set; }
         public bool IsCasting { get; set; }
         public bool IsActive { get; set; }
 
-        public void ProcessAttackCooldown()
-        {
-            if (Equipment.MainWeapon != null)
-            {
-                Equipment.MainWeaponAttackCooldown -= 10 * Time.deltaTime * (1 + Properties.AttackSpeed.TotalBonus/100f);
-            }    
-            if (Equipment.OffWeapon != null)
-            {
-                Equipment.OffWeaponAttackCooldown -= Time.deltaTime * (1 + Properties.AttackSpeed.TotalBonus/100f);
-            }
 
-        }
 
-        [CanBeNull]
-        public List<CombatActionResult> PerformCombatAction(List<Creature> allies, List<Creature> enemies)
-        {
-            var actions = new List<CombatActionResult>();
-            if (IsAlive)
-            {
-                if (!IsCasting)
-                {
-                    ProcessAttackCooldown();
-                    var attackResult = ProcessAttack(enemies);
-                    actions.AddRange(attackResult);
-                }
-                else
-                {
-                    // TODO process casting
-                }
-            }
 
-            return actions;
-        }
     }
 
     [System.Serializable]
@@ -101,11 +78,11 @@ namespace Global
         public CombatAIValues value;
         public Power power;
     }
-    public enum CombatAIChecker {Life, Mana, Armor, Effect};
+    public enum CombatAIChecker {Life, Spirit, Armor, Effect};
     public enum CombatAICondition {Lesser, Higher, Equal};
     public enum CombatAIValues {_100 = 100, _90 = 90,  _80 = 80, _70 = 70, _60 = 60, _50 = 50, _40 = 40, _30 = 30, _20 = 20, _10 = 10, _0 = 0,
-        Dead, Stunned, Frozen, Poison};
-    public enum TargetType {Enemies, Allies};
+        Dead, Stunned, Frozen, Poison, Light, Medium, Heavy};
+    public enum TargetType {Enemies, Allies, Self};
 
 
     public class Attributes
@@ -163,6 +140,7 @@ namespace Global
         public Property ArmorPenetration { get; set; }
         public Property CriticalDamage { get; set; }
         public Property CounterAttackRating { get; set; }
+        public Property CastingSpeed { get; set; }
 
         public Properties()
         {
@@ -178,6 +156,7 @@ namespace Global
             ArmorPenetration = new Property();
             CriticalDamage = new Property();
             CounterAttackRating = new Property();
+            CastingSpeed = new Property();
         }
     }
 

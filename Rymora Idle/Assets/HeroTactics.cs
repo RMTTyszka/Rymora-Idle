@@ -45,6 +45,7 @@ public class HeroTactics : MonoBehaviour
             actionComponent.Index = index++;
             TacticsRows.Add(actionComponent);
         }
+        addButton.transform.SetAsLastSibling();
     }
 
     // Update is called once per frame

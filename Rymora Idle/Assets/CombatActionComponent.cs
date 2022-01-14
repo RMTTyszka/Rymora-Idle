@@ -29,19 +29,27 @@ public class CombatActionComponent : MonoBehaviour
         HeroTactics = GetComponentInParent<HeroTactics>();
         
         Action = Action ?? new CombatAction();
+        Action.power = Action.power ? Action.power : Powers.FirstOrDefault();
         targetSelect.ClearOptions();
         var targetOptions = (Enum.GetValues(typeof(TargetType)) as TargetType[]).Select(e => new Dropdown.OptionData{text = e.ToString()}).ToList();
-            targetSelect.AddOptions(targetOptions);    
+        targetSelect.AddOptions(targetOptions);
+        targetSelect.value = (int)Action.target;
+        
         checkerSelect.ClearOptions();
         var checkersOptions = (Enum.GetValues(typeof(CombatAIChecker)) as CombatAIChecker[]).Select(e => new Dropdown.OptionData{text = e.ToString()}).ToList();
-            checkerSelect.AddOptions(checkersOptions);      
-            valueSelect.ClearOptions();
+        checkerSelect.AddOptions(checkersOptions);   
+        checkerSelect.value = (int)Action.checker;
+  
+        valueSelect.ClearOptions();
         var valueOptions = (Enum.GetValues(typeof(CombatAIValues)) as CombatAIValues[]).Select(e => new Dropdown.OptionData{text = e.ToString()}).ToList();
-        valueSelect.AddOptions(valueOptions);     
+        valueSelect.AddOptions(valueOptions);   
+        valueSelect.value = (int)Action.value;
+
         conditionSelect.ClearOptions();
         var conditionOptions = (Enum.GetValues(typeof(CombatAICondition)) as CombatAICondition[]).Select(e => new Dropdown.OptionData{text = e.ToString()}).ToList();
         conditionSelect.AddOptions(conditionOptions);    
-        
+        conditionSelect.value = (int)Action.condition;
+   
         powerSelect.ClearOptions();
         var powersOptions = Powers.Select(e => new Dropdown.OptionData{text = e.name.ToString()}).ToList();
         powerSelect.AddOptions(powersOptions); 
