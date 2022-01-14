@@ -3,6 +3,7 @@ using System.Linq;
 using Global;
 using Heroes;
 using Items.Equipables.Weapons;
+using Powers;
 using UnityEngine;
 
 public class PartyManager : MonoBehaviour
@@ -12,6 +13,7 @@ public class PartyManager : MonoBehaviour
 
     public PartyNode CurrentPartyNode { get; set; }
     public Creature CurrentHero { get; set; }
+    public PowersList PowersList { get; set; }
     
     
     public Camera MapCamera { get; set; }
@@ -33,6 +35,7 @@ public class PartyManager : MonoBehaviour
 
     private void Awake()
     {
+        PowersList = GameObject.FindGameObjectWithTag("PowersList").GetComponent<PowersList>();
         var index = 0;
         foreach (var partyNode in parties)
         {
@@ -55,6 +58,7 @@ public class PartyManager : MonoBehaviour
         hero.Equipment.MainWeapon =
                 Weapon.FromSizeAndDamageType(Weapon.WeaponsSize.Medium, Weapon.WeaponsDamageType.Cutting, 1);
         hero.CurrentLife = hero.MaxLife();
+        hero.LearnedPowers.Add(PowersList.heal);
     }
 
     public void PublishPartySelected(PartyNode partyNode)

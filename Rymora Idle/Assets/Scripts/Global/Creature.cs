@@ -17,7 +17,8 @@ namespace Global
         public Properties Properties { get; set; }
         public Equipment Equipment { get; set; }
         
-        public List<CombatAction> CombatActions { get; set; } = new List<CombatAction>();
+         public List<Power> LearnedPowers { get; set; } = new List<Power>();
+         public List<CombatAction> CombatActions { get; set; } = new List<CombatAction>();
         
         public Sprite Image { get; set; }
 
@@ -36,6 +37,7 @@ namespace Global
             Attributes = new Attributes();
             Properties = new Properties();
             Equipment = new Equipment();
+            LearnedPowers = new List<Power>();
             IsAlive = true;
         }
 

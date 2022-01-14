@@ -8,7 +8,7 @@ public class PartySelectMenu : MonoBehaviour
 
     public PartyManager PartyManager { get; set; }
 
-    [FormerlySerializedAs("selectHeroButtonPrefab")] public SelectPartyButton selectPartyButtonPrefab;
+    public SelectPartyButton selectPartyButtonPrefab;
     // Start is called before the first frame update
     void Start()
     {
