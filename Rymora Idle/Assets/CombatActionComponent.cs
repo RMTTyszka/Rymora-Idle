@@ -9,17 +9,25 @@ using UnityEngine.UI;
 
 public class CombatActionComponent : MonoBehaviour
 {
-    [FormerlySerializedAs("alliesSelect")] public Dropdown targetSelect;
+    public Dropdown targetSelect;
     public Dropdown checkerSelect;
     public Dropdown conditionSelect;
     public Dropdown valueSelect;
     public Dropdown powerSelect;
+    public HeroTactics HeroTactics { get; set; }
+    public int Index { get; set; }
     public CombatAction Action { get; set; }
     public List<Power> Powers { get; set; }
 
+    public CombatActionComponent()
+    {
+        Powers = new List<Power>();
+    }
 
     private void Start()
     {
+        HeroTactics = GetComponentInParent<HeroTactics>();
+        
         Action = Action ?? new CombatAction();
         targetSelect.ClearOptions();
         var targetOptions = (Enum.GetValues(typeof(TargetType)) as TargetType[]).Select(e => new Dropdown.OptionData{text = e.ToString()}).ToList();
@@ -63,5 +71,9 @@ public class CombatActionComponent : MonoBehaviour
     {
         Action.power = Powers[powerSelect.value];
         Debug.Log(JsonUtility.ToJson(Action));
+    }
+    public void RemoveRow()
+    {
+        HeroTactics.RemoveRow(Index);
     }
 }

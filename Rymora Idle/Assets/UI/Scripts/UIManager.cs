@@ -3,6 +3,7 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     public GameObject heroDetailsContainer;
+    public GameObject heroTacticsContainer;
     public GameManager GameManager { get; set;}
     public Camera worldCamera;
     public bool CombatOn { get; set; }
@@ -14,7 +15,13 @@ public class UIManager : MonoBehaviour
 
     public void ShowHeroSheet()
     {
+        heroTacticsContainer.SetActive(false);
         heroDetailsContainer.SetActive(!heroDetailsContainer.activeSelf);
+    }    
+      public void ShowHeroTactics()
+    {
+        heroDetailsContainer.SetActive(false);
+        heroTacticsContainer.SetActive(!heroTacticsContainer.activeSelf);
     }  
     public void ToggleCombat()
     {

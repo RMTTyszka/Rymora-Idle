@@ -17,9 +17,10 @@ namespace Global
         public Properties Properties { get; set; }
         public Equipment Equipment { get; set; }
         
-         public List<Power> LearnedPowers { get; set; } = new List<Power>();
-         public List<CombatAction> CombatActions { get; set; } = new List<CombatAction>();
-        
+        public List<Power> LearnedPowers { get; set; } = new List<Power>();
+        public List<CombatAction> CombatActions { get; set; } = new List<CombatAction>();
+
+        public int MaxTactics => Skills.Tactics.Value + 2;
         public Sprite Image { get; set; }
 
         public int CurrentLife { get; set; }
