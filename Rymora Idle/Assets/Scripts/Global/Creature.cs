@@ -1,6 +1,3 @@
-using UnityEngine;
-using UnityEngine.AI;
-
 namespace Global
 {
     public class Creature

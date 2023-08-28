@@ -1,10 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Heroes;
 using Map;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class MapMover : MonoBehaviour {
 
