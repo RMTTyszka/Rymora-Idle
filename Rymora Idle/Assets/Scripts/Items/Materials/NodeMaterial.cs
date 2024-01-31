@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Items
 {
-    public class NodeMaterial<T> : MonoBehaviour where T : Material 
+    public class NodeMaterial<T> : MonoBehaviour where T : RawMaterial 
     {
         [SerializeField]
         public T material;

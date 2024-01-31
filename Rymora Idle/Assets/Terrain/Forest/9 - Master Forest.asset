@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 9 - Master Forest
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: -2135585597343286014, guid: 8b712e3d5612ad046b5b66e9366c3ce2, type: 3}
-  m_Color: {r: 0.029681386, g: 0.2735849, b: 0.04097852, a: 1}
+  m_Color: {r: 0, g: 0.15294118, b: 0, a: 1}
   m_Transform:
     e00: 1
     e01: 0

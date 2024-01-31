@@ -12,7 +12,7 @@ namespace Map
         {
             moveSpeed = MoveSpeed.Mountain;
         }
-        public Metal GetMetal()
+        public Metal GetMaterial()
         {
             var value = Random.Range(1, 101);
             if (value < 10)
@@ -51,9 +51,10 @@ namespace Map
             var metalIndex = Level() + i;
             metalIndex = Math.Max(metalIndex, 0);
             metalIndex = Math.Min(metalIndex, 9);
+            Debug.Log($"Meta index {metalIndex}");
             return Metals[metalIndex];
         }
 
-        public static Metal[] Metals => new Metal[] {new Iron(), new Bronze(), new Copper(), new Silver(), new Gold(), new Mythril()};
+        public static Metal[] Metals => new Metal[] {new Iron(), new Bronze(), new Copper(), new Silver(), new Gold(), new Mythril(),};
     }
 }

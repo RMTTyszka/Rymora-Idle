@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 7 - Excellent Forest
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: -2135585597343286014, guid: 8b712e3d5612ad046b5b66e9366c3ce2, type: 3}
-  m_Color: {r: 0.07058824, g: 0.39607847, b: 0.0627451, a: 1}
+  m_Color: {r: 0.20784314, g: 0.30588236, b: 0.23137255, a: 1}
   m_Transform:
     e00: 1
     e01: 0

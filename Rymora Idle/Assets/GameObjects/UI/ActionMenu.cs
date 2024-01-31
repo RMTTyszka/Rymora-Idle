@@ -63,6 +63,29 @@ public class ActionMenu : MonoBehaviour
         partyManager.CurrentParty.InitiateMining(heroAction);
         gameObject.SetActive(false);
         partyManager.PublishActionsUpdated(partyManager.CurrentParty);
+    }  
+    public void CutWood()
+    {
+        var isAlreadyOnMapTile = partyManager.CurrentParty.transform.position == mapManager.CurrentMapPosition;
+        if (!isAlreadyOnMapTile)
+        {
+            partyManager.CurrentParty.InitiateMovement(mapManager.CurrentMapPosition);
+        }
+        var heroAction = new HeroAction
+        {
+            Action = null,
+            EndTime = null,
+            PassedTime = 0,
+            ExecutedCount = 0,
+            ExecutionAction = null,
+            ActionEndType = ActionEndType.ByCount,
+            LimitCount = 5,
+            Terrain = mapManager.CurrentMouseTile,
+            ActionName = "Cut Wood"
+        };
+        partyManager.CurrentParty.InitiateCuttingWood(heroAction);
+        gameObject.SetActive(false);
+        partyManager.PublishActionsUpdated(partyManager.CurrentParty);
     }
 
 }

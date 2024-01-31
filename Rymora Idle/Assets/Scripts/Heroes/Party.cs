@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Global;
+using Items;
 using Items.Metals;
 using Map;
 using UnityEngine;
@@ -11,8 +12,8 @@ namespace Heroes
     public class Party : MonoBehaviour
     {
         public Creature Hero { get; set; }
-        
-        public List<Creature> Members { get; set; }
+
+        public List<Creature> Members { get; set; } = new();
 
         public List<Vector3> WayPoints;
         public MapMover Move { get; set; }
@@ -24,7 +25,7 @@ namespace Heroes
         public decimal? CurrentActionTime{ get; set; } 
         public decimal? EndActionTime { get; set; } 
         public decimal ActionPerformance { get; set; } 
-        public Metal CurrentMaterial { get; set; }
+        public RawMaterial CurrentMaterial { get; set; }
         public HeroAction CurrentAction { get; set; }
         public Queue<HeroAction> NextActions { get; set; }
 
@@ -84,6 +85,7 @@ namespace Heroes
         }
         public void InitiateMovement(Vector3 waypoint)
         {
+            Debug.Log("Initiating Movement");
             WayPoints.Add(waypoint);
             NextActions.Enqueue(new HeroAction
             {
@@ -113,7 +115,7 @@ namespace Heroes
                 {
                     var x = mapManager.map.WorldToCell(transform.position);
                     CurrentTile = mapManager.map.GetTile(x) as MapTerrain;
-                    if (CurrentTile == null)
+                    if (CurrentTile is null)
                     {
                         WayPoints.Clear();
                         partyManager.PublishActionsUpdated(this);
@@ -124,7 +126,7 @@ namespace Heroes
                     {
                         var newPosition = Vector3.MoveTowards(transform.position, waypoint, (float)Speed(CurrentTile.moveSpeed) * Time.deltaTime);
                         var newTile = mapManager.map.GetTile(mapManager.map.WorldToCell(newPosition)) as MapTerrain;
-                        if (newTile != null)
+                        if (newTile is not null)
                         {
                             transform.position = newPosition;
                         }
@@ -153,13 +155,36 @@ namespace Heroes
             heroAction.ExecutionAction = Mine;
             heroAction.TimeToExecute = Skills.MineTime;
             NextActions.Enqueue(heroAction);
+        }     
+        public void TryCutWood()
+        {
+            if (CurrentTile.CanCutWood())
+            {
+                var terrain = CurrentTile as Forest;
+                var material = terrain.GetMaterial();
+                CurrentMaterial = material;
+                var rollValue = Skills.Lumberjack.Roll();
+                var difficult = material.Level * 10 + 50;
+                var actionProficient = rollValue - difficult;
+                ActionPerformance = actionProficient / 100 + 1;
+                CurrentActionTime = 0;
+                EndActionTime = Skills.CutWoodTime;
+                CurrentAction.ExecutionAction = CutWood;
+            }
+        }
+        public void InitiateCuttingWood(HeroAction heroAction)
+        {
+            heroAction.Action = TryCutWood;
+            heroAction.ExecutionAction = CutWood;
+            heroAction.TimeToExecute = Skills.CutWoodTime;
+            NextActions.Enqueue(heroAction);
         }
         public void TryMine()
         {
             if (CurrentTile.CanMine())
             {
                 var mine = CurrentTile as Mountain;
-                var metal = mine.GetMetal();
+                var metal = mine.GetMaterial();
                 CurrentMaterial = metal;
                 var rollValue = Skills.Mine.Roll();
                 var difficult = metal.Level * 10 + 50;
@@ -173,6 +198,18 @@ namespace Heroes
         public void Mine()
         {
             var rollValue = Skills.Mine.Roll();
+            var difficult = CurrentMaterial.Level * 10 + 50;
+            if (rollValue > difficult)
+            {
+                AddItem(CurrentMaterial);
+            }
+
+            CurrentAction.PassedTime += (decimal)Time.deltaTime;
+            CurrentAction.ExecutedCount++;
+        }      
+        public void CutWood()
+        {
+            var rollValue = Skills.Lumberjack.Roll();
             var difficult = CurrentMaterial.Level * 10 + 50;
             if (rollValue > difficult)
             {

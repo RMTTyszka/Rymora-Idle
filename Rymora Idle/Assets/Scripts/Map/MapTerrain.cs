@@ -1,11 +1,12 @@
 using System;
 using Global;
+using UnityEngine;
 using UnityEngine.Tilemaps;
 
 namespace Map
 {
-	public abstract class MapTerrain : Tile {
-
+	public abstract class MapTerrain : Tile 
+	{
 		public bool isWalkable = true;
 		public MoveSpeed moveSpeed;
 		public QualityGrade quality = QualityGrade.Common;
@@ -13,7 +14,7 @@ namespace Map
 		
 		public int Level()
 		{
-			return int.Parse(name.Split('-')[0]);
+			return (int)quality + 1;
 		}
 
 		public bool CanMine()

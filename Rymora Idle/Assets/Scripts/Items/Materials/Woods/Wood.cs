@@ -1,6 +1,6 @@
 namespace Items.Metals
 {
-    public class Metal : RawMaterial
+    public class Wood : RawMaterial
     {
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 public class CombatManager : MonoBehaviour
 {
     public Party Party { get; set; }
-    public List<Creature> Monsters { get; set; }
+    public List<Creature> Monsters { get; set; } = new();
 
     public CreatureSpawner monsterSpawner1;
     public CreatureSpawner monsterSpawner2;
@@ -34,7 +34,7 @@ public class CombatManager : MonoBehaviour
 
     private void SetHero(CreatureSpawner creatureSpawner, int index)
     {
-        var hero = Party.Members.ElementAtOrDefault(index);
+        var hero = Party?.Members.ElementAtOrDefault(index);
         if (hero != null)
         {
             creatureSpawner.Creature = hero;
