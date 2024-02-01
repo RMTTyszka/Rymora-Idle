@@ -8,6 +8,7 @@ namespace Heroes
         public Skills()
         {
             Mine = new Skill();
+            Lumberjack = new Skill();
         }
 
 

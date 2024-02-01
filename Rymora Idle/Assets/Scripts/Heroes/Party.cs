@@ -85,7 +85,6 @@ namespace Heroes
         }
         public void InitiateMovement(Vector3 waypoint)
         {
-            Debug.Log("Initiating Movement");
             WayPoints.Add(waypoint);
             NextActions.Enqueue(new HeroAction
             {

@@ -24,6 +24,10 @@ namespace Map
 		public bool CanCutWood()
 		{
 			return this is Forest;
+		}	
+		public bool CanEnterDungeon()
+		{
+			return this is Dungeon;
 		}
 	}
 }

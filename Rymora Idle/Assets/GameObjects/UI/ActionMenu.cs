@@ -10,6 +10,7 @@ public class ActionMenu : MonoBehaviour
     private ActionButton MoveButton { get; set; }
     private ActionButton MineButton { get; set; }
     private ActionButton CutWoodButton { get; set; }
+    private ActionButton EnterDungeonButton { get; set; }
     
     void Awake()
     {
@@ -17,6 +18,7 @@ public class ActionMenu : MonoBehaviour
         MoveButton = actionButtons.First(button => button.action == ActionEnum.Move);
         MineButton = actionButtons.First(button => button.action == ActionEnum.Mine);
         CutWoodButton = actionButtons.First(button => button.action == ActionEnum.CutWood);
+        EnterDungeonButton = actionButtons.First(button => button.action == ActionEnum.EnterDungeon);
     } 
     
     void OnEnable()
@@ -24,6 +26,7 @@ public class ActionMenu : MonoBehaviour
         MoveButton.gameObject.SetActive(true);
         MineButton.gameObject.SetActive(mapManager.CurrentMouseTile.CanMine());
         CutWoodButton.gameObject.SetActive(mapManager.CurrentMouseTile.CanCutWood());
+        EnterDungeonButton.gameObject.SetActive(mapManager.CurrentMouseTile.CanEnterDungeon());
     }
 
     // Update is called once per frame
@@ -86,6 +89,15 @@ public class ActionMenu : MonoBehaviour
         partyManager.CurrentParty.InitiateCuttingWood(heroAction);
         gameObject.SetActive(false);
         partyManager.PublishActionsUpdated(partyManager.CurrentParty);
+    }    
+    public void EnterDungeon()
+    {
+        var isAlreadyOnMapTile = partyManager.CurrentParty.transform.position == mapManager.CurrentMapPosition;
+        if (!isAlreadyOnMapTile)
+        {
+            partyManager.CurrentParty.InitiateMovement(mapManager.CurrentMapPosition);
+        }
+        Debug.Log("Entering Dungeon");
     }
 
 }

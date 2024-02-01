@@ -9,5 +9,7 @@ public enum ActionEnum
 {
     Move = 0,
     Mine = 1,
-    CutWood = 2
+    CutWood = 2,
+    EnterDungeon = 3,
+    
 }

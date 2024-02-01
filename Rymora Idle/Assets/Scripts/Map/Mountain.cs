@@ -51,7 +51,6 @@ namespace Map
             var metalIndex = Level() + i;
             metalIndex = Math.Max(metalIndex, 0);
             metalIndex = Math.Min(metalIndex, 9);
-            Debug.Log($"Meta index {metalIndex}");
             return Metals[metalIndex];
         }
 
