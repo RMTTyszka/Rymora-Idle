@@ -8,9 +8,9 @@ public class InventoryController : MonoBehaviour
     public Text weightText;
     public PartyManager PartyManager { get; set; }
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        PartyManager = FindObjectsOfType<PartyManager>().First();
+        PartyManager = FindAnyObjectByType<PartyManager>();
         PartyManager.OnInventoryUpdate += UpdateWeight;
     }
 

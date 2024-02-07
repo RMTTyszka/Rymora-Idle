@@ -14,7 +14,7 @@ namespace Global
         public static Creature FromCreature(CreatureTemplate creatureTemplate, int level)
         {
             var creature = new Creature();
-            creature.Name = creatureTemplate.name;
+            creature.Name = creatureTemplate.creatureName;
             creature.Level = level;
             creature.Inventory = new Inventory();
             return creature;

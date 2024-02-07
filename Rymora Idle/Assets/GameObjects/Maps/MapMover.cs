@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Heroes;
 using Map;
 using UnityEngine;
@@ -16,8 +17,8 @@ public class MapMover : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        Pathfinder = GameObject.FindGameObjectWithTag("Pathfinder").GetComponent<Pathfinder>();
-        Party = GetComponent<Party>();
+        Pathfinder = FindAnyObjectByType<Pathfinder>();
+        Party = FindAnyObjectByType<Party>();
         waypoints = new Queue<Vector3>();
     }
 
@@ -26,7 +27,7 @@ public class MapMover : MonoBehaviour {
         //se chegou no waypoint, pega o proximo
 
         if (!hasArrived && Vector3.Distance(transform.position, waypoint) == 0) {
-            if (waypoints.Count > 0)
+            if (waypoints.Any())
             {
                 waypoint = waypoints.Dequeue();
             }

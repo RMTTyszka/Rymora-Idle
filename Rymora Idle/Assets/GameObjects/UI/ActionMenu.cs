@@ -1,12 +1,13 @@
+using System.Diagnostics;
 using System.Linq;
 using Heroes;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 public class ActionMenu : MonoBehaviour
 {
-
-    [SerializeField] private MapManager mapManager;
-    [SerializeField] private PartyManager partyManager;
+    private MapManager MapManager { get; set; }
+    private PartyManager PartyManager { get; set; }
     private ActionButton MoveButton { get; set; }
     private ActionButton MineButton { get; set; }
     private ActionButton CutWoodButton { get; set; }
@@ -15,6 +16,8 @@ public class ActionMenu : MonoBehaviour
     void Awake()
     {
         var actionButtons = GetComponentsInChildren<ActionButton>().ToList();
+        MapManager = FindAnyObjectByType<MapManager>();
+        PartyManager = FindAnyObjectByType<PartyManager>();
         MoveButton = actionButtons.First(button => button.action == ActionEnum.Move);
         MineButton = actionButtons.First(button => button.action == ActionEnum.Mine);
         CutWoodButton = actionButtons.First(button => button.action == ActionEnum.CutWood);
@@ -24,9 +27,9 @@ public class ActionMenu : MonoBehaviour
     void OnEnable()
     {
         MoveButton.gameObject.SetActive(true);
-        MineButton.gameObject.SetActive(mapManager.CurrentMouseTile.CanMine());
-        CutWoodButton.gameObject.SetActive(mapManager.CurrentMouseTile.CanCutWood());
-        EnterDungeonButton.gameObject.SetActive(mapManager.CurrentMouseTile.CanEnterDungeon());
+        MineButton.gameObject.SetActive(MapManager.CurrentMouseTile.CanMine());
+        CutWoodButton.gameObject.SetActive(MapManager.CurrentMouseTile.CanCutWood());
+        EnterDungeonButton.gameObject.SetActive(MapManager.CurrentMouseTile.CanEnterDungeon());
     }
 
     // Update is called once per frame
@@ -37,17 +40,17 @@ public class ActionMenu : MonoBehaviour
 
     public void Move()
     {
-        partyManager.CurrentParty.InitiateMovement(mapManager.CurrentMapPosition);
+        PartyManager.CurrentParty.InitiateMovement(MapManager.CurrentMapPosition);
         gameObject.SetActive(false);
-        partyManager.PublishActionsUpdated(partyManager.CurrentParty);
+        PartyManager.PublishActionsUpdated(PartyManager.CurrentParty);
     }    
     public void Mine()
     {
 
-        var isAlreadyOnMapTile = partyManager.CurrentParty.transform.position == mapManager.CurrentMapPosition;
+        var isAlreadyOnMapTile = PartyManager.CurrentParty.transform.position == MapManager.CurrentMapPosition;
         if (!isAlreadyOnMapTile)
         {
-            partyManager.CurrentParty.InitiateMovement(mapManager.CurrentMapPosition);
+            PartyManager.CurrentParty.InitiateMovement(MapManager.CurrentMapPosition);
         }
 
         var heroAction = new HeroAction
@@ -60,19 +63,19 @@ public class ActionMenu : MonoBehaviour
             ActionEndType = ActionEndType.ByCount,
             LimitCount = 5,
             TimeToExecute = Heroes.Skills.MineTime,
-            Terrain = mapManager.CurrentMouseTile,
-            ActionName = "Mine"
+            Terrain = MapManager.CurrentMouseTile,
+            ActionType = HeroActionType.Mine,
         };
-        partyManager.CurrentParty.InitiateMining(heroAction);
+        PartyManager.CurrentParty.InitiateMining(heroAction);
         gameObject.SetActive(false);
-        partyManager.PublishActionsUpdated(partyManager.CurrentParty);
+        PartyManager.PublishActionsUpdated(PartyManager.CurrentParty);
     }  
     public void CutWood()
     {
-        var isAlreadyOnMapTile = partyManager.CurrentParty.transform.position == mapManager.CurrentMapPosition;
+        var isAlreadyOnMapTile = PartyManager.CurrentParty.transform.position == MapManager.CurrentMapPosition;
         if (!isAlreadyOnMapTile)
         {
-            partyManager.CurrentParty.InitiateMovement(mapManager.CurrentMapPosition);
+            PartyManager.CurrentParty.InitiateMovement(MapManager.CurrentMapPosition);
         }
         var heroAction = new HeroAction
         {
@@ -83,19 +86,19 @@ public class ActionMenu : MonoBehaviour
             ExecutionAction = null,
             ActionEndType = ActionEndType.ByCount,
             LimitCount = 5,
-            Terrain = mapManager.CurrentMouseTile,
-            ActionName = "Cut Wood"
+            Terrain = MapManager.CurrentMouseTile,
+            ActionType = HeroActionType.CutWood,
         };
-        partyManager.CurrentParty.InitiateCuttingWood(heroAction);
+        PartyManager.CurrentParty.InitiateCuttingWood(heroAction);
         gameObject.SetActive(false);
-        partyManager.PublishActionsUpdated(partyManager.CurrentParty);
+        PartyManager.PublishActionsUpdated(PartyManager.CurrentParty);
     }    
     public void EnterDungeon()
     {
-        var isAlreadyOnMapTile = partyManager.CurrentParty.transform.position == mapManager.CurrentMapPosition;
+        var isAlreadyOnMapTile = PartyManager.CurrentParty.transform.position == MapManager.CurrentMapPosition;
         if (!isAlreadyOnMapTile)
         {
-            partyManager.CurrentParty.InitiateMovement(mapManager.CurrentMapPosition);
+            PartyManager.CurrentParty.InitiateMovement(MapManager.CurrentMapPosition);
         }
         Debug.Log("Entering Dungeon");
     }

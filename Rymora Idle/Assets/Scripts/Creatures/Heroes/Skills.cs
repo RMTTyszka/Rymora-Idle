@@ -14,7 +14,7 @@ namespace Heroes
 
 
 
-        public static int MineTime = 3;
-        public static int CutWoodTime = 2;
+        public static decimal MineTime = 3;
+        public static decimal CutWoodTime = 2;
     }
 }

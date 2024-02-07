@@ -3,7 +3,13 @@ using UnityEngine;
 
 public class CreatureSpawner : MonoBehaviour
 {
+    public GameObject creatureBodyPrefab;
     public Creature Creature { get; set; }
+
+    public void InstantiateCreature(Creature creature)
+    {
+        Instantiate(creatureBodyPrefab);
+    }
 
     // Start is called before the first frame update
     void Start()

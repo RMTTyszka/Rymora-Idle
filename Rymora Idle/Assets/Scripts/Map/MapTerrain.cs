@@ -10,6 +10,7 @@ namespace Map
 		public bool isWalkable = true;
 		public MoveSpeed moveSpeed;
 		public QualityGrade quality = QualityGrade.Common;
+		public int encounterRateModifier;
 		public Guid Id { get; set; }
 		
 		public int Level()

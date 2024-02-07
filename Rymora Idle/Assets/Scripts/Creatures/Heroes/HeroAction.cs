@@ -13,10 +13,17 @@ namespace Heroes
         public string ItemName { get; set; }
         public decimal? EndTime { get; set; }
         public decimal? PassedTime { get; set; }
-        public int TimeToExecute { get; set; }
+        public decimal TimeToExecute { get; set; }
         public bool Started { get; set; }
         public MapTerrain Terrain { get; set; }
-        public string ActionName { get; set; }
+        public HeroActionType ActionType { get; set; }
         
+    }
+
+    public enum HeroActionType
+    {
+        Travel = 0,
+        Mine = 1,
+        CutWood = 2,
     }
 }

@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dbc9d9078ca6472590b5747ac4f4791b, type: 3}
-  m_Name: ParleanMontain - 1
+  m_Name: NefirMontain
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: -2135585597343286014, guid: 8b712e3d5612ad046b5b66e9366c3ce2, type: 3}
   m_Color: {r: 0.754717, g: 0.50119466, b: 0.13883947, a: 0.72156864}

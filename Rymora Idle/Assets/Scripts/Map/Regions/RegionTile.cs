@@ -1,12 +1,13 @@
 using System;
 using Global;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 namespace Map
 {
 	public abstract class RegionTile : Tile
 	{
-		public string name;
+		[FormerlySerializedAs("name")] public string regionName;
 	}
 }

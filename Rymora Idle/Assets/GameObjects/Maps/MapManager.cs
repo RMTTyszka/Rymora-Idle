@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Map;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class MapManager : MonoBehaviour
@@ -14,13 +15,14 @@ public class MapManager : MonoBehaviour
     public Vector3? CurrentMouseTile1 { get; set; }
     public MapTerrain CurrentMouseTile { get; set; }
     public MapTerrain CurrentPlayerTile { get; set; }
-    [SerializeField] private PartyManager partyManager;
+    private PartyManager PartyManager { get; set; }
     public GameObject actionMenu;
 
-    [SerializeField] public Tilemap map;
     public List<City> Cities { get; set; } = new List<City>();
     public List<Vector3> CityPositions { get; set; } = new List<Vector3>();
     
+    [FormerlySerializedAs("Terrain Map")] [SerializeField] public Tilemap terrainMap;
+    [FormerlySerializedAs("Region Map")] [SerializeField] public Tilemap regionMap;
     [SerializeField] private Tilemap hightlightMap;
     [SerializeField] private Tile hoverTile;
     public Vector3 CurrentMapPosition { get; set; }
@@ -28,13 +30,13 @@ public class MapManager : MonoBehaviour
 
     private void Start()
     {
-        foreach (var position in map.cellBounds.allPositionsWithin) 
+        foreach (var position in terrainMap.cellBounds.allPositionsWithin) 
         {
-            if (!map.HasTile(position)) {
+            if (!terrainMap.HasTile(position)) {
                 continue;
             }
 
-            var tile = map.GetTile(position);
+            var tile = terrainMap.GetTile(position);
             if (tile is City city)
             {
                 Cities.Add(city);
@@ -62,11 +64,11 @@ public class MapManager : MonoBehaviour
                 }
 
 
-                MapTerrain clickedTile = map.GetTile(mousePos.worldToCellPosition) as MapTerrain;
+                MapTerrain clickedTile = terrainMap.GetTile(mousePos.worldToCellPosition) as MapTerrain;
                 if (clickedTile != null)
                 {
-                    Vector3Int cellPosition = map.LocalToCell(mousePos.worldToCellPosition);
-                    var currentPosition = map.GetCellCenterLocal(cellPosition);
+                    Vector3Int cellPosition = terrainMap.LocalToCell(mousePos.worldToCellPosition);
+                    var currentPosition = terrainMap.GetCellCenterLocal(cellPosition);
                     if (CurrentMouseTile1 != null && CurrentMouseTile1 == currentPosition)
                     {
                         actionMenu.SetActive(false);
@@ -99,7 +101,7 @@ public class MapManager : MonoBehaviour
             if (!mousePos.Equals(previousMousePos))
             {
                 hightlightMap.SetTile(previousMousePos, null);
-                MapTerrain clickedTile = map.GetTile(mousePos.worldToCellPosition) as MapTerrain;
+                MapTerrain clickedTile = terrainMap.GetTile(mousePos.worldToCellPosition) as MapTerrain;
                 if (clickedTile != null)
                 {
                     hightlightMap.SetTile(mousePos.worldToCellPosition, hoverTile);

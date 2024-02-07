@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "Monsters", menuName = "Monster")]
 public class CreatureTemplate : ScriptableObject
 {
-    public string name;
+    [FormerlySerializedAs("name")] public string creatureName;
     public MonsterClass monsterClass;
 
 }

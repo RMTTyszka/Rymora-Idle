@@ -1,3 +1,4 @@
+using System;
 using Heroes;
 using UnityEngine;
 using UnityEngine.UI;
@@ -50,7 +51,7 @@ public class CurrentHeroPanel : MonoBehaviour
                 //Set the text box's text element font size and style:
                 tempTextBox.fontSize = 12;
                 //Set the text box's text element to the current textToDisplay:
-                tempTextBox.text = $"{action.ActionName}";
+                tempTextBox.text = GetActionDescription(action.ActionType);
             }   
         }
 
@@ -68,7 +69,7 @@ public class CurrentHeroPanel : MonoBehaviour
             {
                 actionBar.BarValue = (float) (partyManager.CurrentParty.CurrentActionTime.Value / partyManager.CurrentParty.EndActionTime.Value * 100);
                 actionBar.CurrentSeconds = (float)partyManager.CurrentParty.CurrentActionTime.Value;
-                actionBar.TotalSeconds = partyManager.CurrentParty.CurrentAction.TimeToExecute;
+                actionBar.TotalSeconds = (float) partyManager.CurrentParty.CurrentAction.TimeToExecute;
             }
             else
             {
@@ -77,7 +78,7 @@ public class CurrentHeroPanel : MonoBehaviour
                 actionBar.TotalSeconds = 0;
             }
 
-            actionBar.Title = partyManager.CurrentParty.CurrentAction.ActionName;
+            actionBar.Title = GetActionDescription(partyManager.CurrentParty.CurrentAction.ActionType);
         }
         else
         {
@@ -86,5 +87,19 @@ public class CurrentHeroPanel : MonoBehaviour
 
 
     }
-    
+
+    private string GetActionDescription(HeroActionType currentActionActionType)
+    {
+        switch (currentActionActionType)
+        {
+            case HeroActionType.Travel:
+                return "Travelling";
+            case HeroActionType.Mine:
+                return "Mining";
+            case HeroActionType.CutWood:
+                return "Cutting wood";
+            default:
+                throw new ArgumentOutOfRangeException(nameof(currentActionActionType), currentActionActionType, null);
+        }
+    }
 }

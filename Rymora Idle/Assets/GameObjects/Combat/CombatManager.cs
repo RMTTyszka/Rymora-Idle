@@ -20,8 +20,9 @@ public class CombatManager : MonoBehaviour
     public CreatureSpawner heroSpawner3;
     public CreatureSpawner animalSpawner;
     // Start is called before the first frame update
-    void Start()
+    public void InitiateCombat(Encounter encounter, int level)
     {
+        Monsters = encounter.monsters.Select(monster => Creature.FromCreature(monster, level)).ToList();
         SetHero(heroSpawner1,0);
         SetHero(heroSpawner2,1);
         SetHero(heroSpawner3,2);
@@ -29,7 +30,6 @@ public class CombatManager : MonoBehaviour
         SetMonster(monsterSpawner2, 1);
         SetMonster(monsterSpawner3, 2);
         SetMonster(monsterSpawner4, 3);
-        SetMonster(animalSpawner, 0);
     }
 
     private void SetHero(CreatureSpawner creatureSpawner, int index)
@@ -46,7 +46,7 @@ public class CombatManager : MonoBehaviour
         var monster = Monsters.ElementAtOrDefault(index);
         if (monster != null)
         {
-            creatureSpawner.Creature = monster;
+            creatureSpawner.InstantiateCreature(monster);
         }
     }      
     private void SetAnimal(CreatureSpawner creatureSpawner, int index)

@@ -6,34 +6,40 @@ using Items;
 using Items.Metals;
 using Map;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Heroes
 {
     public class Party : MonoBehaviour
     {
-        public Creature Hero { get; set; }
+        public GameData GameData;
+        public CombatManager CombatManager;
+        public Creature Hero => Members.FirstOrDefault();
 
         public List<Creature> Members { get; set; } = new();
 
         public List<Vector3> WayPoints;
         public MapMover Move { get; set; }
-        [SerializeField] public MapTerrain CurrentTile;
+        private MapTerrain CurrentTerrain { get; set; }
+        private Region CurrentRegion { get; set; }
 
-        [SerializeField] private MapManager mapManager;
-        [SerializeField] private PartyManager partyManager;
-        
+        private MapManager MapManager;
+        private PartyManager PartyManager;
+
         public decimal? CurrentActionTime{ get; set; } 
         public decimal? EndActionTime { get; set; } 
         public decimal ActionPerformance { get; set; } 
         public RawMaterial CurrentMaterial { get; set; }
         public HeroAction CurrentAction { get; set; }
         public Queue<HeroAction> NextActions { get; set; }
+        
+        public float TimeFromLastEncounterCheck { get; set; }
 
         public Skills Skills { get; set; }
 
         public Party()
         {
-            Hero = new Creature();
+            Members.Add(new Creature());
             WayPoints = new List<Vector3>();
             Skills = new Skills();
             ActionPerformance = 1m;
@@ -46,6 +52,14 @@ namespace Heroes
             if (Hero.Level == 0) Hero.Level= 1;
         }
 
+        private void Awake()
+        {
+            MapManager = FindAnyObjectByType<MapManager>();
+            PartyManager = FindAnyObjectByType<PartyManager>();
+            GameData = FindAnyObjectByType<GameData>();
+            CombatManager = GetComponent<CombatManager>();
+        }
+
         void Start()
         {
             Move = GetComponent<MapMover>();
@@ -54,13 +68,62 @@ namespace Heroes
 
         void Update()
         {
+            CheckForEncounter();
             TryAction();
         }
 
+        private void CheckForEncounter()
+        {
+            var shouldCheckForEncounter = !InCombat;
+            shouldCheckForEncounter = shouldCheckForEncounter && CurrentAction?.ActionType is HeroActionType.Travel;
+            shouldCheckForEncounter = shouldCheckForEncounter && CurrentTerrain is not City;
+            if (shouldCheckForEncounter)
+            {
+                TimeFromLastEncounterCheck -= Time.deltaTime;
+                if (TimeFromLastEncounterCheck < 0)
+                {
+                    DoCheckEncounter();
+                    TimeFromLastEncounterCheck += GameData.encounterInterval;
+                }
+            }
+        }
+
+        private void DoCheckEncounter()
+        {
+            var encounterRateModifier = CurrentTerrain.encounterRateModifier;
+            var random = Random.Range(1, 101);
+            random += encounterRateModifier;
+            if (random >= GameData.encounterProbability)
+            {
+                Debug.Log("Initiating Encounter");
+                InCombat = true;
+                StartEncounter();
+            }
+        }
+
+        private void StartEncounter()
+        {
+            var encounter = CurrentRegion.encounters.ElementAtOrDefault(Random.Range(0, CurrentRegion.encounters.Count));
+            if (encounter is null)
+            {
+                InCombat = false;
+                return;
+            }
+
+            var level = CurrentTerrain.Level();
+            CombatManager.InitiateCombat(encounter, level);
+        }
+
+        public bool InCombat { get; set; }
 
 
         private void TryAction()
         {
+            if (InCombat)
+            {
+                return;
+            }
+
             ProcessNextAction();
 
             if (CurrentAction != null)
@@ -93,7 +156,7 @@ namespace Heroes
                 LimitCount = 1,
                 ExecutionAction = TryMove,
                 TimeToExecute = 0,
-                ActionName = "Travel"
+                ActionType = HeroActionType.Travel,
             });
         }       
 
@@ -106,25 +169,26 @@ namespace Heroes
                 if (isCloseEnough)
                 {
                     WayPoints.RemoveAt(0);
-                    partyManager.PublishActionsUpdated(this);
+                    PartyManager.PublishActionsUpdated(this);
                     transform.position = waypoint;
                     CurrentAction = null;
                 }
                 else
                 {
-                    var x = mapManager.map.WorldToCell(transform.position);
-                    CurrentTile = mapManager.map.GetTile(x) as MapTerrain;
-                    if (CurrentTile is null)
+                    var position = MapManager.terrainMap.WorldToCell(transform.position);
+                    CurrentTerrain = MapManager.terrainMap.GetTile(position) as MapTerrain;
+                    CurrentRegion = MapManager.regionMap.GetTile(position) as Region;
+                    if (CurrentTerrain is null)
                     {
                         WayPoints.Clear();
-                        partyManager.PublishActionsUpdated(this);
+                        PartyManager.PublishActionsUpdated(this);
                         CurrentAction = null;
                         NextActions.Clear();
                     }
                     else
                     {
-                        var newPosition = Vector3.MoveTowards(transform.position, waypoint, (float)Speed(CurrentTile.moveSpeed) * Time.deltaTime);
-                        var newTile = mapManager.map.GetTile(mapManager.map.WorldToCell(newPosition)) as MapTerrain;
+                        var newPosition = Vector3.MoveTowards(transform.position, waypoint, (float)Speed(CurrentTerrain.moveSpeed) * Time.deltaTime);
+                        var newTile = MapManager.terrainMap.GetTile(MapManager.terrainMap.WorldToCell(newPosition)) as MapTerrain;
                         if (newTile is not null)
                         {
                             transform.position = newPosition;
@@ -132,7 +196,7 @@ namespace Heroes
                         else
                         {
                             WayPoints.Clear();
-                            partyManager.PublishActionsUpdated(this);
+                            PartyManager.PublishActionsUpdated(this);
                             CurrentAction = null;
                             NextActions.Clear();
                         }
@@ -157,9 +221,9 @@ namespace Heroes
         }     
         public void TryCutWood()
         {
-            if (CurrentTile.CanCutWood())
+            if (CurrentTerrain.CanCutWood())
             {
-                var terrain = CurrentTile as Forest;
+                var terrain = CurrentTerrain as Forest;
                 var material = terrain.GetMaterial();
                 CurrentMaterial = material;
                 var rollValue = Skills.Lumberjack.Roll();
@@ -180,9 +244,9 @@ namespace Heroes
         }
         public void TryMine()
         {
-            if (CurrentTile.CanMine())
+            if (CurrentTerrain.CanMine())
             {
-                var mine = CurrentTile as Mountain;
+                var mine = CurrentTerrain as Mountain;
                 var metal = mine.GetMaterial();
                 CurrentMaterial = metal;
                 var rollValue = Skills.Mine.Roll();
@@ -222,13 +286,13 @@ namespace Heroes
         public void AddItem(Item item)
         {
             Hero.Inventory.AddItem(item);
-            partyManager.PublishInventoryUpdate(this);
+            PartyManager.PublishInventoryUpdate(this);
             print($"Acquired a {item.Name}");
         }      
         public void RemoveItem(Item item, int quantity)
         {
             Hero.Inventory.RemoveItem(item, quantity);
-            partyManager.PublishInventoryUpdate(this);
+            PartyManager.PublishInventoryUpdate(this);
             print($"Removed a {item.Name}");
         }      
 

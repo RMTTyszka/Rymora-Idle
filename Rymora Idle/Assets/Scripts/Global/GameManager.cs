@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Global;
 using Heroes;
@@ -5,42 +6,40 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
-    public PartyManager partyManager;
-    public MapManager mapManager;
+    private PartyManager PartyManager { get; set; }
+    private MapManager MapManager { get; set; }
     public ScreenState CurrentScreen { get; set; }
-    public CombatManager CombatManager { get; set; }
     public Camera worldCamera;
     public Camera combatCamera;
-    
+
+    private void Awake()
+    {
+        PartyManager = FindAnyObjectByType<PartyManager>();
+        MapManager = FindAnyObjectByType<MapManager>();
+        CurrentScreen = ScreenState.Map;
+        MapManager.GameManager = this;
+        worldCamera.gameObject.SetActive(true);
+        combatCamera.gameObject.SetActive(false);
+        PartyManager.CurrentParty = PartyManager.heroes[0];
+        MapManager.OnCitiesPoulated += InitiateHero;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-        CombatManager = GameObject.FindGameObjectWithTag("CombatManager").GetComponent<CombatManager>();
-        CurrentScreen = ScreenState.Map;
-        mapManager.GameManager = this;
-        worldCamera.gameObject.SetActive(true);
-        combatCamera.gameObject.SetActive(false);
-        partyManager.CurrentParty = partyManager.heroes[0];
-        mapManager.OnCitiesPoulated += InitiateHero;
     }
 
     private void InitiateHero()
     {
-        partyManager.heroes[0].transform.position = mapManager.map.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[0]));
-        partyManager.heroes[1].transform.position = mapManager.map.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[1]));
-        partyManager.heroes[2].transform.position = mapManager.map.GetCellCenterWorld(Vector3Int.FloorToInt(mapManager.CityPositions[2]));
+        PartyManager.heroes[0].transform.position = MapManager.terrainMap.GetCellCenterWorld(Vector3Int.FloorToInt(MapManager.CityPositions[0]));
+        PartyManager.heroes[1].transform.position = MapManager.terrainMap.GetCellCenterWorld(Vector3Int.FloorToInt(MapManager.CityPositions[1]));
+        PartyManager.heroes[2].transform.position = MapManager.terrainMap.GetCellCenterWorld(Vector3Int.FloorToInt(MapManager.CityPositions[2]));
     }
 
     // Update is called once per frame
     void Update()
     {
         
-    }
-
-    public void InitiateCombat(Encounter encounter, Party party, int level)
-    {
-        CombatManager.Monsters = encounter.monsters.Select(monster => Creature.FromCreature(monster, level)).ToList();
     }
 }
 
