@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class DungeonManager
 {
-
+    public void InstantiateDungeon(Place place)
+    {
+        var level = place.Level();
+    }
 }
 
 public class DungeonInstance

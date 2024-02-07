@@ -11,12 +11,12 @@ namespace Global
             Inventory = new Inventory();
         }
 
-        public static Creature FromCreature(Creature creatureTemplate)
+        public static Creature FromCreature(CreatureTemplate creatureTemplate, int level)
         {
             var creature = new Creature();
-            creature.Name = creature.Name;
-            creature.Level = creature.Level;
-            creature.Inventory = creature.Inventory;
+            creature.Name = creatureTemplate.name;
+            creature.Level = level;
+            creature.Inventory = new Inventory();
             return creature;
         }
 

@@ -35,5 +35,5 @@ MonoBehaviour:
   m_Flags: 1
   m_ColliderType: 1
   isWalkable: 1
-  moveSpeed: 0
+  moveSpeed: 30
   quality: 0

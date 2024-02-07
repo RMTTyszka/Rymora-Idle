@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Global;
 using Heroes;
@@ -39,15 +38,10 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void InitiateCombat(Encounter encounter, Party party)
+    public void InitiateCombat(Encounter encounter, Party party, int level)
     {
-        CombatManager.Monsters = encounter.Monsters.Select(monster => Creature.FromCreature(monster)).ToList();
+        CombatManager.Monsters = encounter.monsters.Select(monster => Creature.FromCreature(monster, level)).ToList();
     }
-}
-
-public class Encounter
-{
-    public List<Creature> Monsters { get; set; }
 }
 
 

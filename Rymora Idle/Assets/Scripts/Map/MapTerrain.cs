@@ -27,7 +27,7 @@ namespace Map
 		}	
 		public bool CanEnterDungeon()
 		{
-			return this is Dungeon;
+			return this is Place;
 		}
 	}
 }
