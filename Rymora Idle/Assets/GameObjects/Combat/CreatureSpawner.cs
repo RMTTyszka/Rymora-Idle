@@ -12,6 +12,8 @@ public class CreatureSpawner : MonoBehaviour
         Debug.Log($"Instantianting {creature.Name}");
         Creature = Instantiate(creatureBodyPrefab, transform.position, transform.rotation, transform);
         Creature.gameObject.layer = gameObject.layer;
+        Creature.SetImage(creature.Sprite);
+        Creature.Creature = creature;
     }
 
     // Start is called before the first frame update

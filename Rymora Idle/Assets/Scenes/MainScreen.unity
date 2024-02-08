@@ -1887,8 +1887,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24bf3ae167a34c447bf5bcd4e63a4b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameData: {fileID: 0}
-  CombatManager: {fileID: 0}
   WayPoints: []
 --- !u!114 &504167539
 MonoBehaviour:
@@ -4101,8 +4099,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24bf3ae167a34c447bf5bcd4e63a4b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameData: {fileID: 0}
-  CombatManager: {fileID: 0}
   WayPoints: []
 --- !u!114 &1086826856
 MonoBehaviour:
@@ -5878,7 +5874,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d8c3d3b527b0ce4689ffc9206022df2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  encounterProbability: 20
+  encounterProbability: 0
   encounterInterval: 3
 --- !u!1 &1436869403
 GameObject:
@@ -9078,8 +9074,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24bf3ae167a34c447bf5bcd4e63a4b4a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameData: {fileID: 0}
-  CombatManager: {fileID: 0}
   WayPoints: []
 --- !u!114 &1724089166
 MonoBehaviour:

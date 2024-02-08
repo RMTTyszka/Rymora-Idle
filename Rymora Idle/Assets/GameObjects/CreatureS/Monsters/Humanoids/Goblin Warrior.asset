@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b68640dc5863934d957b0d5743720e5, type: 3}
   m_Name: Goblin Warrior
   m_EditorClassIdentifier: 
-  name: Goblin Warrior
+  creatureName: Goblin Warrior
   monsterClass: 0
+  sprite: {fileID: -1849874007707017507, guid: 40d5e25ef6e372942aecd96f9f6c1435, type: 3}

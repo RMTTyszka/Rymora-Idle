@@ -1,3 +1,6 @@
+using Heroes;
+using UnityEngine;
+
 namespace Global
 {
     public class Creature
@@ -6,9 +9,15 @@ namespace Global
         public int Level{ get; set; }
         public Inventory Inventory { get; set; }
 
+        public Skills Skills { get; set; } = new();
+        public Attributes Attributes { get; set; } = new();
+
+
+        public Sprite Sprite { get; set; }
         public Creature()
         {
             Inventory = new Inventory();
+            Skills = new Skills();
         }
 
         public static Creature FromCreature(CreatureTemplate creatureTemplate, int level)
@@ -17,6 +26,7 @@ namespace Global
             creature.Name = creatureTemplate.creatureName;
             creature.Level = level;
             creature.Inventory = new Inventory();
+            creature.Sprite = creatureTemplate.sprite;
             return creature;
         }
 

@@ -8,6 +8,7 @@ public class CreatureTemplate : ScriptableObject
 {
     [FormerlySerializedAs("name")] public string creatureName;
     public MonsterClass monsterClass;
+    public Sprite sprite;
 
 }
 

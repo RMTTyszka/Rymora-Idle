@@ -62,7 +62,7 @@ public class ActionMenu : MonoBehaviour
             ExecutionAction = null,
             ActionEndType = ActionEndType.ByCount,
             LimitCount = 5,
-            TimeToExecute = Heroes.Skills.MineTime,
+            TimeToExecute = Skills.MineTime,
             Terrain = MapManager.CurrentMouseTile,
             ActionType = HeroActionType.Mine,
         };

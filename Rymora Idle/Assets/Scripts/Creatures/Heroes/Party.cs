@@ -12,9 +12,9 @@ namespace Heroes
 {
     public class Party : MonoBehaviour
     {
-        public Combat Combat;
-        public GameData GameData;
-        public CombatManager CombatManager;
+        public Combat Combat { get; set; }
+        public GameData GameData { get; set; }
+        public CombatManager CombatManager { get; set; }
         public Creature Hero => Members.FirstOrDefault();
 
         public List<Creature> Members { get; set; } = new();
@@ -36,13 +36,11 @@ namespace Heroes
         
         public float TimeFromLastEncounterCheck { get; set; }
 
-        public Skills Skills { get; set; }
 
         public Party()
         {
             Members.Add(new Creature());
             WayPoints = new List<Vector3>();
-            Skills = new Skills();
             ActionPerformance = 1m;
             NextActions = new Queue<HeroAction>();
         }
@@ -94,7 +92,7 @@ namespace Heroes
             var encounterRateModifier = CurrentTerrain.encounterRateModifier;
             var random = Random.Range(1, 101);
             random += encounterRateModifier;
-            if (random >= GameData.encounterProbability)
+            if (random <= GameData.encounterProbability)
             {
                 Debug.Log("Initiating Encounter");
                 InCombat = true;
@@ -229,7 +227,7 @@ namespace Heroes
                 var terrain = CurrentTerrain as Forest;
                 var material = terrain.GetMaterial();
                 CurrentMaterial = material;
-                var rollValue = Skills.Lumberjack.Roll();
+                var rollValue = Hero.Skills.Lumberjacking.Roll();
                 var difficult = material.Level * 10 + 50;
                 var actionProficient = rollValue - difficult;
                 ActionPerformance = actionProficient / 100 + 1;
@@ -252,7 +250,7 @@ namespace Heroes
                 var mine = CurrentTerrain as Mountain;
                 var metal = mine.GetMaterial();
                 CurrentMaterial = metal;
-                var rollValue = Skills.Mine.Roll();
+                var rollValue = Hero.Skills.Get(Skill.Mining).Roll();
                 var difficult = metal.Level * 10 + 50;
                 var actionProficient = rollValue - difficult;
                 ActionPerformance = actionProficient / 100 + 1;
@@ -261,11 +259,19 @@ namespace Heroes
                 CurrentAction.ExecutionAction = Mine;
             }
         }
+        public bool RollForChallenge(Skill e, int difficult, int challengeLevel)
+        {
+            var rollValue = Random.Range(1, 101);
+            var skillValue = Hero.Skills.Get(e).GetMod(challengeLevel);
+            rollValue += skillValue;
+            return rollValue > difficult;
+        }
+
         public void Mine()
         {
-            var rollValue = Skills.Mine.Roll();
             var difficult = CurrentMaterial.Level * 10 + 50;
-            if (rollValue > difficult)
+            var success = RollForChallenge(Skill.Mining, difficult, CurrentMaterial.Level);
+            if (success)
             {
                 AddItem(CurrentMaterial);
             }
@@ -275,9 +281,9 @@ namespace Heroes
         }      
         public void CutWood()
         {
-            var rollValue = Skills.Lumberjack.Roll();
             var difficult = CurrentMaterial.Level * 10 + 50;
-            if (rollValue > difficult)
+            var success = RollForChallenge(Skill.Lumberjacking, difficult, CurrentMaterial.Level);
+            if (success)
             {
                 AddItem(CurrentMaterial);
             }
@@ -338,25 +344,6 @@ namespace Heroes
             }
         }
 
-    }
-
-    public class Combat
-    {
-        public Party Party { get; set; }
-        public EncounterInstance Encounter { get; set; }
-
-        public static Combat FromEncounter(Party party, Encounter encounter, int level)
-        {
-            var combat = new Combat
-            {
-                Party = party,
-                Encounter = new EncounterInstance
-                {
-                    Monsters = encounter.monsters.Select(monster => Creature.FromCreature(monster, level)).ToList()
-                }
-            };
-            return combat;
-        }
     }
 
     public class EncounterInstance
