@@ -12,6 +12,7 @@ namespace Heroes
 {
     public class Party : MonoBehaviour
     {
+        public Combat Combat;
         public GameData GameData;
         public CombatManager CombatManager;
         public Creature Hero => Members.FirstOrDefault();
@@ -57,7 +58,7 @@ namespace Heroes
             MapManager = FindAnyObjectByType<MapManager>();
             PartyManager = FindAnyObjectByType<PartyManager>();
             GameData = FindAnyObjectByType<GameData>();
-            CombatManager = GetComponent<CombatManager>();
+            CombatManager = FindAnyObjectByType<CombatManager>();
         }
 
         void Start()
@@ -111,7 +112,9 @@ namespace Heroes
             }
 
             var level = CurrentTerrain.Level();
-            CombatManager.InitiateCombat(encounter, level);
+            InCombat = true;
+            Combat = Combat.FromEncounter(this, encounter, level);
+            CombatManager.CombatStarted(this);
         }
 
         public bool InCombat { get; set; }
@@ -335,5 +338,29 @@ namespace Heroes
             }
         }
 
+    }
+
+    public class Combat
+    {
+        public Party Party { get; set; }
+        public EncounterInstance Encounter { get; set; }
+
+        public static Combat FromEncounter(Party party, Encounter encounter, int level)
+        {
+            var combat = new Combat
+            {
+                Party = party,
+                Encounter = new EncounterInstance
+                {
+                    Monsters = encounter.monsters.Select(monster => Creature.FromCreature(monster, level)).ToList()
+                }
+            };
+            return combat;
+        }
+    }
+
+    public class EncounterInstance
+    {
+        public List<Creature> Monsters { get; set; } = new();
     }
 }

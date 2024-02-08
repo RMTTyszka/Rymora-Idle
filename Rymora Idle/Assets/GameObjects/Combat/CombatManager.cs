@@ -6,60 +6,80 @@ using UnityEngine;
 
 public class CombatManager : MonoBehaviour
 {
-    public Party Party { get; set; }
-    public List<Creature> Monsters { get; set; } = new();
 
-    public CreatureSpawner monsterSpawner1;
-    public CreatureSpawner monsterSpawner2;
-    public CreatureSpawner monsterSpawner3;
-    public CreatureSpawner monsterSpawner4;
+
+
+    private List<Party> Parties { get; set; } = new();
+    private Party CurrentParty { get; set; }
+
+    private PartyManager PartyManager { get; set; }
+    private List<CreatureSpawner> HeroSpawners { get; set; } = new();
+    private List<CreatureSpawner> MonsterSpawners { get; set; } = new();
+    private List<CreatureSpawner> AnimalSpawners { get; set; } = new();
     
-    
-    public CreatureSpawner heroSpawner1;
-    public CreatureSpawner heroSpawner2;
-    public CreatureSpawner heroSpawner3;
-    public CreatureSpawner animalSpawner;
-    // Start is called before the first frame update
-    public void InitiateCombat(Encounter encounter, int level)
+    public void CombatStarted(Party party)
     {
-        Monsters = encounter.monsters.Select(monster => Creature.FromCreature(monster, level)).ToList();
-        SetHero(heroSpawner1,0);
-        SetHero(heroSpawner2,1);
-        SetHero(heroSpawner3,2);
-        SetMonster(monsterSpawner1, 0);
-        SetMonster(monsterSpawner2, 1);
-        SetMonster(monsterSpawner3, 2);
-        SetMonster(monsterSpawner4, 3);
+        if (CurrentParty == party)
+        {
+            InstantiateCombat(party);
+        }
+    }
+    void Awake()
+    {
+        PartyManager = FindAnyObjectByType<PartyManager>();
+        Parties = FindObjectsByType<Party>(FindObjectsInactive.Include, FindObjectsSortMode.None).ToList();
+        foreach (var creatureSpawner in GetComponentsInChildren<CreatureSpawner>())
+        {
+            if (creatureSpawner.creatureType == CreatureType.Hero)
+            {
+                HeroSpawners.Add(creatureSpawner);
+            } else if (creatureSpawner.creatureType == CreatureType.Monster)
+            {
+                MonsterSpawners.Add(creatureSpawner);
+            }
+            else
+            {
+                AnimalSpawners.Add(creatureSpawner);
+            }
+        }
     }
 
-    private void SetHero(CreatureSpawner creatureSpawner, int index)
+    void Start()
     {
-        var hero = Party?.Members.ElementAtOrDefault(index);
-        if (hero != null)
-        {
-            creatureSpawner.Creature = hero;
-        }
+        PartyManager.OnHeroSelected += InstantiateCombat;
+    }
 
-    }    
-    private void SetMonster(CreatureSpawner creatureSpawner, int index)
+    public void InstantiateCombat(Party party)
     {
-        var monster = Monsters.ElementAtOrDefault(index);
-        if (monster != null)
+        CurrentParty = party;
+        if (party.InCombat)
         {
-            creatureSpawner.InstantiateCreature(monster);
+            var index = 0;
+            foreach (var hero in party.Members)
+            {
+                HeroSpawners[index++].InstantiateCreature(hero);
+            }         
+            index = 0;
+            foreach (var monster in party.Combat.Encounter.Monsters)
+            {
+                MonsterSpawners[index++].InstantiateCreature(monster);
+            }
         }
-    }      
-    private void SetAnimal(CreatureSpawner creatureSpawner, int index)
-    {
-        var monster = Monsters.ElementAtOrDefault(index);
-        if (monster != null)
-        {
-            creatureSpawner.Creature = monster;
-        }
-    }    
+    }
 
     // Update is called once per frame
     void Update()
+    {
+        foreach (var party in Parties)
+        {
+            if (party.InCombat & party.Combat is not null)
+            {
+                RunCombat(party.Combat);
+            }
+        }
+    }
+
+    private void RunCombat(Combat partyCombat)
     {
         
     }

@@ -114,7 +114,8 @@ public class MapManager : MonoBehaviour
         
 
     }
-    (Vector3Int worldToCellPosition, Vector3 worldPosition) GetMousePosition () {
+    (Vector3Int worldToCellPosition, Vector3 worldPosition) GetMousePosition () 
+    {
         Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldPos.z = 0;
         return (hightlightMap.WorldToCell(mouseWorldPos), mouseWorldPos);
