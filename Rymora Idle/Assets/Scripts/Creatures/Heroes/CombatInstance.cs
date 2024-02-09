@@ -1,15 +1,15 @@
 using System.Linq;
-using Global;
 using Heroes;
 
-public class Combat
+public class CombatInstance
 {
     public Party Party { get; set; }
     public EncounterInstance Encounter { get; set; }
+    public CombatManager CombatManager { get; set; }
 
-    public static Combat FromEncounter(Party party, Encounter encounter, int level)
+    public static CombatInstance FromEncounter(Party party, Encounter encounter, int level)
     {
-        var combat = new Combat
+        var combat = new CombatInstance
         {
             Party = party,
             Encounter = new EncounterInstance
@@ -18,5 +18,13 @@ public class Combat
             }
         };
         return combat;
+    }
+
+    public void RunCombat()
+    {
+        foreach (var hero in Party.Members)
+        {
+            
+        }
     }
 }

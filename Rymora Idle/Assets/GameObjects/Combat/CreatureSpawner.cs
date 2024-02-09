@@ -1,4 +1,3 @@
-using Global;
 using UnityEngine;
 
 public class CreatureSpawner : MonoBehaviour

@@ -12,7 +12,7 @@ namespace Heroes
 {
     public class Party : MonoBehaviour
     {
-        public Combat Combat { get; set; }
+        public CombatInstance CombatInstance { get; set; }
         public GameData GameData { get; set; }
         public CombatManager CombatManager { get; set; }
         public Creature Hero => Members.FirstOrDefault();
@@ -111,7 +111,7 @@ namespace Heroes
 
             var level = CurrentTerrain.Level();
             InCombat = true;
-            Combat = Combat.FromEncounter(this, encounter, level);
+            CombatInstance = CombatInstance.FromEncounter(this, encounter, level);
             CombatManager.CombatStarted(this);
         }
 
@@ -227,7 +227,7 @@ namespace Heroes
                 var terrain = CurrentTerrain as Forest;
                 var material = terrain.GetMaterial();
                 CurrentMaterial = material;
-                var rollValue = Hero.Skills.Lumberjacking.Roll();
+                var rollValue = Hero.Skills.Lumberjacking.Roll(0);
                 var difficult = material.Level * 10 + 50;
                 var actionProficient = rollValue - difficult;
                 ActionPerformance = actionProficient / 100 + 1;
@@ -250,7 +250,7 @@ namespace Heroes
                 var mine = CurrentTerrain as Mountain;
                 var metal = mine.GetMaterial();
                 CurrentMaterial = metal;
-                var rollValue = Hero.Skills.Get(Skill.Mining).Roll();
+                var rollValue = Hero.Skills.Get(Skill.Mining).Roll(0);
                 var difficult = metal.Level * 10 + 50;
                 var actionProficient = rollValue - difficult;
                 ActionPerformance = actionProficient / 100 + 1;
@@ -262,7 +262,7 @@ namespace Heroes
         public bool RollForChallenge(Skill e, int difficult, int challengeLevel)
         {
             var rollValue = Random.Range(1, 101);
-            var skillValue = Hero.Skills.Get(e).GetMod(challengeLevel);
+            var skillValue = Hero.Skills.Get(e).GetValue(challengeLevel);
             rollValue += skillValue;
             return rollValue > difficult;
         }
@@ -344,10 +344,5 @@ namespace Heroes
             }
         }
 
-    }
-
-    public class EncounterInstance
-    {
-        public List<Creature> Monsters { get; set; } = new();
     }
 }

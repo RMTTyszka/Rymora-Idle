@@ -60,7 +60,7 @@ public class CombatManager : MonoBehaviour
                 HeroSpawners[index++].InstantiateCreature(hero);
             }         
             index = 0;
-            foreach (var monster in party.Combat.Encounter.Monsters)
+            foreach (var monster in party.CombatInstance.Encounter.Monsters)
             {
                 MonsterSpawners[index++].InstantiateCreature(monster);
             }
@@ -72,14 +72,14 @@ public class CombatManager : MonoBehaviour
     {
         foreach (var party in Parties)
         {
-            if (party.InCombat & party.Combat is not null)
+            if (party.InCombat & party.CombatInstance is not null)
             {
-                RunCombat(party.Combat);
+                RunCombat(party.CombatInstance);
             }
         }
     }
 
-    private void RunCombat(Combat partyCombat)
+    private void RunCombat(CombatInstance partyCombatInstance)
     {
         
     }
