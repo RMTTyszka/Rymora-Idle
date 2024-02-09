@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using Items.Equipables.Weapons;
+
 public class WeaponDamageStatus
 {
     public float MinimumDamage { get; set; }
-    public float MaxDamage { get; set; }
+    public float MaximumDamage { get; set; }
     public float AttackSpeed { get; set; }
     public float HitModifier { get; set; }
     public float ArmorPenetration { get; set; }
@@ -19,13 +21,33 @@ public class WeaponPropertyStatus
 
 public static class WeaponData
 {
-    public static Dictionary<WeaponSize, WeaponDamageStatus> DamageBySize = new Dictionary<WeaponSize, WeaponDamageStatus>
+    public static WeaponStatus Status(this WeaponInstance weapon)
+    {
+        var bySize = DataBySize[weapon.Size];
+        var byCategory = DataByDamageCategory[weapon.DamageCategory];
+        return new WeaponStatus
+        {
+            MinimumDamage = bySize.MinimumDamage,
+            MaximumDamage = bySize.MaximumDamage,
+            AttackSpeed = bySize.AttackSpeed,
+            HitModifier = bySize.HitModifier,
+            ArmorPenetration = bySize.ArmorPenetration,
+            DamageMultiplier = bySize.DamageMultiplier,
+            AttributeMultiplier = bySize.AttributeMultiplier,
+            CounterRating = bySize.CounterRating,
+            HitSkill = byCategory.HitSkill,
+            HitAttribute = byCategory.HitAttribute,
+            DamageAttribute = byCategory.DamageAttribute
+        };
+    }
+
+    public static Dictionary<WeaponSize, WeaponDamageStatus> DataBySize = new Dictionary<WeaponSize, WeaponDamageStatus>
     {
         {
             WeaponSize.Light, new WeaponDamageStatus
             {
                 MinimumDamage = 8f,
-                MaxDamage = 18f,
+                MaximumDamage = 18f,
                 AttackSpeed = 5f,
                 HitModifier = 0f,
                 ArmorPenetration = 0f,
@@ -38,7 +60,7 @@ public static class WeaponData
             WeaponSize.Medium, new WeaponDamageStatus
             {
                 MinimumDamage = 8f,
-                MaxDamage = 18f,
+                MaximumDamage = 18f,
                 AttackSpeed = 10f,
                 HitModifier = 0f,
                 ArmorPenetration = 1f,
@@ -51,7 +73,7 @@ public static class WeaponData
             WeaponSize.Heavy, new WeaponDamageStatus
             {
                 MinimumDamage = 8f,
-                MaxDamage = 18f,
+                MaximumDamage = 18f,
                 AttackSpeed = 13f,
                 HitModifier = 10f,
                 ArmorPenetration = 8f,
@@ -61,7 +83,7 @@ public static class WeaponData
             }
         },
     };
-    public static Dictionary<WeaponsDamageCategory, WeaponPropertyStatus> PropertyByDamageCategory = new Dictionary<WeaponsDamageCategory, WeaponPropertyStatus>
+    public static Dictionary<WeaponsDamageCategory, WeaponPropertyStatus> DataByDamageCategory = new Dictionary<WeaponsDamageCategory, WeaponPropertyStatus>
     {
         {
             WeaponsDamageCategory.Cutting, new WeaponPropertyStatus
@@ -120,4 +142,11 @@ public static class WeaponData
             }
         },      
     };
+}
+
+public class WeaponStatus : WeaponDamageStatus
+{
+    public Skill HitSkill { get; set; }
+    public Attribute HitAttribute { get; set; }
+    public Attribute DamageAttribute { get; set; }
 }

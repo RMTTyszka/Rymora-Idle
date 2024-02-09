@@ -1,7 +1,7 @@
 public enum Property { 
     Critical = 0, 
     Resiliense = 1, 
-    Attack = 2, 
+    Hit = 2, 
     PowerAttack = 3, 
     Evasion = 4, 
     PowerDefense = 5,

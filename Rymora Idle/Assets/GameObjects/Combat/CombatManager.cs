@@ -8,6 +8,7 @@ public class CombatManager : MonoBehaviour
 {
 
 
+    public List<CombatEvent> Events { get; set; } = new();
 
     private List<Party> Parties { get; set; } = new();
     private Party CurrentParty { get; set; }
@@ -16,7 +17,12 @@ public class CombatManager : MonoBehaviour
     private List<CreatureSpawner> HeroSpawners { get; set; } = new();
     private List<CreatureSpawner> MonsterSpawners { get; set; } = new();
     private List<CreatureSpawner> AnimalSpawners { get; set; } = new();
-    
+
+    public void BasicAttackPerformed(BasicAttackResult attackResult)
+    {
+        Events.Add(new CombatEvent());
+    }
+
     public void CombatStarted(Party party)
     {
         if (CurrentParty == party)
@@ -83,4 +89,8 @@ public class CombatManager : MonoBehaviour
     {
         
     }
+}
+
+public class CombatEvent
+{
 }

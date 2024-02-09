@@ -39,12 +39,12 @@ public abstract class Roller
         var furniture = Bonuses.Where(bonus => bonus.Type == BonusType.Furniture).Select(bonus => bonus.Value).DefaultIfEmpty().Max();
         return innate + magic + equipment + food + furniture;
     }
-    public int GetValue (int lvl)
+    public virtual int GetValue (int lvl)
     {
         RollForRaise(lvl);
         return GetValue();
     }
-    public int Roll(int lvl)
+    public virtual int Roll(int lvl)
     {
         RollForRaise(lvl);
         int sum = 0;

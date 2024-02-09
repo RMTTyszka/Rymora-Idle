@@ -1,12 +1,14 @@
 using System;
+using Items.Equipables.Armors;
+using Items.Equipables.Weapons;
 
 public class Equipment
 {
-    public Equipable MainHand { get; set; }
+    public WeaponInstance MainHand { get; set; }
     public Equipable Offhand { get; set; }
     public Equipable Head { get; set; }
     public Equipable Neck { get; set; }
-    public Equipable Chest { get; set; }
+    public ArmorInstance Chest { get; set; }
     public Equipable Wrist { get; set; }
     public Equipable Hand { get; set; }
     public Equipable FingerLeft { get; set; }
@@ -24,7 +26,7 @@ public class Equipment
                 return null;
             case Slot.MainHand:
                 previousItem = MainHand;
-                MainHand = item;
+                MainHand = item as WeaponInstance;
                 break;
             case Slot.Offhand:
                 previousItem = Offhand;
@@ -40,7 +42,7 @@ public class Equipment
                 break;
             case Slot.Chest:
                 previousItem = Chest;
-                Chest = item;
+                Chest = item as ArmorInstance;
                 break;
             case Slot.Wrist:
                 previousItem = Wrist;
