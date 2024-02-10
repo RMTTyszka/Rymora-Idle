@@ -1,6 +1,4 @@
 using System;
-using Items.Equipables.Armors;
-using Items.Equipables.Weapons;
 
 public class Equipment
 {

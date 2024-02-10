@@ -1,5 +1,3 @@
-namespace Items.Equipables.Armors;
-
 public class ArmorInstance : Equipable
 {
     public ArmorCategory Category { get; set; }

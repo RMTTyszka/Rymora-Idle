@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Items.Equipables.Armors;
 using Items.Equipables.Weapons;
 using UnityEngine;
 
@@ -77,6 +76,7 @@ public class Combatant
     }
     public void TakeDamage(float damage) {
         if (Creature.IsAlive) {
+            Debug.Log(Creature.Name + $" took {damage} damage");
             Creature.Life -= Mathf.RoundToInt(damage);
             if (Creature.Life < 0) {
                 Creature.Life = 0;
@@ -180,6 +180,7 @@ public class Combatant
 
         var evadeRoll = target.EvadeRoll(Creature.Level);
         if (hitRoll >= evadeRoll) {
+            Debug.Log($"{Creature.Name} has hit {target.Name}");
             var isCrit = CriticalRoll(weapon, target);
             var damage = Damage(target ,weapon, isCrit);
             target.TakeDamage(damage);

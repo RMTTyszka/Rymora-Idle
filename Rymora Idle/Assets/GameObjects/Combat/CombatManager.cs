@@ -80,7 +80,7 @@ public class CombatManager : MonoBehaviour
         {
             if (party.InCombat & party.CombatInstance is not null)
             {
-                RunCombat(party.CombatInstance);
+                party.CombatInstance.RunCombatTurn();
             }
         }
     }

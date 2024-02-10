@@ -23,7 +23,7 @@ public class CombatInstance
         return combat;
     }
 
-    public void RunCombat()
+    public void RunCombatTurn()
     {
         foreach (var hero in Party.Members)
         {

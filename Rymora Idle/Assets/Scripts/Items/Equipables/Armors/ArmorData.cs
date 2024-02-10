@@ -1,7 +1,4 @@
 using System.Collections.Generic;
-
-namespace Items.Equipables.Armors;
-
 public static class ArmorData
 {
     public static ArmorStatus ArmorStatus(this ArmorInstance armor)
