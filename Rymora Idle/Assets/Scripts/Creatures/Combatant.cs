@@ -77,9 +77,9 @@ public class Combatant
     public void TakeDamage(float damage) {
         if (Creature.IsAlive) {
             Debug.Log(Creature.Name + $" took {damage} damage");
-            Creature.Life -= Mathf.RoundToInt(damage);
-            if (Creature.Life < 0) {
-                Creature.Life = 0;
+            Creature.Combatant.Life -= Mathf.RoundToInt(damage);
+            if (Creature.Combatant.Life < 0) {
+                Creature.Combatant.Life = 0;
                 Debug.Log(Creature.Name + " has died");
                 /*this.sprite.GetComponent<SpriteRenderer>().color = Color.gray;
                 this.spriteOutline.enabled = false;*/
@@ -180,7 +180,6 @@ public class Combatant
 
         var evadeRoll = target.EvadeRoll(Creature.Level);
         if (hitRoll >= evadeRoll) {
-            Debug.Log($"{Creature.Name} has hit {target.Name}");
             var isCrit = CriticalRoll(weapon, target);
             var damage = Damage(target ,weapon, isCrit);
             target.TakeDamage(damage);

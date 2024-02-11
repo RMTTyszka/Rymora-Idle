@@ -84,8 +84,7 @@ public class Creature
     }
 
 
-    public bool IsAlive => Life > 0;
-    public static int Life { get; set; }
+    public bool IsAlive => Combatant.Life > 0;
 
     private bool CriticalRoll(WeaponInstance weapon, Creature target)
     {

@@ -74,22 +74,34 @@ public class CombatManager : MonoBehaviour
 
     void Start()
     {
-        PartyManager.OnHeroSelected += InstantiateCombat;
+        PartyManager.OnHeroSelected += OnHeroSelected;
+    }
+
+    public void OnHeroSelected(Party party)
+    {
+        if (CurrentParty == party)
+        {
+            return;
+        }
+        InstantiateCombat(party);
     }
 
     public void InstantiateCombat(Party party)
     {
+
         CurrentParty = party;
         if (party.InCombat)
         {
             var index = 0;
             foreach (var hero in party.Members)
             {
+              //  HeroSpawners[index++].Clear();
                 HeroSpawners[index++].InstantiateCreature(hero);
             }         
             index = 0;
             foreach (var monster in party.CombatInstance.Encounter.Monsters)
             {
+            //    MonsterSpawners[index++].Clear();
                 MonsterSpawners[index++].InstantiateCreature(monster);
             }
         }
@@ -105,11 +117,6 @@ public class CombatManager : MonoBehaviour
                 party.CombatInstance.RunCombatTurn();
             }
         }
-    }
-
-    private void RunCombat(CombatInstance partyCombatInstance)
-    {
-        
     }
 }
 

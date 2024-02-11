@@ -31,4 +31,9 @@ public class CreatureSpawner : MonoBehaviour
     {
         Gizmos.DrawWireSphere(transform.position, 0.33f);
     }
+
+    public void Clear()
+    {
+        Destroy(Creature.gameObject);
+    }
 }
