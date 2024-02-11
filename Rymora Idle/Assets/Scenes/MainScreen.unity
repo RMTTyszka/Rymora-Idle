@@ -5874,7 +5874,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d8c3d3b527b0ce4689ffc9206022df2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  encounterProbability: 20
+  encounterProbability: 80
   encounterInterval: 3
 --- !u!1 &1436869403
 GameObject:

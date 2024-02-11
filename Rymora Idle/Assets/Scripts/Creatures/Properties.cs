@@ -3,7 +3,7 @@ public class Properties
     public PropertyInstance Threat { get; set; } = new(nameof(Threat));
     public PropertyInstance Critical { get; set; } = new(nameof(Critical));
     public PropertyInstance Resiliense { get; set; } = new(nameof(Resiliense));
-    public PropertyInstance Attack { get; set; } = new(nameof(Attack));
+    public PropertyInstance Hit { get; set; } = new(nameof(Hit));
     public PropertyInstance PowerAttack { get; set; } = new(nameof(PowerAttack));
     public PropertyInstance Evasion { get; set; } = new(nameof(Evasion));
     public PropertyInstance PowerDefense { get; set; } = new(nameof(PowerDefense));

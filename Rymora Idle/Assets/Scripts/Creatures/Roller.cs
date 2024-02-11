@@ -60,7 +60,7 @@ public abstract class Roller
         return GetTotalPoints() / Modifier;
     }
     private void RollForRaise(int lvl) {
-        if ( lvl >= Points/5) {
+        if (lvl > 0 && lvl >= Points/5) {
             float chance = 1000f/((Points/5f)*Difficult);
             float roll = Random.Range(0f, 10001f);
             // Debug.Log(roll + " " + chance);

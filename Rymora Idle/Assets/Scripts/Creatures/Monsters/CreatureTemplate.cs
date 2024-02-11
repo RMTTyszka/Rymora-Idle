@@ -8,6 +8,7 @@ public class CreatureTemplate : ScriptableObject
 {
     [FormerlySerializedAs("name")] public string creatureName;
     public MonsterClass monsterClass;
+    // TODO weapon and armor templates
     public Sprite sprite;
 
 }

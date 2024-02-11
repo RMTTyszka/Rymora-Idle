@@ -111,8 +111,8 @@ namespace Heroes
 
             var level = CurrentTerrain.Level();
             InCombat = true;
-            CombatInstance = CombatInstance.FromEncounter(this, encounter, level);
-            CombatManager.CombatStarted(this);
+            CombatInstance = CombatManager.StartCombat(this, encounter, level);
+            
         }
 
         public bool InCombat { get; set; }

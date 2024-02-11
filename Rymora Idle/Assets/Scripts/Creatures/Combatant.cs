@@ -42,7 +42,7 @@ public class Combatant
         var evadeRoll = Random.Range(1, 101);
         evadeRoll += Creature.Attributes.Get(Attribute.Agility).GetValue(level);
         evadeRoll += Creature.Skills.Get(Skill.Tactics).GetValue(level);
-        evadeRoll += Creature.Properties.Get(Property.Evasion).GetValue(level);
+        evadeRoll += Creature.Properties.Get(Property.Evasion).GetValue();
         evadeRoll += ArmorData.DataByCategory[Creature.Equipment.Chest.Category].Evasion;
         return evadeRoll;
     }
@@ -184,6 +184,7 @@ public class Combatant
             var isCrit = CriticalRoll(weapon, target);
             var damage = Damage(target ,weapon, isCrit);
             target.TakeDamage(damage);
+            Debug.Log($"{Creature.Name} has hit {target.Name} for {damage} damage" );
         } else if (!isCounter){
             var counterAttack = target.CheckForCounter(weapon, Creature);
             result.CounterAttack = counterAttack;

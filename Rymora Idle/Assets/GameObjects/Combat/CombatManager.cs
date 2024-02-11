@@ -23,12 +23,34 @@ public class CombatManager : MonoBehaviour
         Events.Add(new CombatEvent());
     }
 
-    public void CombatStarted(Party party)
+    public CombatInstance StartCombat(Party party, Encounter encounter, int level)
     {
+        var combatInstance = CombatInstance.FromEncounter(party, encounter, level);
+        combatInstance.CombatManager = this;
+        foreach (var partyMember in party.Members)
+        {
+            partyMember.Combatant.MainWeaponCooldown = partyMember.Equipment.MainHand.Status().AttackSpeed;
+            if (partyMember.Equipment.Offhand is WeaponInstance)
+            {
+                partyMember.Combatant.SecondaryWeaponCooldown = (partyMember.Equipment.Offhand as WeaponInstance).Status().AttackSpeed;
+            }
+        }      
+        foreach (var monster in combatInstance.Encounter.Monsters)
+        {
+            monster.Combatant.MainWeaponCooldown = monster.Equipment.MainHand.Status().AttackSpeed;
+            if (monster.Equipment.Offhand is WeaponInstance)
+            {
+                monster.Combatant.SecondaryWeaponCooldown = (monster.Equipment.Offhand as WeaponInstance).Status().AttackSpeed;
+            }
+        }
+
         if (CurrentParty == party)
         {
+            party.CombatInstance = combatInstance;
             InstantiateCombat(party);
         }
+
+        return combatInstance;
     }
     void Awake()
     {

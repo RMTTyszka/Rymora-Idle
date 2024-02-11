@@ -31,9 +31,18 @@ public class GameManager : MonoBehaviour
 
     private void InitiateHero()
     {
-        var weaponsList = Resources.LoadAll<ItemList>("Itens/Weapons");
-        Debug.Log(weaponsList.First().name);
+        var weaponsList = Resources.LoadAll<WeaponTemplate>("Itens/Weapons").ToList();
+        var armors = Resources.LoadAll<ArmorTemplate>("Itens/Armors").ToList();
         PartyManager.heroes[0].transform.position = MapManager.terrainMap.GetCellCenterWorld(Vector3Int.FloorToInt(MapManager.CityPositions[0]));
+        PartyManager.heroes[0].Hero.Equipment.Equip(WeaponInstance.FromTemplate(weaponsList.RandomElement(), 1));
+        PartyManager.heroes[0].Hero.Equipment.Equip(ArmorInstance.FromTemplate(armors.RandomElement(), 1));
+        PartyManager.heroes[0].Hero.Combatant.Life = PartyManager.heroes[0].Hero.Combatant.MaxLife; 
+        PartyManager.heroes[1].Hero.Combatant.Life = PartyManager.heroes[0].Hero.Combatant.MaxLife; 
+        PartyManager.heroes[2].Hero.Combatant.Life = PartyManager.heroes[0].Hero.Combatant.MaxLife; 
+        PartyManager.heroes[1].Hero.Equipment.Equip(WeaponInstance.FromTemplate(weaponsList.RandomElement(), 1));
+        PartyManager.heroes[1].Hero.Equipment.Equip(ArmorInstance.FromTemplate(armors.RandomElement(), 1));
+        PartyManager.heroes[2].Hero.Equipment.Equip(WeaponInstance.FromTemplate(weaponsList.RandomElement(), 1));
+        PartyManager.heroes[2].Hero.Equipment.Equip(ArmorInstance.FromTemplate(armors.RandomElement(), 1));
         PartyManager.heroes[1].transform.position = MapManager.terrainMap.GetCellCenterWorld(Vector3Int.FloorToInt(MapManager.CityPositions[1]));
         PartyManager.heroes[2].transform.position = MapManager.terrainMap.GetCellCenterWorld(Vector3Int.FloorToInt(MapManager.CityPositions[2]));
     }

@@ -31,6 +31,9 @@ public class Creature
         creature.Level = level;
         creature.Inventory = new Inventory();
         creature.Sprite = creatureTemplate.sprite;
+        creature.Equipment.Equip(WeaponInstance.FromTemplate(GameData.UnarmedWeapons.RandomElement(), level));
+        creature.Equipment.Equip(ArmorInstance.FromTemplate(GameData.Armors.RandomElement(), level));
+        creature.Combatant.Life = creature.Combatant.MaxLife; 
         return creature;
     }
     public List<BasicAttackResult> RunBasicAttackTurn(List<Creature> enemies, List<Creature> allies)
@@ -46,6 +49,7 @@ public class Creature
         if (Combatant.MainWeaponCooldown <= 0)
         {
             var attackResult = Attack(Equipment.MainHand, enemies, allies, false);
+            Combatant.MainWeaponCooldown += Equipment.MainHand.Status().AttackSpeed;
             attackResults.Add(attackResult);
         }
         if (Equipment.Offhand is WeaponInstance)
@@ -54,6 +58,7 @@ public class Creature
             if (Combatant.SecondaryWeaponCooldown <= 0)
             {
                 var attackResult = Attack(Equipment.Offhand as WeaponInstance, enemies, allies, false);
+                Combatant.SecondaryWeaponCooldown += (Equipment.Offhand as WeaponInstance).Status().AttackSpeed;
                 attackResults.Add(attackResult);
             }
         }
@@ -79,7 +84,7 @@ public class Creature
     }
 
 
-    public bool IsAlive => Creature.Life > 0;
+    public bool IsAlive => Life > 0;
     public static int Life { get; set; }
 
     private bool CriticalRoll(WeaponInstance weapon, Creature target)
@@ -94,7 +99,6 @@ public class Creature
 
     public void RunPowerAttack(List<Creature> enemies, List<Creature> allies)
     {
-        throw new System.NotImplementedException();
     }
 
     public float Damage(Creature target, WeaponInstance weapon, bool isCrit)
