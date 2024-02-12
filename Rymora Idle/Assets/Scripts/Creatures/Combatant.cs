@@ -191,6 +191,11 @@ public class Combatant
 
         return result;
     }
+
+    public bool CanAttack()
+    {
+        return Creature.IsAlive;
+    }
 }
 
 public enum TargetType

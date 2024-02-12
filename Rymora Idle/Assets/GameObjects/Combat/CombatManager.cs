@@ -118,6 +118,33 @@ public class CombatManager : MonoBehaviour
             }
         }
     }
+
+    public void FinishCombat(CombatInstance combatInstance, bool heroesWon)
+    {
+        // TODO tela bonita de loot e etc
+        if (CurrentParty == combatInstance.Party)
+        {
+            Clear();
+        }
+    }
+
+    private void Clear()
+    {
+        foreach (var creatureSpawner in HeroSpawners)
+        {
+            foreach (Transform creature in creatureSpawner.transform)
+            {
+                Destroy(creature.gameObject);
+            }
+        }       
+        foreach (var creatureSpawner in MonsterSpawners)
+        {
+            foreach (Transform creature in creatureSpawner.transform)
+            {
+                Destroy(creature.gameObject);
+            }
+        }
+    }
 }
 
 public class CombatEvent
