@@ -28,6 +28,11 @@ public class MapManager : MonoBehaviour
     public Vector3 CurrentMapPosition { get; set; }
     private Vector3Int previousMousePos = new Vector3Int();
 
+    public void Awake()
+    {
+        PartyManager = FindAnyObjectByType<PartyManager>();
+    }
+
     private void Start()
     {
         foreach (var position in terrainMap.cellBounds.allPositionsWithin) 
@@ -58,6 +63,11 @@ public class MapManager : MonoBehaviour
             var mousePos = GetMousePosition();
             if (Input.GetMouseButtonDown(1))
             {
+                if (!PartyManager.CurrentParty.IsAlive)
+                {
+                    return;
+                }
+
                 if (actionMenu.gameObject.activeInHierarchy)
                 {
                     actionMenu.SetActive(false);

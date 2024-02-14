@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
 
     private void InitiateHero()
     {
+        Time.timeScale = 4.0f;
         var weaponsList = Resources.LoadAll<WeaponTemplate>("Itens/Weapons").ToList();
         var armors = Resources.LoadAll<ArmorTemplate>("Itens/Armors").ToList();
         PartyManager.heroes[0].transform.position = MapManager.terrainMap.GetCellCenterWorld(Vector3Int.FloorToInt(MapManager.CityPositions[0]));

@@ -8,4 +8,6 @@ public class Region : RegionTile
 {
     [SerializeField]
     public List<Encounter> encounters;
+
+    public bool safeSpot;
 }

@@ -1736,9 +1736,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ground: {fileID: 1603694692}
+  regions: {fileID: 1939759684}
   walls: {fileID: 570353880}
   enviroment: {fileID: 0}
-  newWp: []
+  newWaypoint: []
 --- !u!1 &503908505
 GameObject:
   m_ObjectHideFlags: 0
@@ -8760,7 +8761,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1672103420
 Transform:
   m_ObjectHideFlags: 0
@@ -10710,6 +10711,16 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1
+  - first: {x: -11, y: -11, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 11
+      m_TileSpriteIndex: 1
+      m_TileMatrixIndex: 0
+      m_TileColorIndex: 11
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: -10, y: -11, z: 0}
     second:
       serializedVersion: 2
@@ -11074,8 +11085,8 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 0
-    m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 11400000, guid: 19c8a5a2878893945bd7130c5e741cf0, type: 2}
   - m_RefCount: 31
     m_Data: {fileID: 11400000, guid: f954c31bb732f1d458989e2c974da952, type: 2}
   - m_RefCount: 27
@@ -11083,10 +11094,10 @@ Tilemap:
   m_TileSpriteArray:
   - m_RefCount: 0
     m_Data: {fileID: 0}
-  - m_RefCount: 58
+  - m_RefCount: 59
     m_Data: {fileID: -2135585597343286014, guid: 8b712e3d5612ad046b5b66e9366c3ce2, type: 3}
   m_TileMatrixArray:
-  - m_RefCount: 58
+  - m_RefCount: 59
     m_Data:
       e00: 1
       e01: 0
@@ -11127,8 +11138,8 @@ Tilemap:
     m_Data: {r: 3.8095307e-19, g: 3.8095307e-19, b: 3.8095307e-19, a: 3.8095307e-19}
   - m_RefCount: 0
     m_Data: {r: 3.810176e-19, g: 3.810176e-19, b: 3.810176e-19, a: 3.810176e-19}
-  - m_RefCount: 0
-    m_Data: {r: 3.7645072e-19, g: 3.7645072e-19, b: 3.7645072e-19, a: 3.7645072e-19}
+  - m_RefCount: 1
+    m_Data: {r: 0.48584908, g: 0.9141095, b: 1, a: 1}
   - m_RefCount: 31
     m_Data: {r: 0.9716981, g: 0.23375754, b: 0.7033194, a: 0.87058824}
   - m_RefCount: 27

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Heroes;
 using Map;
@@ -22,7 +23,40 @@ public class MapMover : MonoBehaviour {
         waypoints = new Queue<Vector3>();
     }
 
-	// Update is called once per frame
+    public void GoToClosetSafeSpot()
+    {
+        Vector3? safeSpots = null;
+        foreach (var position in Pathfinder.regions.cellBounds.allPositionsWithin) 
+        {
+            if (!Pathfinder.regions.HasTile(position)) {
+                continue;
+            }
+
+            var tile = Pathfinder.regions.GetTile(position) as Region;
+            if (tile is not null && tile.safeSpot)
+            {
+                if (safeSpots is null)
+                {
+                    safeSpots = position;
+                }
+                else
+                {
+                    var distanceBetweenCurrentSafeStop = Vector3.Distance(position, transform.position);
+                    var distanceBetweenNewSafeStop = Vector3.Distance(position, transform.position);
+
+                    if (distanceBetweenNewSafeStop < distanceBetweenCurrentSafeStop)
+                    {
+                        safeSpots = position;
+                    }
+                }
+            }
+        }
+        waypoints.Clear();
+        Party.InitiateMovement(safeSpots.GetValueOrDefault());
+
+    }
+
+    // Update is called once per frame
 	void Update () {
         //se chegou no waypoint, pega o proximo
 

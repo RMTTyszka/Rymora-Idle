@@ -126,12 +126,22 @@ public class CombatManager : MonoBehaviour
         {
             Clear();
         }
+
+        var party = combatInstance.Party;
+
+        combatInstance.Party.InCombat = false;
+        combatInstance.Party.CombatInstance = null;
+        if (!heroesWon)
+        {
+            party.Die();
+        }
     }
 
     private void Clear()
     {
         foreach (var creatureSpawner in HeroSpawners)
         {
+            creatureSpawner.Creature = null;
             foreach (Transform creature in creatureSpawner.transform)
             {
                 Destroy(creature.gameObject);

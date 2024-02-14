@@ -3,14 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using Map;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 public class Pathfinder : MonoBehaviour {
 
     public Tilemap ground;
+    public Tilemap regions;
     public Tilemap walls;
     public Tilemap enviroment;
-    public List<Vector2Int> newWp;
+    [FormerlySerializedAs("newWp")] public List<Vector2Int> newWaypoint;
     public Queue<Vector2Int> frontier;
     // Use this for initialization
     void Start () {
@@ -23,7 +25,7 @@ public class Pathfinder : MonoBehaviour {
 	}
 
     public IEnumerator GetWaypoints(Vector2 origin, Vector2 target, MapMover monster) {
-        newWp = new List<Vector2Int>();
+        newWaypoint = new List<Vector2Int>();
         frontier = new Queue<Vector2Int>();
         Vector2Int endPos = Vector2Int.FloorToInt(target);
         frontier.Enqueue(Vector2Int.FloorToInt(origin));
@@ -53,15 +55,15 @@ public class Pathfinder : MonoBehaviour {
         
 
         while (newCurrent != Vector2Int.FloorToInt(origin)) {
-            newWp.Add(newCurrent);
+            newWaypoint.Add(newCurrent);
             if (!wp.ContainsKey(newCurrent)) {
                 break;
             }
             newCurrent = wp[newCurrent];
         }
-        newWp.Reverse();
+        newWaypoint.Reverse();
         monster.waypoints.Clear();
-        foreach (Vector2Int pos in newWp) {
+        foreach (Vector2Int pos in newWaypoint) {
             monster.waypoints.Enqueue(new Vector3(pos.x, pos.y, 0));
         }
         if (monster.waypoints.Count > 0)
@@ -73,10 +75,10 @@ public class Pathfinder : MonoBehaviour {
         }
 
 
-        for (int i = 0; i < newWp.Count-1; i++)
+        for (int i = 0; i < newWaypoint.Count-1; i++)
         {
-            Vector3 ori = new Vector3(newWp[i].x, newWp[i].y, 0);
-            Vector3 dest = new Vector3(newWp[i+1].x, newWp[i+1].y, 0);
+            Vector3 ori = new Vector3(newWaypoint[i].x, newWaypoint[i].y, 0);
+            Vector3 dest = new Vector3(newWaypoint[i+1].x, newWaypoint[i+1].y, 0);
             Debug.DrawLine(ori, dest, Color.red, 3f);
         }
 

@@ -68,13 +68,14 @@ namespace Heroes
 
         void Update()
         {
+
             CheckForEncounter();
             TryAction();
         }
 
         private void CheckForEncounter()
         {
-            var shouldCheckForEncounter = !InCombat;
+            var shouldCheckForEncounter = !InCombat && IsAlive;
             shouldCheckForEncounter = shouldCheckForEncounter && CurrentAction?.ActionType is HeroActionType.Travel;
             shouldCheckForEncounter = shouldCheckForEncounter && CurrentTerrain is not City;
             if (shouldCheckForEncounter)
@@ -117,6 +118,7 @@ namespace Heroes
         }
 
         public bool InCombat { get; set; }
+        public bool IsAlive => Members.Any(c => c.IsAlive);
 
 
         private void TryAction()
@@ -345,5 +347,12 @@ namespace Heroes
             }
         }
 
+        public void Die()
+        {
+            NextActions.Clear();
+            CurrentAction = null;
+            WayPoints.Clear();
+            Move.GoToClosetSafeSpot();
+        }
     }
 }
