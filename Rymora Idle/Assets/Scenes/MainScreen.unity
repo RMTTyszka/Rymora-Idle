@@ -369,6 +369,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   creatureType: 1
   creatureBodyPrefab: {fileID: -3342884318126199639, guid: 12f4011b2dfdc2b49af9e6a7e1e3a6d0, type: 3}
+  combatantUIElementsPrefab: {fileID: 4326425324054783595, guid: db9b4cb6acda89945a31687545fa1266, type: 3}
 --- !u!1 &151781398
 GameObject:
   m_ObjectHideFlags: 0
@@ -1949,6 +1950,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   creatureType: 0
   creatureBodyPrefab: {fileID: -3342884318126199639, guid: 12f4011b2dfdc2b49af9e6a7e1e3a6d0, type: 3}
+  combatantUIElementsPrefab: {fileID: 4326425324054783595, guid: db9b4cb6acda89945a31687545fa1266, type: 3}
 --- !u!1 &567338248
 GameObject:
   m_ObjectHideFlags: 0
@@ -2196,6 +2198,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   creatureType: 0
   creatureBodyPrefab: {fileID: -3342884318126199639, guid: 12f4011b2dfdc2b49af9e6a7e1e3a6d0, type: 3}
+  combatantUIElementsPrefab: {fileID: 4326425324054783595, guid: db9b4cb6acda89945a31687545fa1266, type: 3}
 --- !u!1 &638057493
 GameObject:
   m_ObjectHideFlags: 0
@@ -4831,6 +4834,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   creatureType: 1
   creatureBodyPrefab: {fileID: -3342884318126199639, guid: 12f4011b2dfdc2b49af9e6a7e1e3a6d0, type: 3}
+  combatantUIElementsPrefab: {fileID: 4326425324054783595, guid: db9b4cb6acda89945a31687545fa1266, type: 3}
 --- !u!1 &1223830018
 GameObject:
   m_ObjectHideFlags: 0
@@ -5703,6 +5707,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   creatureType: 1
   creatureBodyPrefab: {fileID: -3342884318126199639, guid: 12f4011b2dfdc2b49af9e6a7e1e3a6d0, type: 3}
+  combatantUIElementsPrefab: {fileID: 4326425324054783595, guid: db9b4cb6acda89945a31687545fa1266, type: 3}
 --- !u!1 &1355351059
 GameObject:
   m_ObjectHideFlags: 0
@@ -5875,7 +5880,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d8c3d3b527b0ce4689ffc9206022df2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  encounterProbability: 80
+  encounterProbability: 20
   encounterInterval: 3
 --- !u!1 &1436869403
 GameObject:
@@ -9168,6 +9173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   creatureType: 0
   creatureBodyPrefab: {fileID: -3342884318126199639, guid: 12f4011b2dfdc2b49af9e6a7e1e3a6d0, type: 3}
+  combatantUIElementsPrefab: {fileID: 4326425324054783595, guid: db9b4cb6acda89945a31687545fa1266, type: 3}
 --- !u!1 &1782619143
 GameObject:
   m_ObjectHideFlags: 0
@@ -9214,6 +9220,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   creatureType: 1
   creatureBodyPrefab: {fileID: -3342884318126199639, guid: 12f4011b2dfdc2b49af9e6a7e1e3a6d0, type: 3}
+  combatantUIElementsPrefab: {fileID: 4326425324054783595, guid: db9b4cb6acda89945a31687545fa1266, type: 3}
 --- !u!1 &1788360726
 GameObject:
   m_ObjectHideFlags: 0

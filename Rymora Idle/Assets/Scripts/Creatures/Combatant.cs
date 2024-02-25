@@ -14,7 +14,8 @@ public class Combatant
     {
         get 
         {
-            int baseLife = 500;
+            // int baseLife = 500;
+            int baseLife = 100;
             int vitLife = Creature.Attributes.Get(Attribute.Vitality).GetValue(0) * 10;
             return baseLife + vitLife;
         }

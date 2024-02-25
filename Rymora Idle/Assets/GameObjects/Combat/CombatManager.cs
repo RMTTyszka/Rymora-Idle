@@ -141,7 +141,7 @@ public class CombatManager : MonoBehaviour
     {
         foreach (var creatureSpawner in HeroSpawners)
         {
-            creatureSpawner.Creature = null;
+            creatureSpawner.CreatureBody = null;
             foreach (Transform creature in creatureSpawner.transform)
             {
                 Destroy(creature.gameObject);

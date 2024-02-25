@@ -4,6 +4,7 @@ public class CreatureBody : MonoBehaviour
 {
     public Creature Creature { get; set; }
     public SpriteRenderer SpriteRenderer { get; set; }
+    public CharCanvas CombatantUIElements { get; set; }
     // Start is called before the first frame update
     void Awake()
     {

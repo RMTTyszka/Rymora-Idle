@@ -4,15 +4,19 @@ public class CreatureSpawner : MonoBehaviour
 {
     public CreatureType creatureType;
     public CreatureBody creatureBodyPrefab;
-    public CreatureBody Creature { get; set; }
+    public CharCanvas combatantUIElementsPrefab;
+    public CreatureBody CreatureBody { get; set; }
 
     public void InstantiateCreature(Creature creature)
     {
         Debug.Log($"Instantianting {creature.Name}");
-        Creature = Instantiate(creatureBodyPrefab, transform.position, transform.rotation, transform);
-        Creature.gameObject.layer = gameObject.layer;
-        Creature.SetImage(creature.Sprite);
-        Creature.Creature = creature;
+        CreatureBody = Instantiate(creatureBodyPrefab, transform.position, transform.rotation, transform);
+        CreatureBody.gameObject.layer = gameObject.layer;
+        CreatureBody.SetImage(creature.Sprite);
+        CreatureBody.Creature = creature;
+        CreatureBody.CombatantUIElements =
+            Instantiate(combatantUIElementsPrefab, transform.position, transform.rotation, transform);
+        CreatureBody.CombatantUIElements.SetCreature(CreatureBody.Creature);
     }
 
     // Start is called before the first frame update
@@ -34,6 +38,6 @@ public class CreatureSpawner : MonoBehaviour
 
     public void Clear()
     {
-        Destroy(Creature.gameObject);
+        Destroy(CreatureBody.gameObject);
     }
 }
