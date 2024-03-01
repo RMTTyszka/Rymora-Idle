@@ -6,22 +6,11 @@ using UnityEngine;
 public class Combatant
 {
     public Creature Creature { get; set; }
-    public int Life { get; set; }
     
     public float MainWeaponCooldown { get; set; }
     public float? SecondaryWeaponCooldown { get; set; }
-    public int MaxLife 
-    {
-        get 
-        {
-            // int baseLife = 500;
-            int baseLife = 100;
-            int vitLife = Creature.Attributes.Get(Attribute.Vitality).GetValue(0) * 10;
-            return baseLife + vitLife;
-        }
-    }
 
-    public float LifePercent => ((float)Life)/((float)MaxLife)*100;
+
     
     public Creature GetTargetForAutoAttack(List<Creature> enemies, List<Creature> allies)
     {
@@ -35,7 +24,7 @@ public class Combatant
     }
     public float GetAggro() {
         // Less health == More Aggro, and bonus
-        return ((1f-LifePercent)*10 + Creature.Properties.Get(Property.Threat).GetValue(0));
+        return ((1f-Creature.LifePercent)*10 + Creature.Properties.Get(Property.Threat).GetValue(0));
     }
 
     public int EvadeRoll(int level)
@@ -47,7 +36,7 @@ public class Combatant
         evadeRoll += ArmorData.DataByCategory[Creature.Equipment.Chest.Category].Evasion;
         return evadeRoll;
     }
-    public float Damage(Creature target, WeaponInstance weapon, bool isCrit) {
+    public int Damage(Creature target, WeaponInstance weapon, bool isCrit) {
         // Causa the damage, based on the attacker, the weapon and the target attributes
         var weaponDataByDamageCategory = WeaponData.DataByDamageCategory[weapon.DamageCategory];
         var weaponDataBySize = WeaponData.DataBySize[weapon.Size];
@@ -73,14 +62,14 @@ public class Combatant
         float total = wepDamage + charDamage - prot;
         total = total < 0 ? 0 : total;
         total *= isCrit ? 2f + Creature.Properties.Get(Property.CriticalDamage).GetValue()/100f : 1;
-        return total;
+        return (int)total;
     }
-    public void TakeDamage(float damage) {
+    public void TakeDamage(int damage) {
         if (Creature.IsAlive) {
             Debug.Log(Creature.Name + $" took {damage} damage");
-            Creature.Combatant.Life -= Mathf.RoundToInt(damage);
-            if (Creature.Combatant.Life < 0) {
-                Creature.Combatant.Life = 0;
+            Creature.Life -= Mathf.RoundToInt(damage);
+            if (Creature.Life < 0) {
+                Creature.Life = 0;
                 Debug.Log(Creature.Name + " has died");
                 /*this.sprite.GetComponent<SpriteRenderer>().color = Color.gray;
                 this.spriteOutline.enabled = false;*/
@@ -171,6 +160,8 @@ public class Combatant
     public BasicAttackResult Attack(WeaponInstance weapon, Creature target, bool isCounter)
     {
         var result = new BasicAttackResult();
+        result.Attacker = Creature;
+        result.Target = target;
         var weaponDataByDamageCategory = WeaponData.DataByDamageCategory[weapon.DamageCategory];
         var weaponDataBySize = WeaponData.DataBySize[weapon.Size];
         var hitRoll = Random.Range(1, 101);
@@ -180,15 +171,20 @@ public class Combatant
         hitRoll += (int)weaponDataBySize.HitModifier;
 
         var evadeRoll = target.EvadeRoll(Creature.Level);
-        if (hitRoll >= evadeRoll) {
+        if (hitRoll >= evadeRoll)
+        {
+            result.Hit = true;
             var isCrit = CriticalRoll(weapon, target);
+            result.Critical = isCrit;
             var damage = Damage(target ,weapon, isCrit);
+            result.Value = damage;
             target.TakeDamage(damage);
             Debug.Log($"{Creature.Name} has hit {target.Name} for {damage} damage" );
         } else if (!isCounter){
             var counterAttack = target.CheckForCounter(weapon, Creature);
             result.CounterAttack = counterAttack;
         }
+        
 
         return result;
     }

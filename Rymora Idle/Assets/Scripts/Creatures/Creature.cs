@@ -6,6 +6,20 @@ public class Creature
 {
     public string Name { get; set; }
     public int Level{ get; set; }
+    
+    public int MaxLife 
+    {
+        get 
+        {
+            // int baseLife = 500;
+            int baseLife = 100;
+            int vitLife = Attributes.Get(Attribute.Vitality).GetValue(0) * 10;
+            return baseLife + vitLife;
+        }
+    }
+    public float LifePercent => ((float)Life)/((float)MaxLife)*100;
+    public int Life { get; set; }
+
     public Inventory Inventory { get; set; } = new();
     public Equipment Equipment { get; set; } = new();
 
@@ -33,7 +47,7 @@ public class Creature
         creature.Sprite = creatureTemplate.sprite;
         creature.Equipment.Equip(WeaponInstance.FromTemplate(GameData.UnarmedWeapons.RandomElement(), level));
         creature.Equipment.Equip(ArmorInstance.FromTemplate(GameData.Armors.RandomElement(), level));
-        creature.Combatant.Life = creature.Combatant.MaxLife; 
+        creature.Life = creature.MaxLife; 
         return creature;
     }
     public List<BasicAttackResult> RunBasicAttackTurn(List<Creature> enemies, List<Creature> allies)
@@ -84,7 +98,7 @@ public class Creature
     }
 
 
-    public bool IsAlive => Combatant.Life > 0;
+    public bool IsAlive => Life > 0;
 
     private bool CriticalRoll(WeaponInstance weapon, Creature target)
     {
@@ -105,7 +119,7 @@ public class Creature
         return Combatant.Damage(target, weapon, isCrit);
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(int damage)
     {
         // TODO maibe notify animation?
         Combatant.TakeDamage(damage);
@@ -127,7 +141,12 @@ public class Creature
 
 public class BasicAttackResult
 {
+    public Creature Attacker { get; set; }
+    public Creature Target { get; set; }
+    public bool Critical { get; set; }
+    public bool Hit { get; set; }
     public BasicAttackResult CounterAttack { get; set; }
+    public float Value { get; set; }
 }
 
 public enum Slot

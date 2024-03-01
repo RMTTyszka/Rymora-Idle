@@ -503,7 +503,7 @@ GameObject:
   - component: {fileID: 4418519900993138193}
   - component: {fileID: 4326425324054783595}
   m_Layer: 17
-  m_Name: CharCanvas
+  m_Name: CombatantUIInstance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -579,7 +579,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &4418519900993138193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -614,6 +614,7 @@ MonoBehaviour:
   lifeBar: {fileID: 4414639913362797345}
   spiritsBar: {fileID: 7257530817819937115}
   effectManager: {fileID: 19001065107257549}
+  cBTpref: {fileID: 1004582292569814, guid: 0ebf899f7a22098429d9ce90421da096, type: 3}
 --- !u!1 &5097418155397466312
 GameObject:
   m_ObjectHideFlags: 0

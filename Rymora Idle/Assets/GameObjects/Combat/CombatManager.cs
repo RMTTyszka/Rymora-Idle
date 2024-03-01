@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Linq;
-using Global;
 using Heroes;
 using UnityEngine;
 
@@ -18,9 +17,38 @@ public class CombatManager : MonoBehaviour
     private List<CreatureSpawner> MonsterSpawners { get; set; } = new();
     private List<CreatureSpawner> AnimalSpawners { get; set; } = new();
 
+    public CreatureSpawner GetSpawner(Creature creature)
+    {
+        return HeroSpawners.Concat(MonsterSpawners).First(spawner => spawner.CreatureBody?.Creature == creature);
+    }
+
     public void BasicAttackPerformed(BasicAttackResult attackResult)
     {
+        var target = GetSpawner(attackResult.Target);
+        if (attackResult.Hit)
+        {
+            target.CreatureBody.CombatantUIElements.InitCBT(attackResult.Value.ToString(), GetAttackTrigger(attackResult), false);
+        }
+
+        if (attackResult.CounterAttack is not null)
+        {
+            var counterTarget = GetSpawner(attackResult.CounterAttack.Target);
+            counterTarget.CreatureBody.CombatantUIElements.InitCBT(attackResult.CounterAttack.Value.ToString(), GetAttackTrigger(attackResult.CounterAttack), false);
+        }
+
         Events.Add(new CombatEvent());
+    }
+
+    private CbtTriggerType GetAttackTrigger(BasicAttackResult attackResult)
+    {
+        if (attackResult.Hit && attackResult.Critical)
+        {
+            return CbtTriggerType.CriticalDamage;
+        }
+        else
+        {
+            return CbtTriggerType.Damage;
+        }
     }
 
     public CombatInstance StartCombat(Party party, Encounter encounter, int level)

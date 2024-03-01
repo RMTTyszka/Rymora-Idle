@@ -4,7 +4,7 @@ public class CreatureSpawner : MonoBehaviour
 {
     public CreatureType creatureType;
     public CreatureBody creatureBodyPrefab;
-    public CharCanvas combatantUIElementsPrefab;
+    public CombatantUI combatantUIElementsPrefab;
     public CreatureBody CreatureBody { get; set; }
 
     public void InstantiateCreature(Creature creature)
