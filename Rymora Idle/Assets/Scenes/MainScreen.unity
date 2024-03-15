@@ -4015,6 +4015,7 @@ GameObject:
   - component: {fileID: 1086826853}
   - component: {fileID: 1086826854}
   - component: {fileID: 1086826856}
+  - component: {fileID: 1086826857}
   m_Layer: 10
   m_Name: Party1
   m_TagString: Player
@@ -4118,6 +4119,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {x: 0, y: 0, z: 0}
   waypoint: {x: 0, y: 0, z: 0}
+--- !u!114 &1086826857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086826851}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd7ee898df89f3a4bbf28ddc47dc25ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Rows:
+  - test: 0
+    condition: 0
+    value: 0
 --- !u!1 &1106335823
 GameObject:
   m_ObjectHideFlags: 0
