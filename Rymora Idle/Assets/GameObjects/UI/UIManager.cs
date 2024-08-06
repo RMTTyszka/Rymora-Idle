@@ -4,6 +4,7 @@ using UnityEngine.Serialization;
 public class UIManager : MonoBehaviour
 {
     public GameObject statusContainer;
+    public GameObject strategyContainer;
     public GameObject heroDetailsContainer;
     public GameManager GameManager { get; set;}
     public Camera worldCamera;
@@ -24,5 +25,9 @@ public class UIManager : MonoBehaviour
         GameManager.CurrentScreen = !combatCamera.gameObject.activeSelf ? ScreenState.Combat : ScreenState.Map;
         worldCamera.gameObject.SetActive(!worldCamera.gameObject.activeSelf);
         combatCamera.gameObject.SetActive(!combatCamera.gameObject.activeSelf);
+    }    
+    public void ToggleStrategy()
+    {
+        strategyContainer.SetActive(!strategyContainer.activeSelf);
     }
 }

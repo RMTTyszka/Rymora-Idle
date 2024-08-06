@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CombatActionController : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public enum CombatActionValues {_100 = 100, _90 = 90,  _80 = 80, _70 = 70, _60 =
 [System.Serializable]
 public class CombatActionRow {
 
-    public CombatActionTargetProperty test;
+    public CombatActionTargetProperty targetProperty;
     public CombatActionCondition condition;
     public CombatActionValues value;
     public CombatActionRow(string targets, string tests, string conditions, string values, string power ) 
