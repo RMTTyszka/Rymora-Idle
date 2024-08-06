@@ -36,7 +36,7 @@ public class CombatActionMenu : MonoBehaviour
 
     }
 
-    public void PropertySelected(int property)
+    public void PropertySelected(string property)
     {
         CombatAction.targetProperty = PropertyByName[property];
     }

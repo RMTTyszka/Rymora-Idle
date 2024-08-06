@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour {
         }
 
         if (Input.GetKeyDown(KeyCode.Space)) {
-            rb.velocity = new Vector2(rb.velocity.x, 10);
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, 10);
         }
 
         rb.AddForce(new Vector2(x, 0));
