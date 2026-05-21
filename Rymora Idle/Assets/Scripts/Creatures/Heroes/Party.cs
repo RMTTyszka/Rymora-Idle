@@ -17,8 +17,8 @@ namespace Heroes
         public CombatManager CombatManager { get; set; }
         public Creature Hero => Members.FirstOrDefault();
         public Inventory LootBag { get; set; } = new();
-        [SerializeField]
-        public List<Creature> Members { get; set; } = new();
+        [field: SerializeField]
+        public List<Creature> Members { get; private set; } = new();
 
         public List<Vector3> WayPoints;
         public MapMover Move { get; set; }
