@@ -1,0 +1,77 @@
+<h2>Mapa + combate: qual hibrido encaixa melhor?</h2>
+<p class="subtitle">Clique numa opcao se quiser. Tambem pode responder no terminal com ajustes.</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="height:220px;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px;background:#17202a;border-radius:8px;color:#d7e7dd">
+        <div style="position:relative;background:#203b31;border-radius:6px;overflow:hidden">
+          <div style="position:absolute;left:18px;top:24px;width:54px;height:34px;background:#7aa46d;border-radius:4px"></div>
+          <div style="position:absolute;left:98px;top:62px;width:62px;height:40px;background:#967248;border-radius:4px"></div>
+          <div style="position:absolute;left:34px;top:134px;width:72px;height:42px;background:#355d8a;border-radius:4px"></div>
+          <div style="position:absolute;left:18px;top:24px;width:180px;border-top:3px solid #d2b878;transform:rotate(24deg);transform-origin:left"></div>
+          <div style="position:absolute;right:18px;bottom:18px;width:26px;height:26px;background:#e6d78a;border-radius:50%"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="height:30px;background:#2f4355;border-radius:4px"></div>
+          <div style="height:78px;background:#3f2c30;border-radius:4px"></div>
+          <div style="height:78px;background:#2d3944;border-radius:4px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. Top-down vivo + painel lateral</h3>
+      <p>Herois aparecem andando no mapa. Painel mostra combate, viagem, profissao e condicoes.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="height:220px;display:grid;grid-template-rows:1fr 70px;gap:10px;padding:10px;background:#17202a;border-radius:8px;color:#d7e7dd">
+        <div style="position:relative;background:#223646;border-radius:6px;overflow:hidden">
+          <div style="position:absolute;left:32px;top:44px;width:36px;height:36px;background:#6fb06e;border-radius:50%"></div>
+          <div style="position:absolute;left:148px;top:28px;width:36px;height:36px;background:#b08b54;border-radius:50%"></div>
+          <div style="position:absolute;left:250px;top:96px;width:36px;height:36px;background:#8b5fb5;border-radius:50%"></div>
+          <div style="position:absolute;left:68px;top:60px;width:95px;border-top:4px solid #d2b878;transform:rotate(-8deg);transform-origin:left"></div>
+          <div style="position:absolute;left:182px;top:48px;width:90px;border-top:4px solid #d2b878;transform:rotate(34deg);transform-origin:left"></div>
+          <div style="position:absolute;left:136px;top:128px;width:40px;height:32px;background:#e6d78a;border-radius:4px"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+          <div style="background:#3f2c30;border-radius:4px"></div>
+          <div style="background:#2d4538;border-radius:4px"></div>
+          <div style="background:#2d3944;border-radius:4px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. Mapa de nos + telas por atividade</h3>
+      <p>Mapa estrategico controla viagem. Combate, dungeon e profissao abrem telas proprias.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="height:220px;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:10px;background:#17202a;border-radius:8px;color:#d7e7dd">
+        <div style="position:relative;background:#203b31;border-radius:6px;overflow:hidden">
+          <div style="position:absolute;left:16px;top:30px;width:54px;height:34px;background:#7aa46d;border-radius:4px"></div>
+          <div style="position:absolute;left:104px;top:84px;width:62px;height:38px;background:#967248;border-radius:4px"></div>
+          <div style="position:absolute;left:40px;top:150px;width:80px;height:38px;background:#355d8a;border-radius:4px"></div>
+          <div style="position:absolute;right:20px;top:22px;width:28px;height:28px;background:#e6d78a;border-radius:50%"></div>
+        </div>
+        <div style="display:grid;grid-template-rows:55px 1fr 45px;gap:8px">
+          <div style="background:#2f4355;border-radius:4px"></div>
+          <div style="background:#3f2c30;border-radius:4px;position:relative">
+            <div style="position:absolute;left:24px;top:48px;width:32px;height:32px;background:#6fb06e;border-radius:50%"></div>
+            <div style="position:absolute;right:24px;top:48px;width:32px;height:32px;background:#b55f5f;border-radius:50%"></div>
+            <div style="position:absolute;left:72px;right:72px;top:62px;border-top:3px solid #d2b878"></div>
+          </div>
+          <div style="background:#2d4538;border-radius:4px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. Tela dividida persistente</h3>
+      <p>Mapa fica sempre visivel. Atividade atual fica ao lado, bom para acompanhar automacoes.</p>
+    </div>
+  </div>
+</div>
