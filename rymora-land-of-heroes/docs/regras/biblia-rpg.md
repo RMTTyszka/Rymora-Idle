@@ -97,11 +97,12 @@ Inconsistencia do prototipo:
 
 - O prototipo antigo possui nivel de heroi, mas nao confirma que o nivel seja calculado pelo total de pontos em atributos e pericias.
 
+Confirmado:
+
+- Sistema completo de morte mantido: party morta volta ao safe spot, heroi vira fantasma, precisa ir a igreja para reviver, corpo fica disponivel temporariamente no local da morte para recuperar itens.
+
 Decisao pendente:
 
-- Definir quais racas existem.
-- Definir quantos pontos o jogador distribui ao criar cada heroi.
-- Definir a formula que calcula o nivel do heroi a partir dos pontos em atributos e pericias.
 - Definir por quanto tempo o corpo fica disponivel para recuperar itens.
 - Definir o que acontece com os itens que nao forem recuperados a tempo.
 
@@ -123,13 +124,18 @@ Confirmado:
 - Agility participa de armas perfurantes, ranged e evasao.
 - Wisdom participa do dano de catalyst.
 - Intuition participa do acerto de catalyst.
-- Charisma existe como atributo, mas seu uso nao esta confirmado.
+- Charisma existe como atributo.
+- Charisma usado com Mercantilism (lojas, precos, negociacao).
+- Charisma pode ser usado para pericias de bardo no futuro (SpiritSpeaking e afins).
+
+Confirmado:
+
+- Nomes finais em ingles: Strength, Agility, Vitality, Wisdom, Intuition, Charisma.
 
 Decisao pendente:
 
-- Definir os nomes finais em portugues, ingles ou ambos.
-- Definir se os nomes devem ser traduzidos para Forca, Agilidade, Vitalidade, Sabedoria, Intuicao e Carisma.
-- Definir se Charisma tera uso social, comercial, lideranca, recrutamento, magia ou outro papel.
+- Definir regras exatas de interacao social (Charisma + Mercantilism).
+- Definir pericias de bardo e relacao com Charisma.
 - Definir os valores iniciais dos atributos.
 - Definir limites minimos e maximos dos atributos.
 
@@ -189,12 +195,20 @@ Inconsistencia do prototipo:
 - Swordmanship provavelmente precisa de validacao de grafia.
 - Heavyweaponship provavelmente precisa de validacao de grafia.
 
+Confirmado:
+
+- Nomes finais em ingles: Alchemy, Anatomy, AnimalTaming, Archery, Armorcrafting, Armslore, Awareness, Bowcrafting, Carpentery, Fencing, Gathering, Healing, Heavyweaponship, Jewelcrafting, Leatherworking, Lore, Lumberjacking, Magery, Mercantilism, Military, Mining, Parry, Reflex, ResistSpells, Skinning, Stealth, Swordmanship, SpiritSpeaking, Tactics, Tailoring, Wrestling.
+
+Confirmado:
+
+- Todas as 31 pericias entram na primeira versao do jogo.
+- Progressao por uso (confirmado anteriormente).
+
 Decisao pendente:
 
-- Definir nomes finais das pericias.
+- Validar grafia de Carpentery, Swordmanship, Heavyweaponship.
 - Definir quais pericias serao de combate, coleta, fabricacao, magia, sobrevivencia, social ou conhecimento.
-- Definir se todas as pericias ja entram na primeira versao do jogo.
-- Definir se pericias aumentam por uso, por treinamento, por nivel, por itens ou por outro meio.
+- Definir valores iniciais de cada pericia.
 
 ## Propriedades
 
@@ -294,10 +308,14 @@ Confirmado:
 - Pericias usam dificuldade menor que atributos no prototipo.
 - O valor efetivo e baseado em pontos divididos por um modificador.
 
+Confirmado:
+
+- Progressao por uso sera mantida.
+- Atributos aumentam por uso.
+- Pericias aumentam por uso.
+
 Decisao pendente:
 
-- Definir se a progressao por uso sera mantida.
-- Definir se atributos tambem aumentam por uso ou apenas pericias.
 - Definir se propriedades podem evoluir naturalmente ou somente por bonus/equipamentos.
 - Definir os valores finais de dificuldade e progressao.
 - Definir se havera limite de progressao.
@@ -341,11 +359,17 @@ Confirmado:
 - A transferencia de itens entre parties exige que as duas parties estejam no mesmo local.
 - Uma party sem heroi pode transferir itens se outra party estiver no mesmo local.
 
+Confirmado:
+
+- Inventario pertence a party.
+- Heroi leva somente equipamento ao mudar de party.
+- Transferencia manual de itens entre parties exige mesma localizacao.
+- Itens iguais sao agrupaveis por nome e nivel.
+
 Decisao pendente:
 
 - Definir limite de peso.
 - Definir limite de espacos.
-- Definir se itens iguais empilham automaticamente.
 - Definir se peso afeta movimento, combate ou coleta.
 
 ## Equipamentos
@@ -421,9 +445,12 @@ Confirmado:
 - None usa Wrestling para acerto, Vitality para acerto e Vitality para dano.
 - Smashing usa Heavyweaponship para acerto, Vitality para acerto e Strength para dano.
 
+Confirmado:
+
+- Nomes finais em ingles: Smashing, Piercing, Cutting, Catalyst, None, Ranged, Thrown.
+
 Decisao pendente:
 
-- Definir nomes finais das categorias.
 - Definir se Catalyst representa cajados, varinhas, focos magicos ou outro item.
 - Definir se None significa desarmado, improvisado ou criatura natural.
 - Definir valores finais de dano, velocidade, acerto, penetracao e contra-ataque.
@@ -504,16 +531,19 @@ Confirmado:
 - Madeira confirmada:
   - Oak: nivel 1, peso 4.
 
+Confirmado:
+
+- Lista atual mantida provisionalmente: Iron (nvl1), Bronze (nvl2), Copper (nvl3), Silver (nvl4), Gold (nvl5), Mythril (nvl6), Oak (nvl1).
+- Bronze e minerio bruto (nao resultado de crafting).
+- Expansao de madeiras adiada.
+
 Inconsistencia do prototipo:
 
 - Wood aparece agrupado junto dos metais no prototipo antigo.
 
 Decisao pendente:
 
-- Definir a lista final de madeiras.
-- Definir se Bronze deve ser minerado diretamente ou produzido por fabricacao.
-- Definir se Copper deve vir antes de Bronze na progressao.
-- Definir se peso e nivel dos materiais serao mantidos.
+- Definir peso e nivel finais dos materiais.
 - Definir usos de cada material em fabricacao.
 
 ## Terrenos
@@ -726,9 +756,14 @@ Confirmado:
 - AttackSpeed acelera a recuperacao dos ataques.
 - PowerAttack existe como conceito, mas sua regra ainda nao esta definida.
 
+Confirmado:
+
+- Combate e automatico por cooldown. Cada personagem ataca quando a recarga da arma termina.
+- Arma principal e secundaria possuem recargas independentes.
+- AttackSpeed acelera a recarga.
+
 Decisao pendente:
 
-- Definir se combate e automatico, por ordens, por prioridades ou por habilidades programadas.
 - Definir se existe posicionamento em combate.
 - Definir se party pode fugir.
 - Definir se derrota encerra a viagem ou gera penalidade adicional.
@@ -818,10 +853,14 @@ Confirmado:
   - penetracao da arma;
   - ArmorPenetration.
 
+Confirmado:
+
+- Estrutura geral de combate do legado mantida: hitRoll vs evadeRoll, dano combinando skill + atributo + arma, critico por chance com Critical/Resiliense, contra-ataque por Counter.
+- Valores numericos serao ajustados depois (balanceamento).
+
 Decisao pendente:
 
-- Definir formula final de dano.
-- Definir se dano deve ser inteiro ou pode ser decimal.
+- Definir se dano deve ser inteiro ou decimal.
 - Definir se dano zero ainda conta como acerto.
 - Definir se existe tipo de dano alem da categoria da arma.
 
@@ -956,12 +995,17 @@ Confirmado:
 - Regioes podem ser safe spot.
 - Party morta tenta voltar para o ponto seguro mais proximo.
 
+Confirmado:
+
+- City e safe spot: sem encontros, cura party ao entrar, potencial para lojas (regras de loja adiadas).
+- Regioes podem ser safe spot (sem encontros).
+- Dungeons existem como locais no mapa com encontros fixos, sem andares separados na primeira versao.
+- Dungeon nao interrompe viagem permanente - party entra, enfrenta encontros, sai ao vencer ou morrer.
+
 Decisao pendente:
 
-- Definir o que existe em uma cidade.
-- Definir se lojas vendem itens, compram materiais, oferecem treinamento ou contratam herois.
-- Definir como pontos seguros sao encontrados.
-- Definir se ponto seguro cura, revive ou apenas protege.
+- Definir regras detalhadas de lojas.
+- Definir como pontos seguros sao encontrados (safe spot fixo ou mais proximo).
 
 ## Fabricacao e Economia
 
@@ -981,9 +1025,13 @@ Confirmado:
 - Existem materiais que podem servir para fabricacao.
 - Mercantilism existe como pericia.
 
+Confirmado:
+
+- Crafting fica so no plano para primeira versao. Regras e receitas serao definidas, mas nao implementadas.
+- Coleta de materiais funciona, mas sem uso de crafting por enquanto.
+
 Decisao pendente:
 
-- Definir se fabricacao entra na primeira versao.
 - Definir receitas.
 - Definir se qualidade do material afeta qualidade do item.
 - Definir se Mercantilism afeta preco, negociacao, lojas ou producao.
@@ -1021,20 +1069,59 @@ Estas informacoes existem no prototipo antigo, mas nao devem virar regra final s
 - A formula de aggro precisa ser validada contra a intencao de design.
 - Bronze aparece como material bruto mineravel, mas pode precisar virar resultado de fabricacao.
 
-## Decisoes Pendentes Prioritarias
+## Decisoes Tomadas
 
-Antes do documento sobre a organizacao interna do projeto, as decisoes mais importantes sao:
+1. [Confirmado] Idioma: ingles mantido.
+2. [Adiado] Propriedades (PowerAttack, SpiritPoints, etc): manter todas, definir funcao depois.
+3. [Confirmado] Progressao: por uso (atributos e pericias).
+4. [Confirmado] Combate: automatico por cooldown, formulas do legado mantidas (valores ajustaveis depois).
+5. [Confirmado] Morte: sistema completo (fantasma, igreja, recuperacao de corpo).
+6. [Confirmado] Inventario: por party.
+7. [Confirmado] Materiais: lista atual mantida provisionalmente.
+8. [Confirmado] Cidades: safe spot + lojas (regras adiadas). Dungeon: encontros fixos sem andares.
+9. [Confirmado] Crafting: so planejamento, sem implementar na primeira versao.
+10. [Confirmado] Idle puro na v1. ValiantPoints como recurso do jogador (detalhamento adiado).
 
-1. Idioma final dos nomes de atributos, pericias, propriedades, itens e categorias.
-2. Significado de PowerAttack, PowerDefense, SpiritPoints, ValiantPoints, Reaction e Life.
-3. Regra final de progressao por uso.
-4. Formula final de combate.
-5. Regras finais de morte e retorno a ponto seguro.
-6. Estrutura final de inventario: por heroi, por party ou compartilhado.
-7. Lista final de materiais, especialmente madeiras.
-8. Significado final de cidades, regioes, pontos seguros e dungeons.
-9. Se fabricacao entra na primeira versao jogavel.
-10. Se o jogo sera idle, semi-idle ou comandado com interacoes frequentes.
+## Decisoes Pendentes Ainda Validas
+
+- Definir funcao de PowerAttack, PowerDefense, SpiritPoints, ValiantPoints, Reaction, Life.
+- Definir valores iniciais e limites de atributos.
+- Validar grafia de Carpentery, Swordmanship, Heavyweaponship.
+- Definir categorias das pericias (combate, coleta, fabricacao, magia, sobrevivencia, social, conhecimento).
+- Definir valores iniciais de cada pericia.
+- Definir regras exatas de interacao social (Charisma + Mercantilism).
+- Definir pericias de bardo e relacao com Charisma.
+- Definir se propriedades evoluem naturalmente ou so por bonus/equipamentos.
+- Definir valores finais de dificuldade e progressao.
+- Definir se ha limite de progressao.
+- Definir se dano e inteiro ou decimal.
+- Definir se dano zero conta como acerto.
+- Definir tempo de disponibilidade do corpo apos morte.
+- Definir destino dos itens nao recuperados do corpo.
+- Definir limite de peso e espacos do inventario.
+- Definir se peso afeta movimento, combate ou coleta.
+- Definir valores finais dos materiais.
+- Definir usos de cada material em crafting.
+- Definir regras detalhadas de lojas.
+- Definir se ponto seguro e fixo ou o mais proximo.
+- Definir receitas de crafting.
+- Definir se qualidade do material afeta qualidade do item.
+- Definir funcao de Mercantilism.
+
+## Idle
+
+Confirmado:
+
+- Primeira versao: idle puro. Jogador programa acoes e alterna entre grupos.
+- Futuro possivel: interacao do jogador durante execucao de profissoes pode acelerar a acao (nao decidido).
+
+## Valiant Points
+
+Confirmado:
+
+- ValiantPoints: recurso em nivel de jogador (nao de party nem de heroi).
+- ValiantPoints podem ser usados para dar acoes extras em combate.
+- Conceito planejado, detalhamento adiado.
 
 ## Regra de Governanca deste Documento
 
