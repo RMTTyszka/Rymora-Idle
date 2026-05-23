@@ -15,6 +15,25 @@ Este documento define a arquitetura do jogo Rymora Land of Heroes, construido do
 
 Para cada regra de negocio, consulte a biblia. Para detalhes tecnicos por dominio, consulte os arquivos especificos em `docs/arquitetura/`.
 
+## 1.1 Diretriz de prototipo
+
+O prototipo deve buscar ficar o mais proximo possivel do resultado final, mesmo que isso torne o desenvolvimento mais lento.
+
+Preferir:
+- estruturas que possam evoluir para a versao final.
+- adapters reais em vez de simulacoes descartaveis.
+- UI provisoria que siga o fluxo final do jogador.
+- regras implementadas no Core, nao em scripts de demo.
+- dados configuraveis quando valores ainda estao pendentes.
+
+Evitar:
+- hacks feitos apenas para "ver funcionando".
+- caminhos temporarios que precisem ser jogados fora logo depois.
+- duplicar regra no Godot para acelerar visual.
+- criar comportamento diferente do produto final sem marcar explicitamente como provisorio.
+
+Quando houver conflito entre velocidade e fidelidade ao produto final, escolher fidelidade, desde que o escopo continue pequeno e verificavel.
+
 ---
 
 ## 2. Stack
@@ -27,6 +46,12 @@ Para cada regra de negocio, consulte a biblia. Para detalhes tecnicos por domini
 | Renderizacao | Forward Plus (padrao Godot 4) |
 
 O projeto e 2D topdown. Duas telas: mapa (exploracao) e combate. Nao havera uso de fisica 3D, cameras 3D ou mesh 3D.
+
+Projetos C# atuais:
+
+- `Rymora-Land-of-Heroes.csproj`: adapter Godot, scripts e cenas.
+- `src/Core/RymoraLandOfHeroes.Core.csproj`: regras puras, sem Godot.
+- `src/Tests/RymoraLandOfHeroes.Core.Tests.csproj`: testes xUnit do Core.
 
 ---
 
@@ -74,6 +99,7 @@ Nenhum dominio pode importar ou depender de outro dominio no nivel de codigo Cor
 - Todo codigo em `src/Core/` e C# puro (`.cs` files sem referencias Godot).
 - Todo codigo em `src/Godot/` sao adaptadores, presenters, spawners que referenciam Godot.
 - O Core nunca referencia Godot. Adaptadores Godot referenciam Core.
+- O Core nao usa tipos Godot (`Vector2I`, `Node`, `Resource`, `Texture2D`). Usar tipos proprios como `TilePosition` e `SpriteReference`; adaptadores convertem para tipos Godot.
 
 ### 5.2 Eventos
 
@@ -152,4 +178,5 @@ Detalhes do fluxo de inicializacao serao definidos em `docs/arquitetura/aplicaca
 - `docs/arquitetura/ui.md` - telas, input, HUD
 - `docs/arquitetura/dados.md` - save, config
 - `docs/arquitetura/aplicacao.md` - bootstrap, casos de uso
+- `docs/arquitetura/testes.md` - padrao de testes e ObjectMother
 - Projeto Unity legado em `../Rymora Idle/` - referencia de comportamento

@@ -40,8 +40,10 @@ Formula exata: adiada (decisao pendente).
 ### 2.2 MaxLife
 
 ```
-MaxLife = 100 + Vitality.GetValue(0) * 10
+MaxLife = lifeConfig.BaseLife + Vitality.GetValue(0) * lifeConfig.VitalityLifeMultiplier
 ```
+
+`BaseLife` e `VitalityLifeMultiplier` devem vir de configuracao de balanceamento. Valores como `100` e `10` sao provisorios, nao constantes de regra final.
 
 ---
 
@@ -73,8 +75,8 @@ public sealed class AttributeInstance
 }
 ```
 
-- Comeca com 5 pontos.
-- Divisor: 5 (valor efetivo = Points / 5).
+- Pontos iniciais vem de `ProgressionConfig.InitialAttributePoints` (valor provisorio: 5).
+- Divisor vem de `ProgressionConfig.AttributeValueDivisor` (valor provisorio: 5).
 - Bonus por tipo: Innate, Magic, Equipment, Food, Furniture.
 
 ### 3.2 Papeis dos atributos
@@ -106,8 +108,8 @@ public sealed class SkillInstance
 }
 ```
 
-- Comeca com 5 pontos.
-- Divisor: 5.
+- Pontos iniciais vem de `ProgressionConfig.InitialSkillPoints` (valor provisorio: 5).
+- Divisor vem de `ProgressionConfig.SkillValueDivisor` (valor provisorio: 5).
 - Progressao por uso.
 
 ### 4.2 Lista de pericias (31)
@@ -133,7 +135,7 @@ public sealed class PropertyInstance
 ```
 
 - Comeca com 0 pontos.
-- Normalmente sobem apenas por bonus/equipamentos.
+- Na v1, propriedades sobem apenas por bonus/equipamentos ate decisao final sobre evolucao natural.
 
 ### 5.2 Lista de propriedades
 
@@ -253,7 +255,7 @@ Formula exata: adiada.
    - nao pode coletar.
    - nao pode entrar em combate.
    - precisa ir ate uma igreja (City) para reviver.
-4. Corpo fica no local da morte por tempo limitado:
-   - outra party pode ir ate o local para recuperar itens.
+4. Corpo ou container de loot da party morta fica no local da morte por tempo limitado:
+   - outra party pode ir ate o local para recuperar itens do inventario da party morta.
    - itens nao recuperados a tempo: definicao adiada.
 5. Ao reviver na igreja, heroi recupera vida e volta ao normal.

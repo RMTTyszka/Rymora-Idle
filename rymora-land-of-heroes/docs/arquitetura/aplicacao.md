@@ -22,18 +22,33 @@ Application nao possui:
 O fluxo de inicializacao:
 
 1. Godot carrega cena principal (`Bootstrap.tscn`).
-2. `Bootstrap` (adaptador Godot) executa `Application.Initialize()`.
-3. Content loaders carregam catalogos (armas, armaduras, monstros, encontros).
-4. World adapter le o tilemap e popula `WorldState`.
+2. `Bootstrap` (adaptador Godot) carrega config/conteudo JSON.
+3. Content loaders montam catalogos runtime (armas, materiais, criaturas, encontros, terrain tiles).
+4. World adapter le o tilemap usando catalogo de terrain tiles e popula `WorldState`.
 5. Party registry cria as parties com herois iniciais.
 6. Estado inicial: `CurrentScreen = Map`, `SelectedParty = Party1`.
 7. Presenters sincronizam com estado inicial.
+
+Implementacao inicial existente:
+
+- Cena principal: `scenes/bootstrap.tscn`.
+- Script Godot: `src/Godot/Bootstrap/Bootstrap.cs`.
+- Factory de bootstrap Core: `src/Godot/Bootstrap/BootstrapCoreFactory.cs`.
+- Loader JSON: `src/Godot/Content/JsonGameContentLoader.cs`.
+- Catalogos runtime: `src/Godot/Content/GameContent.cs`.
+- World adapter: `src/Godot/World/WorldTileMapAdapter.cs`.
+- Demo tilemap builder: `src/Godot/World/DemoTileMapBuilder.cs`.
+- Party presenter: `src/Godot/Presentation/PartyPresenter.cs`.
+- Combat presenter: `src/Godot/Presentation/CombatPresenter.cs`.
+- Projeto Godot C#: `Rymora-Land-of-Heroes.csproj`, referenciando `src/Core/RymoraLandOfHeroes.Core.csproj`.
+
+O bootstrap atual e uma prova de integracao finalista: carrega JSON de config/conteudo, cria mapa em `TileMapLayer` se a cena estiver vazia, converte esse mapa para `WorldState`, cria `GameApplication`, seleciona `party-1`, enfileira uma acao `Mine` usando material do catalogo e imprime no console quando o Core adiciona o item ao inventario da party.
 
 ---
 
 ## 3. Casos de uso
 
-Casos de uso sao metodos em `Application` que coordenam multiplos dominios.
+Casos de uso sao metodos em `GameApplication` que coordenam multiplos dominios.
 
 ### 3.1 SelectParty
 
@@ -82,9 +97,10 @@ Casos de uso sao metodos em `Application` que coordenam multiplos dominios.
 
 ```
 1. Limpa fila de acoes da Party.
-2. World.FindNearestSafeSpot(Position).
-3. Enfileira Travel ate o safe spot.
-4. Marca herois como fantasma.
+2. World.FindNearestSafeSpotPosition(Position).
+3. Limpa combate ativo.
+4. Move party para safe spot na v1.
+5. Estado de fantasma/igreja fica para refinamento do dominio Hero.
 ```
 
 ---
@@ -94,14 +110,14 @@ Casos de uso sao metodos em `Application` que coordenam multiplos dominios.
 O Application e atualizado pelo Godot a cada frame:
 
 ```
-Application.Update(float deltaTime):
+GameApplication.Update(float deltaTime):
     para cada Party:
         se Party.IsInCombat:
             RunCombatTurn(party, deltaTime)
-        senao se Party.IsAlive:
-            RunPartyActions(party, deltaTime)
+        senao se Party.IsDefeated:
+            HandlePartyDeath(party)
         senao:
-            RunDeathReturn(party)
+            RunPartyActions(party, deltaTime)
 ```
 
 ---
@@ -109,15 +125,16 @@ Application.Update(float deltaTime):
 ## 5. Estrutura
 
 ```csharp
-public sealed class Application
+public sealed class GameApplication
 {
     public WorldState World { get; }
     public PartyRegistry Parties { get; }
     public UIState UI { get; }
+    public GameConfig Config { get; }
 
-    public void Initialize(GameConfig config, IWeaponCatalog weapons, ...);
+    public GameApplication(WorldState world, IEnumerable<Party> parties, GameConfig config, Func<CreatureTemplate, Creature> monsterFactory);
     public void SelectParty(string partyId);
-    public void EnqueueAction(string partyId, ActionRequest request);
+    public bool EnqueueAction(string partyId, PartyActionRequest request);
     public void Update(float deltaTime);
     public void HandleInput(PlayerIntent intent);
 }

@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Hero",
+    "baseLife": 100,
+    "vitalityLifeMultiplier": 10,
+    "mainHandWeapon": "Training Sword"
+  },
+  {
+    "name": "Goblin",
+    "baseLife": 28,
+    "vitalityLifeMultiplier": 0,
+    "mainHandWeapon": "Goblin Claws"
+  }
+]

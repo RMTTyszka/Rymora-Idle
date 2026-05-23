@@ -1,0 +1,55 @@
+[gd_scene load_steps=7 format=3 uid="uid://bq5h3q3ph1yfe"]
+
+[ext_resource type="Script" path="res://src/Godot/Bootstrap/Bootstrap.cs" id="1_bootstrap"]
+[ext_resource type="Script" path="res://src/Godot/World/DemoTileMapBuilder.cs" id="2_demo_map_builder"]
+[ext_resource type="Script" path="res://src/Godot/World/WorldTileMapAdapter.cs" id="3_world_adapter"]
+[ext_resource type="Script" path="res://src/Godot/Presentation/PartyPresenter.cs" id="4_party_presenter"]
+[ext_resource type="Script" path="res://src/Godot/Presentation/CombatPresenter.cs" id="5_combat_presenter"]
+[ext_resource type="Script" path="res://src/Godot/Presentation/HudPresenter.cs" id="6_hud_presenter"]
+
+[node name="Bootstrap" type="Node2D"]
+script = ExtResource("1_bootstrap")
+
+[node name="TerrainLayer" type="TileMapLayer" parent="."]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(48, 0)
+zoom = Vector2(0.8, 0.8)
+enabled = true
+
+[node name="DemoTileMapBuilder" type="Node" parent="."]
+script = ExtResource("2_demo_map_builder")
+
+[node name="WorldTileMapAdapter" type="Node" parent="."]
+script = ExtResource("3_world_adapter")
+
+[node name="PartyPresenter" type="Node2D" parent="."]
+script = ExtResource("4_party_presenter")
+
+[node name="CombatLayer" type="CanvasLayer" parent="."]
+
+[node name="CombatPresenter" type="Node2D" parent="CombatLayer"]
+visible = false
+script = ExtResource("5_combat_presenter")
+
+[node name="UiLayer" type="CanvasLayer" parent="."]
+
+[node name="Hud" type="PanelContainer" parent="UiLayer"]
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 332.0
+offset_bottom = 160.0
+script = ExtResource("6_hud_presenter")
+
+[node name="Margin" type="MarginContainer" parent="UiLayer/Hud"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Label" type="Label" parent="UiLayer/Hud/Margin"]
+layout_mode = 2
+text = "HUD"
+
+[node name="ContextMenu" type="PopupMenu" parent="UiLayer"]

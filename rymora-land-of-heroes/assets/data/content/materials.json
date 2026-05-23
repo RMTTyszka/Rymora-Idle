@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Iron",
+    "level": 1,
+    "weight": 3
+  },
+  {
+    "name": "Oak",
+    "level": 1,
+    "weight": 4
+  }
+]

@@ -1,3 +1,15 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# .NET
+bin/
+obj/
+
+# Godot generated script UIDs for C# source
+*.cs.uid
+
+# Parent Unity .gitignore ignores C# projects; this Godot project needs them
+!src/**/*.csproj
+!*.csproj
+!*.sln

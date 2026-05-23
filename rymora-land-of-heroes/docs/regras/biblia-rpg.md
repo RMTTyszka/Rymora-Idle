@@ -41,9 +41,10 @@ Confirmado:
 - O jogador seleciona uma party por vez.
 - Ao selecionar uma party, o jogador pode controla-la e programar suas acoes.
 - O jogador pode trocar a party selecionada e prosseguir controlando outra party.
-- Cada party possui um heroi principal.
+- Cada party com pelo menos um heroi possui um heroi principal.
 - O jogo tera somente tres herois ate o final.
 - Um heroi pode entrar na party de outro heroi.
+- Uma party pode ter zero, um ou mais herois.
 - Se uma party fica sem heroi, ela fica parada.
 - Uma party sem heroi so pode ser usada para consultar seu inventario e ajustar sua programacao de acoes.
 - Um heroi so pode sair de uma party quando estiver no mesmo local de outra party para a qual ele ira.
@@ -75,7 +76,7 @@ Confirmado:
 - Um heroi possui atributos.
 - Um heroi possui pericias.
 - Um heroi possui propriedades de combate.
-- Um heroi possui inventario.
+- Um heroi nao possui inventario proprio; inventario pertence a party.
 - Um heroi possui equipamentos.
 - Um heroi pode estar vivo ou morto.
 - Um heroi pode realizar ataques basicos.
@@ -684,7 +685,7 @@ Confirmado:
 - A chance de sucesso usa uma rolagem da pericia relevante contra uma dificuldade.
 - Mining coleta metais.
 - Lumberjacking coleta madeira.
-- Ao obter um item, o item entra no inventario do heroi.
+- Ao obter um item, o item entra no inventario da party.
 
 Confirmado:
 
@@ -1076,7 +1077,7 @@ Estas informacoes existem no prototipo antigo, mas nao devem virar regra final s
 3. [Confirmado] Progressao: por uso (atributos e pericias).
 4. [Confirmado] Combate: automatico por cooldown, formulas do legado mantidas (valores ajustaveis depois).
 5. [Confirmado] Morte: sistema completo (fantasma, igreja, recuperacao de corpo).
-6. [Confirmado] Inventario: por party.
+6. [Confirmado] Inventario: por party; heroi nao possui inventario proprio e leva somente equipamento ao mudar de party.
 7. [Confirmado] Materiais: lista atual mantida provisionalmente.
 8. [Confirmado] Cidades: safe spot + lojas (regras adiadas). Dungeon: encontros fixos sem andares.
 9. [Confirmado] Crafting: so planejamento, sem implementar na primeira versao.

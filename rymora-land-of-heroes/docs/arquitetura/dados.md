@@ -42,13 +42,15 @@ public sealed record SaveData
 public sealed record PartySaveData
 {
     public string PartyId;
-    public Vector2I Position;
+    public TilePosition Position;
     public bool IsAlive;
     public List<HeroSaveData> Members;
     public List<ActionSaveData> ActionQueue;
     public InventorySaveData Inventory;
 }
 ```
+
+`TilePosition` serializa coordenadas logicas do Core. Save nao grava tipos Godot como `Vector2I`.
 
 ### 2.3 Quando salvar
 
@@ -67,13 +69,94 @@ public sealed record GameConfig
 {
     public float EncounterProbability; // chance base de encontro
     public float EncounterInterval; // tempo entre checks de encontro
+    public EncounterPolicy EncounterPolicy; // aplica modificador de terreno sem hardcode no World
     public float CorpseDecayTime; // tempo ate corpo desaparecer
+    public ProgressionConfig Progression;
+    public LifeConfig Life;
+    public CollectionConfig Collection;
+    public TravelConfig Travel;
+    public CombatConfig Combat;
+}
+
+public sealed record ProgressionConfig
+{
+    public float InitialAttributePoints;
+    public float InitialSkillPoints;
+    public float AttributeValueDivisor;
+    public float SkillValueDivisor;
+}
+
+public sealed record LifeConfig
+{
+    public float BaseLife;
+    public float VitalityLifeMultiplier;
+}
+
+public sealed record EncounterPolicy
+{
+    public EncounterModifierMode TerrainModifierMode; // decisao pendente: valor default
+}
+
+public enum EncounterModifierMode
+{
+    None,
+    AddToProbability,
+    SubtractFromProbability
+}
+
+public sealed record CollectionConfig
+{
+    public float DifficultyBase;
+    public float DifficultyPerMaterialLevel;
+    public float MiningActionTime;
+    public float WoodcuttingActionTime;
+}
+
+public sealed record TravelConfig
+{
+    public float ActionTime;
+}
+
+public sealed record CombatConfig
+{
+    public RollRange HitRollRange;
+    public RollRange EvadeRollRange;
+    public float BaseCriticalMultiplier;
+    public TargetingConfig Targeting;
+}
+
+public sealed record RollRange
+{
+    public int Min;
+    public int Max;
+}
+
+public sealed record TargetingConfig
+{
+    public float LowLifeWeight;
+    public float ThreatWeight;
 }
 ```
 
-Carregado de um arquivo de recurso Godot (`.tres` ou `.json`).
+Carregado de `assets/data/game_config.json` pelo adapter Godot.
 
-### 3.2 Player settings (preferencias)
+Valores numericos pendentes na biblia entram em `GameConfig` como balanceamento provisorio, nao como regra fixa no Core.
+
+### 3.2 Content runtime
+
+Conteudo inicial carregado por JSON:
+
+- `assets/data/content/weapons.json`
+- `assets/data/content/materials.json`
+- `assets/data/content/creatures.json`
+- `assets/data/content/encounters.json`
+- `assets/data/world/terrain_tiles.json`
+
+O adapter Godot monta catalogos runtime (`IWeaponCatalog`, `IMaterialCatalog`, `IEncounterCatalog`) e injeta factories no `GameApplication`. O Core recebe templates e config ja parseados; nao le arquivo nem referencia Godot.
+
+`terrain_tiles.json` tambem mapeia atlas coords para `TerrainData`, regiao, safe spot, cor provisoria do tile e material coletavel por acao.
+
+### 3.3 Player settings (preferencias)
 
 - Idioma (futuro).
 - Volume.

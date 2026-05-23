@@ -45,6 +45,13 @@ public sealed class CombatInstance
 public sealed class Combatant
 {
     public Creature Creature { get; }
+    public WeaponCooldown MainHandCooldown { get; }
+    public WeaponCooldown? OffhandCooldown { get; }
+}
+
+public sealed class WeaponCooldown
+{
+    public WeaponTemplate Weapon { get; }
     public float CurrentCooldown { get; set; }
     public float TotalCooldown { get; }
 }
@@ -56,17 +63,17 @@ public sealed class Combatant
 
 Combate automatico por cooldown. `CombatInstance.RunTurn(float deltaTime)`:
 
-1. Herois: para cada heroi, reduz cooldown por `deltaTime * attackSpeed`. Se cooldown <= 0, ataca.
+1. Herois: para cada heroi vivo, reduz cooldown de cada arma por `deltaTime`. Se cooldown <= 0, ataca com aquela arma.
 2. Monstros: mesmo processo.
 3. Verifica condicoes de vitoria/derrota.
 
-Cada combatente ataca com sua arma principal. Arma secundaria tem cooldown proprio.
+Cada combatente ataca com arma principal. Se houver arma secundaria, ela possui `WeaponCooldown` proprio e resolve ataque independente.
 
 ### 4.1 Cooldown
 
 `TotalCooldown = weapon.AttackSpeed / (1 + combatant.Properties.AttackSpeed)`
 
-O cooldown e reduzido a cada tick por `deltaTime`.
+O cooldown e reduzido a cada tick por `deltaTime`. `AttackSpeed` acelera ataque diminuindo `TotalCooldown`, nao multiplicando duas vezes o avanco do cooldown.
 
 ---
 
@@ -75,10 +82,11 @@ O cooldown e reduzido a cada tick por `deltaTime`.
 Alvo = inimigo com maior aggro.
 
 ```
-aggro = (1 - currentLife / maxLife) * 100 + combatant.Properties.Threat
+aggro = targetingConfig.LowLifeWeight * (1 - currentLife / maxLife)
+      + targetingConfig.ThreatWeight * combatant.Properties.Threat
 ```
 
-Quanto menos vida, maior o aggro. Threat aumenta ainda mais.
+Quanto menos vida, maior o aggro se `LowLifeWeight` for positivo. Peso final fica em configuracao ate validacao da regra de alvo.
 
 ---
 
@@ -87,8 +95,8 @@ Quanto menos vida, maior o aggro. Threat aumenta ainda mais.
 ### 6.1 Acerto
 
 ```
-hitRoll = Random(1, 100) + weaponSkill + weaponAttribute + Hit + weaponSizeHitMod
-evadeRoll = Random(1, 100) + Agility + Tactics + Evasion + armorEvasion
+hitRoll = combatRandom.Roll(combatConfig.HitRollRange) + weaponSkill + weaponAttribute + Hit + weaponSizeHitMod
+evadeRoll = combatRandom.Roll(combatConfig.EvadeRollRange) + Agility + Tactics + Evasion + armorEvasion
 
 acertou = hitRoll >= evadeRoll
 ```
@@ -115,7 +123,7 @@ danoFinal = max(0, danoBruto - fortitude - protecaoEfetiva)
 
 ```
 chanceCritico = Critical - target.Resiliense + armaVsArmorModifier
-se critico: danoFinal *= (1.5 + CriticalDamage)
+se critico: danoFinal *= (combatConfig.BaseCriticalMultiplier + CriticalDamage)
 ```
 
 Modificador arma vs armadura:

@@ -1,0 +1,16 @@
+[
+  {
+    "id": "demo-goblin",
+    "name": "Demo Goblin",
+    "regionNames": ["Wild"],
+    "monsters": [
+      {
+        "creatureName": "Goblin",
+        "class": "Combatant",
+        "sprite": {
+          "id": "goblin"
+        }
+      }
+    ]
+  }
+]

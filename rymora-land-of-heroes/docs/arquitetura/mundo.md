@@ -30,6 +30,14 @@ O mapa e uma grade hexagonal 2D topdown. Cada celula contem:
 
 O mapa e carregado a partir de um tilemap Godot. O World adapter le o tilemap e converte para dados do Core na inicializacao.
 
+Coordenadas do Core usam tipo proprio, sem dependencia Godot:
+
+```csharp
+public readonly record struct TilePosition(int X, int Y);
+```
+
+O adaptador Godot converte `Vector2I` do tilemap para `TilePosition` na entrada e faz o inverso apenas para renderizacao.
+
 ### 2.1 Terrenos
 
 Ver `docs/regras/biblia-rpg.md` para regras de negocio completas.
@@ -66,6 +74,30 @@ public sealed record RegionData(
 )
 ```
 
+### 2.3 Adapter Godot atual
+
+Implementacao inicial:
+
+- `src/Godot/World/WorldTileMapAdapter.cs` le um `TileMapLayer` e cria `WorldState`.
+- `WorldTileMapAdapter.ToTilePosition(Vector2 worldPosition)` converte posicao do mouse em coordenada logica do Core.
+- `assets/data/world/terrain_tiles.json` mapeia `atlasCoords` para `TerrainData`, regiao, safe spot, cor provisoria e material coletavel.
+- `src/Godot/World/TerrainTileCodes.cs` guarda apenas constantes do TileSet provisorio (`SourceId`, `TileSize`).
+- `src/Godot/World/DemoTileMapBuilder.cs` cria um TileSet simples em memoria a partir do catalogo e preenche um mapa pequeno quando o TileMapLayer esta vazio.
+- O demo usa tiles grandes (`96x96`) e poucas paredes internas para deixar movimento visivel durante validacao.
+
+Mapeamento inicial de atlas coords fica em JSON:
+
+| Atlas coords | TerrainType |
+|--------------|-------------|
+| `(0, 0)` | Plain |
+| `(1, 0)` | Forest |
+| `(2, 0)` | Mountain |
+| `(3, 0)` | Mine |
+| `(4, 0)` | City |
+| `(5, 0)` | Wall |
+
+Esse mapeamento continua provisorio ate existir tileset final com metadata ou pipeline de mapa definitivo, mas nao fica hardcoded no Core nem no world adapter.
+
 ---
 
 ## 3. Navegacao
@@ -74,8 +106,8 @@ public sealed record RegionData(
 
 O movimento usa pathfinding em grade hexagonal:
 
-- entrada: `origin (Vector2I)` e `destination (Vector2I)`
-- saida: `IReadOnlyList<Vector2I>` (caminho)
+- entrada: `origin (TilePosition)` e `destination (TilePosition)`
+- saida: `IReadOnlyList<TilePosition>` (waypoints ate o destino, sem incluir a origem)
 - respeita `IsWalkable` dos terrenos
 - bloqueios: `Wall` tiles
 
@@ -86,9 +118,15 @@ Implementacao: A* sobre grade hexagonal. Otimizacoes (distancia de Manhattan hex
 A Party segue o caminho tile a tile:
 
 1. Core define o caminho e a velocidade no tile atual.
-2. Adapter Godot interpola a posicao visual entre tiles.
+2. Adapter Godot sincroniza a posicao visual; interpolacao entre tiles fica no TODO abaixo.
 3. Ao chegar em cada tile, Core verifica encontro e acoes pendentes.
 4. Se o terreno nao for caminhavel, a fila de viagem e limpa.
+
+TODO:
+- Manter movimento logico do Core por tile.
+- Adicionar interpolacao visual no Godot entre tile anterior e proximo tile.
+- Usar progresso da acao (`CurrentTime / TimeToExecute`) para mover sprite aos poucos dentro do mesmo tile.
+- Encontros e regras continuam disparando somente quando a party chega ao proximo tile logico.
 
 ### 3.3 Safe spots
 
@@ -103,9 +141,11 @@ Durante viagem, a cada tile percorrido:
 1. Verifica se ja esta em combate -> pula.
 2. Verifica se esta morto -> pula.
 3. Verifica se terreno atual e City -> pula.
-4. Calcula chance: `Random.Range(1, 101) + terrain.EncounterRateModifier <= GameData.EncounterProbability`.
+4. Calcula chance usando `EncounterProbability` e `terrain.EncounterRateModifier` conforme `EncounterPolicy`.
 5. Se passar, seleciona um encontro aleatorio da regiao atual.
 6. Inicia combate via Application.
+
+O sinal de `EncounterRateModifier` e configurado por `EncounterModifierMode`. O valor default final ainda depende de decisao de design.
 
 ---
 
@@ -116,11 +156,11 @@ O menu contextual mostra acoes disponiveis baseadas no tile alvo:
 | Acao | Requisito de terreno |
 |------|---------------------|
 | Move | Qualquer tile caminhavel |
-| Mine | `AllowsMining == true` (Mountain) |
+| Mine | `AllowsMining == true` |
 | CutWood | `AllowsWoodcutting == true` (Forest) |
 | EnterDungeon | `IsPlace == true` (Place ou City) |
 
-O World fornece ao Application a lista de acoes validas para um tile. O Application decide qual acao enfileirar.
+O adapter Godot usa `TerrainData` e metadados de `terrain_tiles.json` para montar o menu contextual e enfileirar `PartyActionRequest`. O Core valida a execucao por flags do terreno.
 
 Dungeons sao tratadas como encontros fixos: ao entrar, o Application inicia uma sequencia de combates sem deslocamento no mapa.
 
@@ -136,17 +176,18 @@ Estado central do World no Core:
 public sealed class WorldState
 {
     // Mapa: acesso por coordenada
-    public TerrainData GetTerrain(Vector2I position);
-    public RegionData GetRegion(Vector2I position);
+    public TerrainData GetTerrain(TilePosition position);
+    public RegionData GetRegion(TilePosition position);
 
     // Navegacao
-    public IReadOnlyList<Vector2I> FindPath(Vector2I from, Vector2I to);
-    public bool IsWalkable(Vector2I position);
-    public RegionData FindNearestSafeSpot(Vector2I position);
+    public IReadOnlyList<TilePosition> FindPath(TilePosition from, TilePosition to);
+    public bool IsWalkable(TilePosition position);
+    public RegionData FindNearestSafeSpot(TilePosition position);
+    public TilePosition FindNearestSafeSpotPosition(TilePosition position);
 
     // Encontros
-    public EncounterTemplate SelectRandomEncounter(Vector2I position);
-    public bool ShouldTriggerEncounter(Vector2I position, int probability);
+    public EncounterTemplate SelectRandomEncounter(TilePosition position);
+    public bool ShouldTriggerEncounter(TilePosition position, float baseProbability, EncounterPolicy policy);
 }
 ```
 
@@ -157,7 +198,7 @@ public sealed class WorldState
 ### 7.1 Selecionar tile e agir
 
 1. Input adapter Godot detecta clique direito no tilemap.
-2. Traduz coordenada de pixel para `Vector2I` do tile.
+2. Traduz coordenada de pixel para `TilePosition`.
 3. Chama `WorldState.GetTerrain(position)` e `WorldState.GetRegion(position)`.
 4. Application determina acoes validas.
 5. UI mostra menu contextual com acoes disponiveis.
