@@ -37,6 +37,8 @@ public sealed class WorldState
 
     public RegionData GetRegion(TilePosition position) => GetTile(position).Region;
 
+    public ZoneData GetZone(TilePosition position) => GetTile(position).Zone;
+
     public bool IsWalkable(TilePosition position)
     {
         return _tiles.TryGetValue(position, out var tile) && tile.Terrain.IsWalkable;
@@ -117,10 +119,11 @@ public sealed class WorldState
 
     public EncounterTemplate SelectRandomEncounter(TilePosition position)
     {
-        var encounters = GetRegion(position).Encounters;
+        var tile = GetTile(position);
+        var encounters = GetEncountersForTile(tile);
         if (encounters.Count == 0)
         {
-            throw new InvalidOperationException($"Region at {position} has no encounters.");
+            throw new InvalidOperationException($"Region {tile.Region.Id} has no encounters for terrain {tile.Terrain.Type} at {position}.");
         }
 
         return encounters[_randomSource.NextInclusive(0, encounters.Count - 1)];
@@ -129,12 +132,14 @@ public sealed class WorldState
     public bool ShouldTriggerEncounter(TilePosition position, float baseProbability, EncounterPolicy policy)
     {
         var tile = GetTile(position);
-        if (tile.Terrain.IsCity || tile.Region.IsSafeSpot || tile.Region.Encounters.Count == 0)
+        if (tile.Terrain.IsCity || tile.Region.IsSafeSpot || GetEncountersForTile(tile).Count == 0)
         {
             return false;
         }
 
-        var effectiveProbability = ApplyEncounterModifier(baseProbability, tile.Terrain.EncounterRateModifier, policy);
+        var effectiveProbability = ApplyEncounterModifier(baseProbability, tile.Terrain.EncounterRateModifier, policy)
+            + tile.Region.EncounterProbabilityModifier
+            + tile.Zone.EncounterProbabilityModifier;
         effectiveProbability = Math.Clamp(effectiveProbability, 0, 100);
         if (effectiveProbability <= 0)
         {
@@ -166,6 +171,13 @@ public sealed class WorldState
         }
 
         return tile;
+    }
+
+    private static IReadOnlyList<EncounterTemplate> GetEncountersForTile(WorldTile tile)
+    {
+        return tile.Region.EncountersByTerrain.TryGetValue(tile.Terrain.Type, out var encounters)
+            ? encounters
+            : Array.Empty<EncounterTemplate>();
     }
 
     private IEnumerable<TilePosition> GetWalkableNeighbors(TilePosition position)

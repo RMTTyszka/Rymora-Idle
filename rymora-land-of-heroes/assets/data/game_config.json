@@ -1,42 +1,42 @@
 {
-  "encounterProbability": 0,
+  "encounterProbability": 25,
   "encounterInterval": 1,
   "encounterPolicy": {
-    "terrainModifierMode": "None"
+	"terrainModifierMode": "None"
   },
   "corpseDecayTime": 60,
   "progression": {
-    "initialAttributePoints": 5,
-    "initialSkillPoints": 5,
-    "attributeValueDivisor": 5,
-    "skillValueDivisor": 5
+	"initialAttributePoints": 5,
+	"initialSkillPoints": 5,
+	"attributeValueDivisor": 5,
+	"skillValueDivisor": 5
   },
   "life": {
-    "baseLife": 100,
-    "vitalityLifeMultiplier": 10
+	"baseLife": 100,
+	"vitalityLifeMultiplier": 10
   },
   "collection": {
-    "difficultyBase": 0,
-    "difficultyPerMaterialLevel": 0,
-    "miningActionTime": 0.1,
-    "woodcuttingActionTime": 0.1
+	"difficultyBase": 0,
+	"difficultyPerMaterialLevel": 0,
+	"miningActionTime": 0.1,
+	"woodcuttingActionTime": 0.1
   },
   "travel": {
-    "actionTime": 0.2
+	"actionTime": 0.2
   },
   "combat": {
-    "hitRollRange": {
-      "min": 1,
-      "max": 1
-    },
-    "evadeRollRange": {
-      "min": 1,
-      "max": 1
-    },
-    "baseCriticalMultiplier": 1.5,
-    "targeting": {
-      "lowLifeWeight": 100,
-      "threatWeight": 1
-    }
+	"hitRollRange": {
+	  "min": 1,
+	  "max": 1
+	},
+	"evadeRollRange": {
+	  "min": 1,
+	  "max": 1
+	},
+	"baseCriticalMultiplier": 1.5,
+	"targeting": {
+	  "lowLifeWeight": 100,
+	  "threatWeight": 1
+	}
   }
 }

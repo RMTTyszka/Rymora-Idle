@@ -29,6 +29,7 @@ public sealed record CreatureTemplate(
 public sealed record EncounterTemplate(
     string Id,
     string Name,
+    int Level,
     IReadOnlyList<CreatureTemplate> Monsters);
 
 public sealed record MaterialItem(string Name, int Level, float Weight);

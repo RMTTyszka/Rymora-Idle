@@ -1,0 +1,15 @@
+[gd_resource type="TileSet" format=3 uid="uid://doskbgx316bfr"]
+
+[ext_resource type="Texture2D" uid="uid://cbhpxdclqewgi" path="res://assets/art/world/region_hex_atlas.png" id="1_region_atlas"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_region"]
+texture = ExtResource("1_region_atlas")
+texture_region_size = Vector2i(96, 96)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+
+[resource]
+tile_shape = 3
+tile_size = Vector2i(96, 96)
+sources/0 = SubResource("TileSetAtlasSource_region")

@@ -14,13 +14,21 @@ public partial class WorldTileMapAdapter : Node
     [Export]
     public TileMapLayer? TerrainLayer { get; set; }
 
-    private TerrainTileCatalog? _terrainTiles;
-    private IEncounterCatalog? _encounters;
+    [Export]
+    public TileMapLayer? RegionLayer { get; set; }
 
-    internal void Configure(TerrainTileCatalog terrainTiles, IEncounterCatalog encounters)
+    [Export]
+    public TileMapLayer? ZoneLayer { get; set; }
+
+    private TerrainTileCatalog? _terrainTiles;
+    private RuntimeRegionCatalog? _regions;
+    private RuntimeZoneCatalog? _zones;
+
+    internal void Configure(TerrainTileCatalog terrainTiles, RuntimeRegionCatalog regions, RuntimeZoneCatalog zones)
     {
         _terrainTiles = terrainTiles;
-        _encounters = encounters;
+        _regions = regions;
+        _zones = zones;
     }
 
     public WorldState CreateWorld(IRandomSource? randomSource = null)
@@ -31,7 +39,7 @@ public partial class WorldTileMapAdapter : Node
 
     public TilePosition FindFirstPosition(TerrainType terrainType)
     {
-        foreach (var cell in GetLayer().GetUsedCells())
+        foreach (var cell in GetTerrainLayer().GetUsedCells())
         {
             var currentTerrainType = GetTerrainTileDefinition(cell).Terrain.Type;
             if (currentTerrainType == terrainType)
@@ -45,18 +53,18 @@ public partial class WorldTileMapAdapter : Node
 
     public Vector2 ToLocalPosition(TilePosition position)
     {
-        return GetLayer().MapToLocal(new Vector2I(position.X, position.Y));
+        return GetTerrainLayer().MapToLocal(new Vector2I(position.X, position.Y));
     }
 
     public TilePosition ToTilePosition(Vector2 worldPosition)
     {
-        var cell = GetLayer().LocalToMap(GetLayer().ToLocal(worldPosition));
+        var cell = GetTerrainLayer().LocalToMap(GetTerrainLayer().ToLocal(worldPosition));
         return ToTilePosition(cell);
     }
 
     public bool HasTile(TilePosition position)
     {
-        return GetLayer().GetCellSourceId(new Vector2I(position.X, position.Y)) != -1;
+        return GetTerrainLayer().GetCellSourceId(new Vector2I(position.X, position.Y)) != -1;
     }
 
     internal TerrainTileDefinition GetTerrainTileDefinition(TilePosition position)
@@ -71,7 +79,7 @@ public partial class WorldTileMapAdapter : Node
 
     private IReadOnlyList<WorldTile> ReadTiles()
     {
-        var layer = GetLayer();
+        var layer = GetTerrainLayer();
         var usedCells = layer.GetUsedCells();
         if (usedCells.Count == 0)
         {
@@ -82,19 +90,27 @@ public partial class WorldTileMapAdapter : Node
         foreach (var cell in usedCells)
         {
             var definition = GetTerrainTileDefinition(cell);
-            var region = new RegionData(
-                definition.RegionName,
-                definition.IsSafeSpot,
-                GetEncounterCatalog().GetEncountersByRegion(definition.RegionName));
-            tiles.Add(new WorldTile(ToTilePosition(cell), definition.Terrain, region));
+            var region = GetRegionTile(cell);
+            var zone = GetZoneTile(cell);
+            tiles.Add(new WorldTile(ToTilePosition(cell), definition.Terrain, region, zone));
         }
 
         return tiles;
     }
 
-    private TileMapLayer GetLayer()
+    private TileMapLayer GetTerrainLayer()
     {
         return TerrainLayer ?? throw new InvalidOperationException("TerrainLayer is not assigned.");
+    }
+
+    private TileMapLayer GetRegionLayer()
+    {
+        return RegionLayer ?? throw new InvalidOperationException("RegionLayer is not assigned.");
+    }
+
+    private TileMapLayer GetZoneLayer()
+    {
+        return ZoneLayer ?? throw new InvalidOperationException("ZoneLayer is not assigned.");
     }
 
     private TerrainTileCatalog GetTerrainTiles()
@@ -102,14 +118,39 @@ public partial class WorldTileMapAdapter : Node
         return _terrainTiles ?? throw new InvalidOperationException("Terrain tile catalog is not configured.");
     }
 
-    private IEncounterCatalog GetEncounterCatalog()
+    private RuntimeRegionCatalog GetRegionCatalog()
     {
-        return _encounters ?? throw new InvalidOperationException("Encounter catalog is not configured.");
+        return _regions ?? throw new InvalidOperationException("Region catalog is not configured.");
+    }
+
+    private RuntimeZoneCatalog GetZoneCatalog()
+    {
+        return _zones ?? throw new InvalidOperationException("Zone catalog is not configured.");
     }
 
     private TerrainTileDefinition GetTerrainTileDefinition(Vector2I cell)
     {
-        return GetTerrainTiles().GetByAtlasCoords(GetLayer().GetCellAtlasCoords(cell));
+        return GetTerrainTiles().GetByAtlasCoords(GetTerrainLayer().GetCellAtlasCoords(cell));
+    }
+
+    private RegionData GetRegionTile(Vector2I cell)
+    {
+        if (GetRegionLayer().GetCellSourceId(cell) == -1)
+        {
+            throw new InvalidOperationException($"RegionLayer has no cell at {cell}.");
+        }
+
+        return GetRegionCatalog().GetRegion(GetRegionLayer().GetCellAtlasCoords(cell));
+    }
+
+    private ZoneData GetZoneTile(Vector2I cell)
+    {
+        if (GetZoneLayer().GetCellSourceId(cell) == -1)
+        {
+            throw new InvalidOperationException($"ZoneLayer has no cell at {cell}.");
+        }
+
+        return GetZoneCatalog().GetZone(GetZoneLayer().GetCellAtlasCoords(cell));
     }
 
     private static TilePosition ToTilePosition(Vector2I cell) => new(cell.X, cell.Y);

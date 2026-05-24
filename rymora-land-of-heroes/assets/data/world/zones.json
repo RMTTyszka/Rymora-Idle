@@ -1,0 +1,29 @@
+[
+  {
+    "atlasX": 0,
+    "atlasY": 0,
+    "id": "edge",
+    "name": "Borda",
+    "level": 1,
+    "encounterProbabilityModifier": 0,
+    "color": "#4A8F4A"
+  },
+  {
+    "atlasX": 1,
+    "atlasY": 0,
+    "id": "interior",
+    "name": "Interior",
+    "level": 2,
+    "encounterProbabilityModifier": 5,
+    "color": "#9B7A2E"
+  },
+  {
+    "atlasX": 2,
+    "atlasY": 0,
+    "id": "deep",
+    "name": "Profundo",
+    "level": 3,
+    "encounterProbabilityModifier": 10,
+    "color": "#7B2E2E"
+  }
+]

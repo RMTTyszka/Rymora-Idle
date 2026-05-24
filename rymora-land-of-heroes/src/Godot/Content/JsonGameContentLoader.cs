@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using Godot;
 using RymoraLandOfHeroes.Core.Common;
@@ -21,14 +22,19 @@ internal static class JsonGameContentLoader
         var config = LoadConfig("res://assets/data/game_config.json");
         var weapons = new RuntimeWeaponCatalog(LoadWeapons("res://assets/data/content/weapons.json"));
         var materials = new RuntimeMaterialCatalog(LoadMaterials("res://assets/data/content/materials.json"));
-        var encounters = new RuntimeEncounterCatalog(LoadEncounters("res://assets/data/content/encounters.json"));
+        var encounterTemplates = LoadEncounters("res://assets/data/content/encounters.json");
+        var regionDefinitions = LoadRegions("res://assets/data/world/regions.json");
+        var zoneDefinitions = LoadZones("res://assets/data/world/zones.json");
+        var encounters = new RuntimeEncounterCatalog(encounterTemplates, regionDefinitions);
+        var regions = new RuntimeRegionCatalog(regionDefinitions, encounters);
+        var zones = new RuntimeZoneCatalog(zoneDefinitions);
         var creatures = new CreatureCatalog(
             config,
             weapons,
             LoadCreatures("res://assets/data/content/creatures.json"));
         var terrainTiles = new TerrainTileCatalog(LoadTerrainTiles("res://assets/data/world/terrain_tiles.json"));
 
-        return new GameContent(config, weapons, materials, encounters, creatures, terrainTiles);
+        return new GameContent(config, weapons, materials, encounters, regions, zones, creatures, terrainTiles);
     }
 
     private static GameConfig LoadConfig(string path)
@@ -91,18 +97,44 @@ internal static class JsonGameContentLoader
             new SpriteReference(creature.Sprite?.Id ?? string.Empty)));
     }
 
-    private static IReadOnlyList<EncounterCatalogEntry> LoadEncounters(string path)
+    private static IReadOnlyList<EncounterTemplate> LoadEncounters(string path)
     {
         var encounters = ReadJson<List<EncounterDto>>(path);
-        return encounters.ConvertAll(encounter => new EncounterCatalogEntry(
-            new EncounterTemplate(
-                encounter.Id,
-                encounter.Name,
-                encounter.Monsters.ConvertAll(monster => new CreatureTemplate(
-                    monster.CreatureName,
-                    ParseEnum<MonsterClass>(monster.Class),
-                    new SpriteReference(monster.Sprite?.Id ?? string.Empty)))),
-            encounter.RegionNames));
+        return encounters.ConvertAll(encounter => new EncounterTemplate(
+            encounter.Id,
+            encounter.Name,
+            encounter.Level,
+            encounter.Monsters.ConvertAll(monster => new CreatureTemplate(
+                monster.CreatureName,
+                ParseEnum<MonsterClass>(monster.Class),
+                new SpriteReference(monster.Sprite?.Id ?? string.Empty)))));
+    }
+
+    private static IReadOnlyList<RegionDefinition> LoadRegions(string path)
+    {
+        var regions = ReadJson<List<RegionDto>>(path);
+        return regions.ConvertAll(region => new RegionDefinition(
+            new Vector2I(region.AtlasX, region.AtlasY),
+            region.Id,
+            region.Name,
+            region.IsSafeSpot,
+            region.EncounterProbabilityModifier,
+            region.EncountersByTerrain.ToDictionary(
+                pair => ParseEnum<TerrainType>(pair.Key),
+                pair => (IReadOnlyList<string>)pair.Value),
+            GodotColorParser.ParseHex(region.Color)));
+    }
+
+    private static IReadOnlyList<ZoneDefinition> LoadZones(string path)
+    {
+        var zones = ReadJson<List<ZoneDto>>(path);
+        return zones.ConvertAll(zone => new ZoneDefinition(
+            new Vector2I(zone.AtlasX, zone.AtlasY),
+            zone.Id,
+            zone.Name,
+            zone.Level,
+            zone.EncounterProbabilityModifier,
+            GodotColorParser.ParseHex(zone.Color)));
     }
 
     private static IReadOnlyList<TerrainTileDefinition> LoadTerrainTiles(string path)
@@ -120,8 +152,6 @@ internal static class JsonGameContentLoader
                 tile.AllowsWoodcutting,
                 tile.IsCity,
                 tile.IsPlace),
-            tile.RegionName,
-            tile.IsSafeSpot,
             tile.MiningMaterial,
             tile.WoodcuttingMaterial,
             GodotColorParser.ParseHex(tile.Color)));
@@ -246,8 +276,31 @@ internal static class JsonGameContentLoader
     {
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public List<string> RegionNames { get; set; } = new();
+        public int Level { get; set; }
         public List<EncounterMonsterDto> Monsters { get; set; } = new();
+    }
+
+    private sealed class RegionDto
+    {
+        public int AtlasX { get; set; }
+        public int AtlasY { get; set; }
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public bool IsSafeSpot { get; set; }
+        public float EncounterProbabilityModifier { get; set; }
+        public Dictionary<string, List<string>> EncountersByTerrain { get; set; } = new();
+        public string Color { get; set; } = "#FFFFFF";
+    }
+
+    private sealed class ZoneDto
+    {
+        public int AtlasX { get; set; }
+        public int AtlasY { get; set; }
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public int Level { get; set; }
+        public float EncounterProbabilityModifier { get; set; }
+        public string Color { get; set; } = "#FFFFFF";
     }
 
     private sealed class EncounterMonsterDto
@@ -267,8 +320,6 @@ internal static class JsonGameContentLoader
         public int AtlasX { get; set; }
         public int AtlasY { get; set; }
         public string Type { get; set; } = string.Empty;
-        public string RegionName { get; set; } = string.Empty;
-        public bool IsSafeSpot { get; set; }
         public bool IsWalkable { get; set; }
         public float MoveSpeed { get; set; }
         public int Quality { get; set; }

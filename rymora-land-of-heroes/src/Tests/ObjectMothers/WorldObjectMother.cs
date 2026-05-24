@@ -47,6 +47,38 @@ internal static class WorldObjectMother
             InputPolicy: new EncounterPolicy(EncounterModifierMode.AddToProbability),
             ExpectedResult: false);
     }
+
+    public static EncounterModifierScenario WorldWithRegionEncounterModifier()
+    {
+        return new EncounterModifierScenario(
+            InputWorld: TestObjectMother.CreateWorld(
+                random: new SequenceRandomSource(20),
+                regionEncounterModifier: 15),
+            InputPosition: new TilePosition(0, 0),
+            InputBaseProbability: 10,
+            InputPolicy: new EncounterPolicy(EncounterModifierMode.None),
+            ExpectedResult: true);
+    }
+
+    public static EncounterModifierScenario WorldWithZoneEncounterModifier()
+    {
+        return new EncounterModifierScenario(
+            InputWorld: TestObjectMother.CreateWorld(
+                random: new SequenceRandomSource(20),
+                zoneEncounterModifier: 15),
+            InputPosition: new TilePosition(0, 0),
+            InputBaseProbability: 10,
+            InputPolicy: new EncounterPolicy(EncounterModifierMode.None),
+            ExpectedResult: true);
+    }
+
+    public static ZoneScenario WorldWithZoneLevel()
+    {
+        return new ZoneScenario(
+            InputWorld: TestObjectMother.CreateWorld(random: new SequenceRandomSource(1)),
+            InputPosition: new TilePosition(0, 0),
+            ExpectedLevel: 1);
+    }
 }
 
 internal sealed record FindPathScenario(
@@ -71,3 +103,5 @@ internal sealed record SafeSpotEncounterScenario(
     float InputBaseProbability,
     EncounterPolicy InputPolicy,
     bool ExpectedResult);
+
+internal sealed record ZoneScenario(WorldState InputWorld, TilePosition InputPosition, int ExpectedLevel);

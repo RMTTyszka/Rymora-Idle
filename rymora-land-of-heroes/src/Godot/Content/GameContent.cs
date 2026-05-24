@@ -19,6 +19,8 @@ internal sealed class GameContent
         RuntimeWeaponCatalog weapons,
         RuntimeMaterialCatalog materials,
         RuntimeEncounterCatalog encounters,
+        RuntimeRegionCatalog regions,
+        RuntimeZoneCatalog zones,
         CreatureCatalog creatures,
         TerrainTileCatalog terrainTiles)
     {
@@ -26,6 +28,8 @@ internal sealed class GameContent
         Weapons = weapons;
         Materials = materials;
         Encounters = encounters;
+        Regions = regions;
+        Zones = zones;
         Creatures = creatures;
         TerrainTiles = terrainTiles;
     }
@@ -34,6 +38,8 @@ internal sealed class GameContent
     public RuntimeWeaponCatalog Weapons { get; }
     public RuntimeMaterialCatalog Materials { get; }
     public RuntimeEncounterCatalog Encounters { get; }
+    public RuntimeRegionCatalog Regions { get; }
+    public RuntimeZoneCatalog Zones { get; }
     public CreatureCatalog Creatures { get; }
     public TerrainTileCatalog TerrainTiles { get; }
 }
@@ -87,24 +93,20 @@ internal sealed class RuntimeEncounterCatalog : IEncounterCatalog
     private readonly Dictionary<string, EncounterTemplate> _encounters;
     private readonly Dictionary<string, List<EncounterTemplate>> _encountersByRegion;
 
-    public RuntimeEncounterCatalog(IEnumerable<EncounterCatalogEntry> encounters)
+    public RuntimeEncounterCatalog(IEnumerable<EncounterTemplate> encounters, IEnumerable<RegionDefinition> regions)
     {
-        _encounters = new Dictionary<string, EncounterTemplate>(StringComparer.OrdinalIgnoreCase);
+        _encounters = encounters.ToDictionary(encounter => encounter.Id, StringComparer.OrdinalIgnoreCase);
         _encountersByRegion = new Dictionary<string, List<EncounterTemplate>>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var entry in encounters)
+        foreach (var region in regions)
         {
-            _encounters.Add(entry.Template.Id, entry.Template);
-            foreach (var regionName in entry.RegionNames)
+            var regionEncounters = new List<EncounterTemplate>();
+            foreach (var encounterId in region.EncounterIdsByTerrain.Values.SelectMany(encounterIds => encounterIds).Distinct(StringComparer.OrdinalIgnoreCase))
             {
-                if (!_encountersByRegion.TryGetValue(regionName, out var regionEncounters))
-                {
-                    regionEncounters = new List<EncounterTemplate>();
-                    _encountersByRegion.Add(regionName, regionEncounters);
-                }
-
-                regionEncounters.Add(entry.Template);
+                regionEncounters.Add(GetEncounter(encounterId));
             }
+
+            _encountersByRegion.Add(region.Name, regionEncounters);
         }
     }
 
@@ -129,9 +131,99 @@ internal sealed class RuntimeEncounterCatalog : IEncounterCatalog
     }
 }
 
-internal sealed record EncounterCatalogEntry(
-    EncounterTemplate Template,
-    IReadOnlyList<string> RegionNames);
+internal sealed class RuntimeRegionCatalog
+{
+    private readonly Dictionary<Vector2I, RegionDefinition> _regionsByAtlasCoords;
+    private readonly Dictionary<string, RegionDefinition> _regionsById;
+    private readonly IEncounterCatalog _encounters;
+
+    public RuntimeRegionCatalog(IEnumerable<RegionDefinition> regions, IEncounterCatalog encounters)
+    {
+        var regionArray = regions.ToArray();
+        _regionsByAtlasCoords = regionArray.ToDictionary(region => region.AtlasCoords);
+        _regionsById = regionArray.ToDictionary(region => region.Id, StringComparer.OrdinalIgnoreCase);
+        _encounters = encounters;
+    }
+
+    public IReadOnlyList<RegionDefinition> All => _regionsByAtlasCoords.Values.ToArray();
+
+    public RegionData GetRegion(Vector2I atlasCoords)
+    {
+        var definition = _regionsByAtlasCoords.TryGetValue(atlasCoords, out var region)
+            ? region
+            : throw new KeyNotFoundException($"Region not found at atlas coords {atlasCoords}.");
+
+        var encountersByTerrain = definition.EncounterIdsByTerrain.ToDictionary(
+            pair => pair.Key,
+            pair => (IReadOnlyList<EncounterTemplate>)pair.Value.Select(_encounters.GetEncounter).ToArray());
+
+        return new RegionData(
+            definition.Id,
+            definition.Name,
+            definition.IsSafeSpot,
+            definition.EncounterProbabilityModifier,
+            encountersByTerrain);
+    }
+
+    public RegionDefinition GetDefinition(string id)
+    {
+        return _regionsById.TryGetValue(id, out var definition)
+            ? definition
+            : throw new KeyNotFoundException($"Region not found: {id}.");
+    }
+}
+
+internal sealed record RegionDefinition(
+    Vector2I AtlasCoords,
+    string Id,
+    string Name,
+    bool IsSafeSpot,
+    float EncounterProbabilityModifier,
+    IReadOnlyDictionary<TerrainType, IReadOnlyList<string>> EncounterIdsByTerrain,
+    Color Color);
+
+internal sealed class RuntimeZoneCatalog
+{
+    private readonly Dictionary<Vector2I, ZoneDefinition> _zonesByAtlasCoords;
+    private readonly Dictionary<string, ZoneDefinition> _zonesById;
+
+    public RuntimeZoneCatalog(IEnumerable<ZoneDefinition> zones)
+    {
+        var zoneArray = zones.ToArray();
+        _zonesByAtlasCoords = zoneArray.ToDictionary(zone => zone.AtlasCoords);
+        _zonesById = zoneArray.ToDictionary(zone => zone.Id, StringComparer.OrdinalIgnoreCase);
+    }
+
+    public IReadOnlyList<ZoneDefinition> All => _zonesByAtlasCoords.Values.ToArray();
+
+    public ZoneData GetZone(Vector2I atlasCoords)
+    {
+        var definition = _zonesByAtlasCoords.TryGetValue(atlasCoords, out var zone)
+            ? zone
+            : throw new KeyNotFoundException($"Zone not found at atlas coords {atlasCoords}.");
+
+        return new ZoneData(
+            definition.Id,
+            definition.Name,
+            definition.Level,
+            definition.EncounterProbabilityModifier);
+    }
+
+    public ZoneDefinition GetDefinition(string id)
+    {
+        return _zonesById.TryGetValue(id, out var definition)
+            ? definition
+            : throw new KeyNotFoundException($"Zone not found: {id}.");
+    }
+}
+
+internal sealed record ZoneDefinition(
+    Vector2I AtlasCoords,
+    string Id,
+    string Name,
+    int Level,
+    float EncounterProbabilityModifier,
+    Color Color);
 
 internal sealed class CreatureCatalog
 {
@@ -237,8 +329,6 @@ internal sealed class TerrainTileCatalog
 internal sealed record TerrainTileDefinition(
     Vector2I AtlasCoords,
     TerrainData Terrain,
-    string RegionName,
-    bool IsSafeSpot,
     string? MiningMaterial,
     string? WoodcuttingMaterial,
     Color Color)

@@ -2,7 +2,7 @@
   {
     "id": "demo-goblin",
     "name": "Demo Goblin",
-    "regionNames": ["Wild"],
+    "level": 1,
     "monsters": [
       {
         "creatureName": "Goblin",

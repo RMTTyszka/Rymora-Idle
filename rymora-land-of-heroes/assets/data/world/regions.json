@@ -1,0 +1,51 @@
+[
+  {
+	"atlasX": 0,
+	"atlasY": 0,
+	"id": "wild",
+	"name": "Wild",
+	"isSafeSpot": false,
+	"encounterProbabilityModifier": 0,
+	"encountersByTerrain": {
+	  "Plain": ["demo-goblin"],
+	  "Forest": ["demo-goblin"],
+	  "Mountain": ["demo-goblin"],
+	  "Mine": ["demo-goblin"],
+	  "Desert": ["demo-goblin"],
+	  "Jungle": ["demo-goblin"],
+	  "Swamp": ["demo-goblin"],
+	  "Snow": ["demo-goblin"],
+	  "Water": ["demo-goblin"],
+	  "Ice": ["demo-goblin"],
+	  "Hills": ["demo-goblin"],
+	  "Road": ["demo-goblin"],
+	  "Place": ["demo-goblin"],
+	  "Volcano": ["demo-goblin"]
+	},
+	"color": "#B0472D"
+  },
+  {
+	"atlasX": 1,
+	"atlasY": 0,
+	"id": "town",
+	"name": "Town",
+	"isSafeSpot": true,
+	"encounterProbabilityModifier": 0,
+	"encountersByTerrain": {},
+	"color": "#D8B45B"
+  },
+  {
+	"atlasX": 2,
+	"atlasY": 0,
+	"id": "gray-troll-mountain",
+	"name": "Montanha do Troll Cinzento",
+	"isSafeSpot": false,
+	"encounterProbabilityModifier": 5,
+	"encountersByTerrain": {
+	  "Hills": ["demo-goblin"],
+	  "Mountain": ["demo-goblin"],
+	  "Volcano": ["demo-goblin"]
+	},
+	"color": "#6B5F5A"
+  }
+]

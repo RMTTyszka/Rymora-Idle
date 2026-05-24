@@ -68,7 +68,9 @@ internal static class TestObjectMother
         IRandomSource random,
         IReadOnlyCollection<TilePosition>? wallPositions = null,
         IReadOnlyCollection<TilePosition>? minePositions = null,
-        IReadOnlyCollection<TilePosition>? forestPositions = null)
+        IReadOnlyCollection<TilePosition>? forestPositions = null,
+        float regionEncounterModifier = 0,
+        float zoneEncounterModifier = 0)
     {
         var wallSet = wallPositions?.ToHashSet() ?? new HashSet<TilePosition>();
         var mineSet = minePositions?.ToHashSet() ?? new HashSet<TilePosition>();
@@ -78,10 +80,28 @@ internal static class TestObjectMother
             new EncounterTemplate(
                 "plain-encounter",
                 "Plain Encounter",
+                Level: 1,
                 new[] { new CreatureTemplate("Goblin", MonsterClass.Combatant, new SpriteReference("goblin")) })
         };
-        var wild = new RegionData("Wild", IsSafeSpot: false, encounters);
-        var safe = new RegionData("Safe", IsSafeSpot: true, Array.Empty<EncounterTemplate>());
+        var encountersByTerrain = new Dictionary<TerrainType, IReadOnlyList<EncounterTemplate>>
+        {
+            [TerrainType.Plain] = encounters,
+            [TerrainType.Mine] = encounters,
+            [TerrainType.Forest] = encounters
+        };
+        var wild = new RegionData(
+            "wild",
+            "Wild",
+            IsSafeSpot: false,
+            EncounterProbabilityModifier: regionEncounterModifier,
+            EncountersByTerrain: encountersByTerrain);
+        var safe = new RegionData(
+            "safe",
+            "Safe",
+            IsSafeSpot: true,
+            EncounterProbabilityModifier: 0,
+            EncountersByTerrain: new Dictionary<TerrainType, IReadOnlyList<EncounterTemplate>>());
+        var zone = new ZoneData("edge", "Edge", Level: 1, EncounterProbabilityModifier: zoneEncounterModifier);
         var tiles = new List<WorldTile>();
 
         for (var x = 0; x <= 3; x++)
@@ -103,7 +123,7 @@ internal static class TestObjectMother
                         allowsMining: isMine,
                         allowsWoodcutting: isForest);
 
-                tiles.Add(new WorldTile(position, terrain, isSafe ? safe : wild));
+                tiles.Add(new WorldTile(position, terrain, isSafe ? safe : wild, zone));
             }
         }
 

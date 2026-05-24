@@ -150,11 +150,19 @@ Conteudo inicial carregado por JSON:
 - `assets/data/content/materials.json`
 - `assets/data/content/creatures.json`
 - `assets/data/content/encounters.json`
+- `assets/data/world/regions.json`
+- `assets/data/world/zones.json`
 - `assets/data/world/terrain_tiles.json`
 
 O adapter Godot monta catalogos runtime (`IWeaponCatalog`, `IMaterialCatalog`, `IEncounterCatalog`) e injeta factories no `GameApplication`. O Core recebe templates e config ja parseados; nao le arquivo nem referencia Godot.
 
-`terrain_tiles.json` tambem mapeia atlas coords para `TerrainData`, regiao, safe spot, cor provisoria do tile e material coletavel por acao.
+`regions.json` define tiles de regiao, safe spot, modificador de chance de encontro e encontros por bioma. `zones.json` define tiles de zona, nivel e modificador de chance. `terrain_tiles.json` mapeia atlas coords para `TerrainData`, bioma visual, cor provisoria do tile e material coletavel por acao.
+
+Chance de encontro durante viagem deve ser balanceavel por dados:
+- chance global em `assets/data/game_config.json` (`encounterProbability`).
+- modificador por terreno/bioma em `assets/data/world/terrain_tiles.json` (`encounterRateModifier`).
+- modificador por regiao em `assets/data/world/regions.json` (`encounterProbabilityModifier`).
+- modificador por zona em `assets/data/world/zones.json` (`encounterProbabilityModifier`).
 
 ### 3.3 Player settings (preferencias)
 

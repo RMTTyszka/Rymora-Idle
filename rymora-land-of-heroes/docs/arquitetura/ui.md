@@ -51,7 +51,7 @@ Implementacao atual provisoria:
 Implementacao atual provisoria:
 - `CombatPresenter` desenha overlay com herois, monstros e barras de vida.
 - `CombatPresenter` mostra historico com os ultimos eventos do combate.
-- Opcao `Start Combat` no menu contextual inicia primeiro encontro do catalogo.
+- Encontros de viagem alternam automaticamente para tela de combate quando o Core inicia combate.
 - Eventos de combate sao logados no console Godot.
 - Ao terminar combate, overlay some e party volta ao mapa.
 
@@ -68,7 +68,6 @@ Implementacao atual provisoria:
 - `Move` aparece em tile caminhavel.
 - `Mine` aparece em tile com `AllowsMining`.
 - `Cut Wood` aparece em tile com `AllowsWoodcutting`.
-- `Start Combat` aparece sempre.
 - `Mine` e `Cut Wood` enfileiram travel ate o tile alvo antes da coleta quando a party esta em outro tile.
 - `EnterDungeon` ainda nao foi implementado.
 
@@ -96,7 +95,7 @@ Implementacao atual provisoria:
 - Clique esquerdo limpa a fila atual da party na demo para o movimento responder imediatamente ao jogador.
 - Destino invalido imprime log com posicao atual, destino, caminhabilidade e tamanho do path.
 - `PartyPresenter` sincroniza a posicao visual da party apos cada `Update`.
-- TODO: `PartyPresenter` deve interpolar entre tile anterior e proximo tile usando progresso da acao, para movimento visual suave sem mudar regra tile-based do Core.
+- `PartyPresenter` interpola entre tile atual e proximo waypoint usando progresso da acao, sem mudar regra tile-based do Core.
 
 ---
 

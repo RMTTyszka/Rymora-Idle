@@ -59,4 +59,40 @@ public sealed class WorldStateTests
 
         Assert.Equal(scenario.ExpectedResult, result);
     }
+
+    [Fact]
+    public void ShouldTriggerEncounter_uses_region_modifier()
+    {
+        var scenario = WorldObjectMother.WorldWithRegionEncounterModifier();
+
+        var result = scenario.InputWorld.ShouldTriggerEncounter(
+            scenario.InputPosition,
+            scenario.InputBaseProbability,
+            scenario.InputPolicy);
+
+        Assert.Equal(scenario.ExpectedResult, result);
+    }
+
+    [Fact]
+    public void ShouldTriggerEncounter_uses_zone_modifier()
+    {
+        var scenario = WorldObjectMother.WorldWithZoneEncounterModifier();
+
+        var result = scenario.InputWorld.ShouldTriggerEncounter(
+            scenario.InputPosition,
+            scenario.InputBaseProbability,
+            scenario.InputPolicy);
+
+        Assert.Equal(scenario.ExpectedResult, result);
+    }
+
+    [Fact]
+    public void GetZone_returns_zone_level()
+    {
+        var scenario = WorldObjectMother.WorldWithZoneLevel();
+
+        var zone = scenario.InputWorld.GetZone(scenario.InputPosition);
+
+        Assert.Equal(scenario.ExpectedLevel, zone.Level);
+    }
 }

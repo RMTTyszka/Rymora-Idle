@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Godot;
 using RymoraLandOfHeroes.Core.World;
@@ -8,41 +9,86 @@ namespace RymoraLandOfHeroes.GodotAdapter.World;
 
 public partial class DemoTileMapBuilder : Node
 {
+    private static readonly Vector2[] HexPoints =
+    {
+        new(TerrainTileCodes.TileSize * 0.50f, TerrainTileCodes.TileSize * 0.04f),
+        new(TerrainTileCodes.TileSize * 0.92f, TerrainTileCodes.TileSize * 0.27f),
+        new(TerrainTileCodes.TileSize * 0.92f, TerrainTileCodes.TileSize * 0.73f),
+        new(TerrainTileCodes.TileSize * 0.50f, TerrainTileCodes.TileSize * 0.96f),
+        new(TerrainTileCodes.TileSize * 0.08f, TerrainTileCodes.TileSize * 0.73f),
+        new(TerrainTileCodes.TileSize * 0.08f, TerrainTileCodes.TileSize * 0.27f)
+    };
+
     [Export]
     public TileMapLayer? TerrainLayer { get; set; }
 
-    private TerrainTileCatalog? _terrainTiles;
+    [Export]
+    public TileMapLayer? RegionLayer { get; set; }
 
-    internal void Configure(TerrainTileCatalog terrainTiles)
+    [Export]
+    public TileMapLayer? ZoneLayer { get; set; }
+
+    private TerrainTileCatalog? _terrainTiles;
+    private RuntimeRegionCatalog? _regions;
+    private RuntimeZoneCatalog? _zones;
+
+    internal void Configure(TerrainTileCatalog terrainTiles, RuntimeRegionCatalog regions, RuntimeZoneCatalog zones)
     {
         _terrainTiles = terrainTiles;
+        _regions = regions;
+        _zones = zones;
     }
 
     public void BuildIfEmpty()
     {
         var terrainTiles = GetTerrainTiles();
-        if (TerrainLayer is null || TerrainLayer.GetUsedCells().Count > 0)
+        var regions = GetRegions();
+        var zones = GetZones();
+        if (TerrainLayer is null || RegionLayer is null || ZoneLayer is null)
         {
             return;
         }
 
-        TerrainLayer.TileSet = CreateTileSet(terrainTiles);
+        TerrainLayer.TileSet ??= CreateTileSet(terrainTiles.All.Select(tile => (tile.AtlasCoords, tile.Color)));
+        RegionLayer.TileSet ??= CreateTileSet(regions.All.Select(region => (region.AtlasCoords, region.Color)));
+        ZoneLayer.TileSet ??= CreateTileSet(zones.All.Select(zone => (zone.AtlasCoords, zone.Color)));
+        if (TerrainLayer.GetUsedCells().Count > 0)
+        {
+            return;
+        }
 
         for (var x = -5; x <= 6; x++)
         {
             for (var y = -4; y <= 4; y++)
             {
-                Set(x, y, PickTerrain(x, y), terrainTiles);
+                Set(x, y, PickTerrain(x, y), PickRegionId(x, y), PickZoneId(x, y), terrainTiles, regions, zones);
             }
         }
     }
 
-    private void Set(int x, int y, TerrainType terrainType, TerrainTileCatalog terrainTiles)
+    private void Set(
+        int x,
+        int y,
+        TerrainType terrainType,
+        string regionId,
+        string zoneId,
+        TerrainTileCatalog terrainTiles,
+        RuntimeRegionCatalog regions,
+        RuntimeZoneCatalog zones)
     {
+        var cell = new Vector2I(x, y);
         TerrainLayer!.SetCell(
-            new Vector2I(x, y),
+            cell,
             TerrainTileCodes.SourceId,
             terrainTiles.GetByTerrainType(terrainType).AtlasCoords);
+        RegionLayer!.SetCell(
+            cell,
+            TerrainTileCodes.SourceId,
+            regions.GetDefinition(regionId).AtlasCoords);
+        ZoneLayer!.SetCell(
+            cell,
+            TerrainTileCodes.SourceId,
+            zones.GetDefinition(zoneId).AtlasCoords);
     }
 
     private static TerrainType PickTerrain(int x, int y)
@@ -62,6 +108,56 @@ public partial class DemoTileMapBuilder : Node
             return TerrainType.City;
         }
 
+        if (x == 4 && y == -2)
+        {
+            return TerrainType.Place;
+        }
+
+        if (x == 4 && y == -1)
+        {
+            return TerrainType.Volcano;
+        }
+
+        if (y == 0 && x > 0)
+        {
+            return TerrainType.Road;
+        }
+
+        if (x <= -4)
+        {
+            return TerrainType.Desert;
+        }
+
+        if (x == -3)
+        {
+            return TerrainType.Jungle;
+        }
+
+        if (x == -2)
+        {
+            return TerrainType.Swamp;
+        }
+
+        if (y == -4)
+        {
+            return TerrainType.Snow;
+        }
+
+        if (y == 4)
+        {
+            return TerrainType.Water;
+        }
+
+        if (x >= 5 && y < 0)
+        {
+            return TerrainType.Ice;
+        }
+
+        if ((x + y) % 7 == 0)
+        {
+            return TerrainType.Hills;
+        }
+
         if ((x + y) % 5 == 0)
         {
             return TerrainType.Forest;
@@ -75,10 +171,27 @@ public partial class DemoTileMapBuilder : Node
         return TerrainType.Plain;
     }
 
-    private static TileSet CreateTileSet(TerrainTileCatalog terrainTiles)
+    private static string PickRegionId(int x, int y)
     {
-        var maxAtlasX = terrainTiles.All.Max(tile => tile.AtlasCoords.X);
-        var maxAtlasY = terrainTiles.All.Max(tile => tile.AtlasCoords.Y);
+        return x == 5 && y == 0 ? "town" : "wild";
+    }
+
+    private static string PickZoneId(int x, int y)
+    {
+        var distance = Math.Max(Math.Abs(x), Math.Abs(y));
+        if (distance <= 1)
+        {
+            return "deep";
+        }
+
+        return distance <= 3 ? "interior" : "edge";
+    }
+
+    private static TileSet CreateTileSet(IEnumerable<(Vector2I AtlasCoords, Color Color)> tiles)
+    {
+        var tileArray = tiles.ToArray();
+        var maxAtlasX = tileArray.Max(tile => tile.AtlasCoords.X);
+        var maxAtlasY = tileArray.Max(tile => tile.AtlasCoords.Y);
         var image = Image.CreateEmpty(
             TerrainTileCodes.TileSize * (maxAtlasX + 1),
             TerrainTileCodes.TileSize * (maxAtlasY + 1),
@@ -86,9 +199,9 @@ public partial class DemoTileMapBuilder : Node
             Image.Format.Rgba8);
         image.Fill(Colors.Transparent);
 
-        foreach (var terrainTile in terrainTiles.All)
+        foreach (var tile in tileArray)
         {
-            FillTile(image, terrainTile.AtlasCoords, terrainTile.Color);
+            FillTile(image, tile.AtlasCoords, tile.Color);
         }
 
         var source = new TileSetAtlasSource
@@ -97,13 +210,16 @@ public partial class DemoTileMapBuilder : Node
             TextureRegionSize = new Vector2I(TerrainTileCodes.TileSize, TerrainTileCodes.TileSize)
         };
 
-        foreach (var terrainTile in terrainTiles.All)
+        foreach (var tile in tileArray)
         {
-            source.CreateTile(terrainTile.AtlasCoords);
+            source.CreateTile(tile.AtlasCoords);
         }
 
         var tileSet = new TileSet
         {
+            TileShape = TileSet.TileShapeEnum.Hexagon,
+            TileLayout = TileSet.TileLayoutEnum.Stacked,
+            TileOffsetAxis = TileSet.TileOffsetAxisEnum.Horizontal,
             TileSize = new Vector2I(TerrainTileCodes.TileSize, TerrainTileCodes.TileSize)
         };
         tileSet.AddSource(source, TerrainTileCodes.SourceId);
@@ -118,7 +234,11 @@ public partial class DemoTileMapBuilder : Node
         {
             for (var y = startY; y < startY + TerrainTileCodes.TileSize; y++)
             {
-                image.SetPixel(x, y, color);
+                var local = new Vector2(x - startX + 0.5f, y - startY + 0.5f);
+                if (IsInsideHex(local))
+                {
+                    image.SetPixel(x, y, color);
+                }
             }
         }
 
@@ -128,19 +248,65 @@ public partial class DemoTileMapBuilder : Node
     private static void DrawBorder(Image image, int startX, int startY)
     {
         var border = new Color(0.04f, 0.04f, 0.04f, 0.55f);
-        var endX = startX + TerrainTileCodes.TileSize - 1;
-        var endY = startY + TerrainTileCodes.TileSize - 1;
-        for (var offset = 0; offset < TerrainTileCodes.TileSize; offset++)
+        for (var x = startX; x < startX + TerrainTileCodes.TileSize; x++)
         {
-            image.SetPixel(startX + offset, startY, border);
-            image.SetPixel(startX + offset, endY, border);
-            image.SetPixel(startX, startY + offset, border);
-            image.SetPixel(endX, startY + offset, border);
+            for (var y = startY; y < startY + TerrainTileCodes.TileSize; y++)
+            {
+                var local = new Vector2(x - startX + 0.5f, y - startY + 0.5f);
+                if (IsInsideHex(local) && IsHexEdge(local))
+                {
+                    image.SetPixel(x, y, border);
+                }
+            }
         }
+    }
+
+    private static bool IsHexEdge(Vector2 point)
+    {
+        const int borderWidth = 2;
+        return !IsInsideHex(point + new Vector2(borderWidth, 0))
+            || !IsInsideHex(point - new Vector2(borderWidth, 0))
+            || !IsInsideHex(point + new Vector2(0, borderWidth))
+            || !IsInsideHex(point - new Vector2(0, borderWidth));
+    }
+
+    private static bool IsInsideHex(Vector2 point)
+    {
+        var inside = false;
+        for (int current = 0, previous = HexPoints.Length - 1; current < HexPoints.Length; previous = current++)
+        {
+            var currentPoint = HexPoints[current];
+            var previousPoint = HexPoints[previous];
+            if ((currentPoint.Y > point.Y) == (previousPoint.Y > point.Y))
+            {
+                continue;
+            }
+
+            var xAtY = (previousPoint.X - currentPoint.X)
+                * (point.Y - currentPoint.Y)
+                / (previousPoint.Y - currentPoint.Y)
+                + currentPoint.X;
+            if (point.X < xAtY)
+            {
+                inside = !inside;
+            }
+        }
+
+        return inside;
     }
 
     private TerrainTileCatalog GetTerrainTiles()
     {
         return _terrainTiles ?? throw new InvalidOperationException("Terrain tile catalog is not configured.");
+    }
+
+    private RuntimeRegionCatalog GetRegions()
+    {
+        return _regions ?? throw new InvalidOperationException("Region catalog is not configured.");
+    }
+
+    private RuntimeZoneCatalog GetZones()
+    {
+        return _zones ?? throw new InvalidOperationException("Zone catalog is not configured.");
     }
 }

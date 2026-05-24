@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using RymoraLandOfHeroes.Core.Application;
+using RymoraLandOfHeroes.Core.Combat;
 using RymoraLandOfHeroes.Core.Common;
 using RymoraLandOfHeroes.Core.Content;
 using RymoraLandOfHeroes.Core.Party;
@@ -17,8 +18,7 @@ public partial class Bootstrap : Node2D
     {
         Move = 1,
         Mine = 2,
-        CutWood = 3,
-        StartCombat = 4
+        CutWood = 3
     }
 
     private GameApplication? _application;
@@ -30,6 +30,7 @@ public partial class Bootstrap : Node2D
     private GameContent? _content;
     private MaterialItem? _startupMineMaterial;
     private TilePosition _contextMenuTarget;
+    private CombatInstance? _observedCombat;
     private bool _miningLogged;
     private bool _wasInCombat;
     private float _elapsed;
@@ -37,6 +38,8 @@ public partial class Bootstrap : Node2D
     public override void _Ready()
     {
         var terrainLayer = GetNode<TileMapLayer>("TerrainLayer");
+        var regionLayer = GetNode<TileMapLayer>("RegionLayer");
+        var zoneLayer = GetNode<TileMapLayer>("ZoneLayer");
         var demoMapBuilder = GetNode<DemoTileMapBuilder>("DemoTileMapBuilder");
         _worldAdapter = GetNode<WorldTileMapAdapter>("WorldTileMapAdapter");
         _partyPresenter = GetNode<PartyPresenter>("PartyPresenter");
@@ -46,12 +49,19 @@ public partial class Bootstrap : Node2D
         _contextMenu.IdPressed += OnContextMenuIdPressed;
         _content = JsonGameContentLoader.LoadDefault();
 
-        demoMapBuilder.Configure(_content.TerrainTiles);
+        regionLayer.Visible = false;
+        zoneLayer.Visible = false;
+
+        demoMapBuilder.Configure(_content.TerrainTiles, _content.Regions, _content.Zones);
         demoMapBuilder.TerrainLayer = terrainLayer;
+        demoMapBuilder.RegionLayer = regionLayer;
+        demoMapBuilder.ZoneLayer = zoneLayer;
         demoMapBuilder.BuildIfEmpty();
 
-        _worldAdapter.Configure(_content.TerrainTiles, _content.Encounters);
+        _worldAdapter.Configure(_content.TerrainTiles, _content.Regions, _content.Zones);
         _worldAdapter.TerrainLayer = terrainLayer;
+        _worldAdapter.RegionLayer = regionLayer;
+        _worldAdapter.ZoneLayer = zoneLayer;
         var world = _worldAdapter.CreateWorld();
         var startPosition = _worldAdapter.FindFirstPosition(TerrainType.Mine);
         _startupMineMaterial = _worldAdapter.GetMaterialForAction(
@@ -124,6 +134,11 @@ public partial class Bootstrap : Node2D
             return;
         }
 
+        if (_application.Parties.Get(BootstrapCoreFactory.PartyId).IsInCombat)
+        {
+            return;
+        }
+
         if (mouseButton.ButtonIndex == MouseButton.Right)
         {
             ShowContextMenu(mouseButton);
@@ -167,7 +182,6 @@ public partial class Bootstrap : Node2D
             }
         }
 
-        _contextMenu.AddItem("Start Combat", (int)ContextAction.StartCombat);
         _contextMenu.Position = new Vector2I((int)mouseButton.Position.X, (int)mouseButton.Position.Y);
         _contextMenu.Popup();
     }
@@ -184,9 +198,6 @@ public partial class Bootstrap : Node2D
                 break;
             case ContextAction.CutWood:
                 EnqueueGather(_contextMenuTarget, PartyActionType.CutWood);
-                break;
-            case ContextAction.StartCombat:
-                StartCombat();
                 break;
         }
     }
@@ -288,30 +299,6 @@ public partial class Bootstrap : Node2D
         };
     }
 
-    private void StartCombat()
-    {
-        if (_application is null || _content is null)
-        {
-            return;
-        }
-
-        var party = _application.Parties.Get(BootstrapCoreFactory.PartyId);
-        if (party.IsInCombat)
-        {
-            return;
-        }
-
-        party.ActionQueue.Clear();
-        var combat = _application.StartCombat(BootstrapCoreFactory.PartyId, _content.Encounters.GetFirstEncounter());
-        _combatPresenter?.ClearHistory();
-        combat.OnEvent += combatEvent =>
-        {
-            _combatPresenter?.AddEvent(combatEvent);
-            GD.Print($"Combat {combatEvent.Type}: {combatEvent.Source.Creature.Name} -> {combatEvent.Target.Creature.Name}, dmg={combatEvent.Damage:0.0}.");
-        };
-        GD.Print("Combat started. Right click ignored while combat is active.");
-    }
-
     private void SyncCombatOverlay(bool isInCombat)
     {
         if (_application is null || _combatPresenter is null)
@@ -321,16 +308,49 @@ public partial class Bootstrap : Node2D
 
         if (isInCombat && _application.ActiveCombats.TryGetValue(BootstrapCoreFactory.PartyId, out var combat))
         {
+            ObserveCombat(combat);
             _combatPresenter.Sync(combat);
             _wasInCombat = true;
             return;
         }
 
         _combatPresenter.Sync(null);
+        StopObservingCombat();
         if (_wasInCombat)
         {
             _wasInCombat = false;
             GD.Print("Combat finished. Returned to map.");
         }
+    }
+
+    private void ObserveCombat(CombatInstance combat)
+    {
+        if (ReferenceEquals(_observedCombat, combat))
+        {
+            return;
+        }
+
+        StopObservingCombat();
+        _observedCombat = combat;
+        _observedCombat.OnEvent += OnCombatEvent;
+        _combatPresenter?.ClearHistory();
+        GD.Print("Encounter started. Combat screen active.");
+    }
+
+    private void StopObservingCombat()
+    {
+        if (_observedCombat is null)
+        {
+            return;
+        }
+
+        _observedCombat.OnEvent -= OnCombatEvent;
+        _observedCombat = null;
+    }
+
+    private void OnCombatEvent(CombatEvent combatEvent)
+    {
+        _combatPresenter?.AddEvent(combatEvent);
+        GD.Print($"Combat {combatEvent.Type}: {combatEvent.Source.Creature.Name} -> {combatEvent.Target.Creature.Name}, dmg={combatEvent.Damage:0.0}.");
     }
 }

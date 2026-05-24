@@ -14,6 +14,29 @@ public partial class PartyPresenter : Node2D
 
     public void Sync(Party party, WorldTileMapAdapter worldAdapter)
     {
-        Position = worldAdapter.ToLocalPosition(party.Position);
+        Position = GetVisualPosition(party, worldAdapter);
+    }
+
+    private static Vector2 GetVisualPosition(Party party, WorldTileMapAdapter worldAdapter)
+    {
+        var current = party.ActionQueue.Current;
+        if (current?.Request.ActionType != PartyActionType.Travel || current.Request.Path is null)
+        {
+            return worldAdapter.ToLocalPosition(party.Position);
+        }
+
+        var path = current.Request.Path;
+        if (current.ExecutedCount >= path.Count)
+        {
+            return worldAdapter.ToLocalPosition(party.Position);
+        }
+
+        var from = worldAdapter.ToLocalPosition(party.Position);
+        var to = worldAdapter.ToLocalPosition(path[current.ExecutedCount]);
+        var progress = current.Request.TimeToExecute <= 0
+            ? 1
+            : Mathf.Clamp(current.CurrentTime / current.Request.TimeToExecute, 0, 1);
+
+        return from.Lerp(to, progress);
     }
 }

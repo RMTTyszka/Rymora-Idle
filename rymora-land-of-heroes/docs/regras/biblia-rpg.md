@@ -551,6 +551,9 @@ Decisao pendente:
 
 Confirmado:
 
+- O mapa usa grade hexagonal 2D topdown.
+- Tiles heptagonais nao serao usados como base do mapa.
+- Tiles octogonais nao serao usados como base do mapa.
 - Terrenos possuem caminhabilidade.
 - Terrenos possuem velocidade de movimento.
 - Terrenos possuem qualidade.
@@ -571,9 +574,11 @@ Confirmado:
   - Water: 20.
   - Ice: 60.
   - Hills: 60.
+  - Volcano: 30.
 
 Confirmado:
 
+- Cada tipo de terreno/bioma deve possuir tile hexagonal configuravel.
 - Forest permite cortar madeira.
 - Mountain permite minerar.
 - Place permite entrar em dungeon.
@@ -596,14 +601,22 @@ Decisao pendente:
 Confirmado:
 
 - Regioes possuem nome.
+- Regioes possuem modificador configuravel de chance de encontro.
 - Regioes podem possuir encontros.
+- Regioes configuram encontros por bioma/terreno.
 - Regioes podem ser ponto seguro.
+
+Confirmado:
+
+- Zonas possuem nome.
+- Zonas possuem nivel configuravel.
+- Zonas possuem modificador configuravel de chance de encontro.
+- Uma celula do mapa combina terreno, regiao e zona.
 
 Decisao pendente:
 
 - Definir o que uma regiao representa no mundo.
-- Definir se regioes possuem nivel proprio ou usam qualidade dos terrenos.
-- Definir se regioes possuem faccoes, biomas, eventos, cidades ou recursos especiais.
+- Definir se regioes possuem faccoes, eventos, cidades ou recursos especiais.
 - Definir se ponto seguro impede encontros, permite cura, permite retorno ou outra funcao.
 
 ## Viagem
@@ -625,6 +638,9 @@ Confirmado:
 - Encontros acontecem durante acao de viagem.
 - Encontros nao acontecem em City.
 - A chance de encontro usa probabilidade base e modificador do terreno.
+- A chance de encontro tambem pode ser modificada pela regiao.
+- A chance de encontro tambem pode ser modificada pela zona.
+- A probabilidade base de encontro durante viagem deve ser configuravel.
 
 Decisao pendente:
 
@@ -709,7 +725,9 @@ Decisao pendente:
 Confirmado:
 
 - Um encontro possui monstros.
+- Um encontro possui nivel configuravel.
 - Uma regiao pode conter encontros.
+- Encontros de uma regiao devem ser configuraveis por dados e por bioma/terreno.
 - Quando um encontro comeca, os monstros sao criados com base em modelos de criatura.
 - O nivel do encontro usa o nivel do terreno no prototipo.
 

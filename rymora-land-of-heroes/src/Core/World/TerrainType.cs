@@ -5,6 +5,7 @@ public enum TerrainType
     Plain,
     Forest,
     Mountain,
+    Volcano,
     Road,
     City,
     Place,

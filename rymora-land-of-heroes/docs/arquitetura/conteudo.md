@@ -106,9 +106,12 @@ public sealed class EncounterTemplate
 {
     public string Id;
     public string Name;
+    public int Level;
     public IReadOnlyList<CreatureTemplate> Monsters;
 }
 ```
+
+`Level` do encontro vem de `assets/data/content/encounters.json`. Regioes apontam para encontros por id agrupados por terreno em `assets/data/world/regions.json`. O nivel de jogo do tile vem de `assets/data/world/zones.json`.
 
 ### 3.5 Material
 
@@ -175,3 +178,14 @@ Baseado no legado:
 | Encontros | MontainEncounter, PlaainEncounter |
 | Metais | Iron, Bronze, Copper, Silver, Gold, Mythril |
 | Madeiras | Oak |
+
+Arquivos de conteudo usados no prototipo Godot:
+- `assets/data/content/weapons.json`
+- `assets/data/content/materials.json`
+- `assets/data/content/creatures.json`
+- `assets/data/content/encounters.json`
+- `assets/data/world/regions.json`
+- `assets/data/world/zones.json`
+- `assets/data/world/terrain_tiles.json`
+
+`regions.json` define tiles de regiao, safe spot, modificador de chance de encontro e encontros por bioma. `zones.json` define tiles de zona, nivel e modificador de chance. `terrain_tiles.json` define tiles/biomas, regras de terreno e materiais coletaveis.
