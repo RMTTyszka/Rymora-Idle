@@ -189,3 +189,14 @@ Arquivos de conteudo usados no prototipo Godot:
 - `assets/data/world/terrain_tiles.json`
 
 `regions.json` define tiles de regiao, safe spot, modificador de chance de encontro e encontros por bioma. `zones.json` define tiles de zona, nivel e modificador de chance. `terrain_tiles.json` define tiles/biomas, regras de terreno e materiais coletaveis.
+
+### 5.1 Validacao de conteudo
+
+`JsonGameContentLoader` valida as referencias cruzadas antes de montar os catalogos runtime. O bootstrap deve falhar cedo com erro claro quando JSON estiver inconsistente.
+
+Validacoes atuais:
+- arma referenciada por creature existe em `weapons.json`.
+- creature referenciada por encounter existe em `creatures.json`.
+- encounter referenciado por region existe em `encounters.json`.
+- material referenciado por terrain tile existe em `materials.json`.
+- atlas coords de terrain, region e zone nao duplicam.

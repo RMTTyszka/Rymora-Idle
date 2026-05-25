@@ -20,21 +20,68 @@ internal static class JsonGameContentLoader
     public static GameContent LoadDefault()
     {
         var config = LoadConfig("res://assets/data/game_config.json");
-        var weapons = new RuntimeWeaponCatalog(LoadWeapons("res://assets/data/content/weapons.json"));
-        var materials = new RuntimeMaterialCatalog(LoadMaterials("res://assets/data/content/materials.json"));
+        var weaponTemplates = LoadWeapons("res://assets/data/content/weapons.json");
+        var materialItems = LoadMaterials("res://assets/data/content/materials.json");
         var encounterTemplates = LoadEncounters("res://assets/data/content/encounters.json");
         var regionDefinitions = LoadRegions("res://assets/data/world/regions.json");
         var zoneDefinitions = LoadZones("res://assets/data/world/zones.json");
+        var creatureDefinitions = LoadCreatures("res://assets/data/content/creatures.json");
+        var terrainTileDefinitions = LoadTerrainTiles("res://assets/data/world/terrain_tiles.json");
+
+        ContentValidator.Validate(CreateValidationData(
+            weaponTemplates,
+            materialItems,
+            creatureDefinitions,
+            encounterTemplates,
+            regionDefinitions,
+            zoneDefinitions,
+            terrainTileDefinitions));
+
+        var weapons = new RuntimeWeaponCatalog(weaponTemplates);
+        var materials = new RuntimeMaterialCatalog(materialItems);
         var encounters = new RuntimeEncounterCatalog(encounterTemplates, regionDefinitions);
         var regions = new RuntimeRegionCatalog(regionDefinitions, encounters);
         var zones = new RuntimeZoneCatalog(zoneDefinitions);
         var creatures = new CreatureCatalog(
             config,
             weapons,
-            LoadCreatures("res://assets/data/content/creatures.json"));
-        var terrainTiles = new TerrainTileCatalog(LoadTerrainTiles("res://assets/data/world/terrain_tiles.json"));
+            creatureDefinitions);
+        var terrainTiles = new TerrainTileCatalog(terrainTileDefinitions);
 
         return new GameContent(config, weapons, materials, encounters, regions, zones, creatures, terrainTiles);
+    }
+
+    private static ContentValidationData CreateValidationData(
+        IReadOnlyList<WeaponTemplate> weapons,
+        IReadOnlyList<MaterialItem> materials,
+        IReadOnlyList<CreatureDefinition> creatures,
+        IReadOnlyList<EncounterTemplate> encounters,
+        IReadOnlyList<RegionDefinition> regions,
+        IReadOnlyList<ZoneDefinition> zones,
+        IReadOnlyList<TerrainTileDefinition> terrainTiles)
+    {
+        return new ContentValidationData(
+            Weapons: weapons.Select(weapon => new ContentWeaponData(weapon.Name)).ToArray(),
+            Materials: materials.Select(material => new ContentMaterialData(material.Name)).ToArray(),
+            Creatures: creatures.Select(creature => new ContentCreatureData(creature.Name, creature.MainHandWeapon)).ToArray(),
+            Encounters: encounters.Select(encounter => new ContentEncounterData(
+                encounter.Id,
+                encounter.Monsters.Select(monster => monster.CreatureName).ToArray())).ToArray(),
+            Regions: regions.Select(region => new ContentRegionData(
+                region.Id,
+                region.AtlasCoords.X,
+                region.AtlasCoords.Y,
+                region.IsSafeSpot,
+                region.EncounterIdsByTerrain.ToDictionary(
+                    pair => pair.Key.ToString(),
+                    pair => pair.Value))).ToArray(),
+            Zones: zones.Select(zone => new ContentZoneData(zone.Id, zone.AtlasCoords.X, zone.AtlasCoords.Y)).ToArray(),
+            TerrainTiles: terrainTiles.Select(tile => new ContentTerrainTileData(
+                tile.AtlasCoords.X,
+                tile.AtlasCoords.Y,
+                tile.Terrain.Type.ToString(),
+                tile.MiningMaterial,
+                tile.WoodcuttingMaterial)).ToArray());
     }
 
     private static GameConfig LoadConfig(string path)

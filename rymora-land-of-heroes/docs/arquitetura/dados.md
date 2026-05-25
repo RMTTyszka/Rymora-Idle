@@ -156,6 +156,8 @@ Conteudo inicial carregado por JSON:
 
 O adapter Godot monta catalogos runtime (`IWeaponCatalog`, `IMaterialCatalog`, `IEncounterCatalog`) e injeta factories no `GameApplication`. O Core recebe templates e config ja parseados; nao le arquivo nem referencia Godot.
 
+Antes de montar os catalogos runtime, o adapter valida referencias cruzadas do conteudo JSON para falhar cedo: weapons usadas por creatures, creatures usadas por encounters, encounters usados por regions, materiais usados por terrain tiles e atlas coords duplicadas em terrain/region/zone.
+
 `regions.json` define tiles de regiao, safe spot, modificador de chance de encontro e encontros por bioma. `zones.json` define tiles de zona, nivel e modificador de chance. `terrain_tiles.json` mapeia atlas coords para `TerrainData`, bioma visual, cor provisoria do tile e material coletavel por acao.
 
 Chance de encontro durante viagem deve ser balanceavel por dados:

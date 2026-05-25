@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Rymora-Land-of-Heroes.csproj" />
     <ProjectReference Include="..\Core\RymoraLandOfHeroes.Core.csproj" />
   </ItemGroup>
 </Project>

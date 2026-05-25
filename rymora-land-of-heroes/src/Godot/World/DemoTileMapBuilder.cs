@@ -11,12 +11,12 @@ public partial class DemoTileMapBuilder : Node
 {
     private static readonly Vector2[] HexPoints =
     {
-        new(TerrainTileCodes.TileSize * 0.50f, TerrainTileCodes.TileSize * 0.04f),
-        new(TerrainTileCodes.TileSize * 0.92f, TerrainTileCodes.TileSize * 0.27f),
-        new(TerrainTileCodes.TileSize * 0.92f, TerrainTileCodes.TileSize * 0.73f),
-        new(TerrainTileCodes.TileSize * 0.50f, TerrainTileCodes.TileSize * 0.96f),
-        new(TerrainTileCodes.TileSize * 0.08f, TerrainTileCodes.TileSize * 0.73f),
-        new(TerrainTileCodes.TileSize * 0.08f, TerrainTileCodes.TileSize * 0.27f)
+        new(TerrainTileCodes.TileSize * 0.50f, 0),
+        new(TerrainTileCodes.TileSize - 1, TerrainTileCodes.TileSize * 0.25f),
+        new(TerrainTileCodes.TileSize - 1, TerrainTileCodes.TileSize * 0.75f),
+        new(TerrainTileCodes.TileSize * 0.50f, TerrainTileCodes.TileSize - 1),
+        new(0, TerrainTileCodes.TileSize * 0.75f),
+        new(0, TerrainTileCodes.TileSize * 0.25f)
     };
 
     [Export]

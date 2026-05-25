@@ -134,7 +134,7 @@ Implementacao inicial:
 - `assets/data/world/regions.json` mapeia atlas coords do `RegionLayer` para regiao, safe spot, chance local e encontros por terreno.
 - `assets/data/world/zones.json` mapeia atlas coords do `ZoneLayer` para zona, nivel e chance local.
 - `src/Godot/World/TerrainTileCodes.cs` guarda apenas constantes do TileSet provisorio (`SourceId`, `TileSize`).
-- `assets/art/world/terrain_hex_atlas.png` contem atlas visual provisorio dos tiles hexagonais.
+- `assets/art/world/terrain_hex_atlas.png` contem atlas visual provisorio dos tiles hexagonais, sem texto ou labels dentro dos hexagonos.
 - `assets/world/terrain_hex_tileset.tres` e o TileSet editavel usado pelo `TerrainLayer`.
 - `assets/world/region_hex_tileset.tres` e o TileSet editavel usado pelo `RegionLayer`.
 - `assets/world/zone_hex_tileset.tres` e o TileSet editavel usado pelo `ZoneLayer`.
@@ -149,6 +149,12 @@ Fluxo para editar mapa no Godot:
 - Selecionar `ZoneLayer` para pintar zonas/levels.
 - Salvar a cena.
 - Ao rodar o jogo, `WorldTileMapAdapter` cruza as tres layers pintadas e `DemoTileMapBuilder` nao substitui o mapa.
+
+Regra visual dos atlases:
+- Tiles hexagonais do mapa nao devem conter texto, siglas ou labels desenhados no centro.
+- Cada hexagono deve ocupar toda a celula `96x96` do TileSet, encostando nas bordas esperadas do tile para nao deixar espacamento transparente entre tiles vizinhos.
+- A identificacao de terreno, regiao e zona deve vir de `terrain_tiles.json`, `regions.json`, `zones.json` e das ferramentas de edicao/debug, nao da arte do tile.
+- Labels no proprio tile poluem a leitura do mapa jogavel e ficam proibidos mesmo em arte provisoria.
 
 Mapeamento inicial de atlas coords fica em JSON. O proximo passo e cobrir todos os biomas/terrenos do enum, mesmo com arte provisoria:
 

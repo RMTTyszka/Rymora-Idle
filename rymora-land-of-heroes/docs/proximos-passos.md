@@ -75,6 +75,7 @@ Regras:
 - Nivel vem de `zone`.
 - Para editar mapa: abrir `scenes/bootstrap.tscn`, pintar `TerrainLayer`, `RegionLayer` e `ZoneLayer`, salvar a cena.
 - Core continua sem tipos Godot.
+- Atlas visual de tile deve ficar sem texto, siglas ou labels dentro dos hexagonos; o hexagono deve preencher a celula `96x96` sem padding visual; metadados ficam nos JSONs e em ferramentas de debug.
 
 ### 2. Movimento visual suave
 
@@ -135,18 +136,24 @@ Opcoes:
 
 Objetivo: falhar cedo quando JSON tiver erro.
 
+Estado atual: validacao inicial implementada no loader de conteudo Godot.
+
 Arquivos principais:
 
 - `src/Godot/Content/JsonGameContentLoader.cs`
 - `src/Godot/Content/GameContent.cs`
 - `assets/data/**/*.json`
 
-Validacoes uteis:
+Validacoes implementadas:
 
 - Weapon referenciada por creature existe.
 - Creature referenciada por encounter existe.
+- Encounter referenciado por region existe.
 - Material referenciado por terrain existe.
-- Terrain atlas coords nao duplicam.
+- Terrain, region e zone atlas coords nao duplicam.
+
+Validacoes futuras uteis:
+
 - Toda regiao nao-safe usada no mapa tem encontros, se encontros forem obrigatorios.
 
 ---
