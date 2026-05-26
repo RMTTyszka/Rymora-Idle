@@ -138,4 +138,40 @@ public sealed class GameApplicationAutomationTests
         Assert.Contains(scenario.AssertParty.Automation.Macros, macro => macro.Name == "Recorded");
         Assert.Equal(ProgramRunnerState.Running, scenario.AssertParty.Automation.Runner.State);
     }
+
+    [Fact]
+    public void HandleInput_routes_program_edit_intents()
+    {
+        var scenario = ApplicationObjectMother.ApplicationWithMiningProgram();
+        var originalStep = scenario.AssertParty.Automation.Program.Steps[0];
+
+        scenario.InputApplication.HandleInput(new AddMacroToProgramIntent("party-1", "macro-1", RepeatPolicy.Count(2)));
+        var addedStep = scenario.AssertParty.Automation.Program.Steps[1];
+        scenario.InputApplication.HandleInput(new SetProgramRepeatIntent("party-1", RepeatPolicy.Count(5)));
+        scenario.InputApplication.HandleInput(new SetProgramStepRepeatIntent("party-1", originalStep.Id, RepeatPolicy.Count(3)));
+        scenario.InputApplication.HandleInput(new MoveProgramStepIntent("party-1", addedStep.Id, 0));
+        scenario.InputApplication.HandleInput(new RemoveProgramStepIntent("party-1", addedStep.Id));
+
+        Assert.Equal(5, scenario.AssertParty.Automation.Program.Repeat.RepeatCount);
+        Assert.Single(scenario.AssertParty.Automation.Program.Steps);
+        Assert.Equal(originalStep.Id, scenario.AssertParty.Automation.Program.Steps[0].Id);
+        Assert.Equal(3, scenario.AssertParty.Automation.Program.Steps[0].Repeat.RepeatCount);
+    }
+
+    [Fact]
+    public void HandleInput_routes_macro_edit_intents()
+    {
+        var scenario = ApplicationObjectMother.ApplicationWithMiningProgram();
+
+        scenario.InputApplication.HandleInput(new RenameMacroIntent("party-1", "macro-1", "Iron Loop"));
+        scenario.InputApplication.HandleInput(new SetGatherActionRepeatIntent("party-1", "macro-1", "mine-1", RepeatPolicy.Count(4)));
+        scenario.InputApplication.HandleInput(new MoveMacroActionIntent("party-1", "macro-1", "mine-1", 0));
+        scenario.InputApplication.HandleInput(new RemoveMacroActionIntent("party-1", "macro-1", "move-1"));
+
+        var macro = scenario.AssertParty.Automation.GetMacro("macro-1");
+        var gather = Assert.IsType<GatherMacroAction>(Assert.Single(macro.Actions));
+        Assert.Equal("Iron Loop", macro.Name);
+        Assert.Equal("mine-1", gather.Id);
+        Assert.Equal(4, gather.Repeat.RepeatCount);
+    }
 }

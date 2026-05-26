@@ -81,6 +81,33 @@ public sealed class GameApplication
             case StopProgramIntent stopProgram:
                 StopProgram(stopProgram.PartyId);
                 break;
+            case AddMacroToProgramIntent addMacroToProgram:
+                AddMacroToProgram(addMacroToProgram.PartyId, addMacroToProgram.MacroId, addMacroToProgram.Repeat);
+                break;
+            case MoveProgramStepIntent moveProgramStep:
+                MoveProgramStep(moveProgramStep.PartyId, moveProgramStep.StepId, moveProgramStep.NewIndex);
+                break;
+            case RemoveProgramStepIntent removeProgramStep:
+                RemoveProgramStep(removeProgramStep.PartyId, removeProgramStep.StepId);
+                break;
+            case RenameMacroIntent renameMacro:
+                RenameMacro(renameMacro.PartyId, renameMacro.MacroId, renameMacro.Name);
+                break;
+            case RemoveMacroActionIntent removeMacroAction:
+                RemoveMacroAction(removeMacroAction.PartyId, removeMacroAction.MacroId, removeMacroAction.ActionId);
+                break;
+            case MoveMacroActionIntent moveMacroAction:
+                MoveMacroAction(moveMacroAction.PartyId, moveMacroAction.MacroId, moveMacroAction.ActionId, moveMacroAction.NewIndex);
+                break;
+            case SetGatherActionRepeatIntent setGatherActionRepeat:
+                SetGatherActionRepeat(setGatherActionRepeat.PartyId, setGatherActionRepeat.MacroId, setGatherActionRepeat.ActionId, setGatherActionRepeat.Repeat);
+                break;
+            case SetProgramRepeatIntent setProgramRepeat:
+                SetProgramRepeat(setProgramRepeat.PartyId, setProgramRepeat.Repeat);
+                break;
+            case SetProgramStepRepeatIntent setProgramStepRepeat:
+                SetProgramStepRepeat(setProgramStepRepeat.PartyId, setProgramStepRepeat.StepId, setProgramStepRepeat.Repeat);
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(intent), "Unknown player intent.");
         }

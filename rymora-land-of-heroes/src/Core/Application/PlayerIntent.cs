@@ -22,3 +22,12 @@ public sealed record RecordGatherActionIntent(string PartyId, TilePosition Targe
 public sealed record PlayProgramIntent(string PartyId) : PlayerIntent;
 public sealed record PauseProgramIntent(string PartyId) : PlayerIntent;
 public sealed record StopProgramIntent(string PartyId) : PlayerIntent;
+public sealed record AddMacroToProgramIntent(string PartyId, string MacroId, RepeatPolicy Repeat) : PlayerIntent;
+public sealed record MoveProgramStepIntent(string PartyId, string StepId, int NewIndex) : PlayerIntent;
+public sealed record RemoveProgramStepIntent(string PartyId, string StepId) : PlayerIntent;
+public sealed record RenameMacroIntent(string PartyId, string MacroId, string Name) : PlayerIntent;
+public sealed record RemoveMacroActionIntent(string PartyId, string MacroId, string ActionId) : PlayerIntent;
+public sealed record MoveMacroActionIntent(string PartyId, string MacroId, string ActionId, int NewIndex) : PlayerIntent;
+public sealed record SetGatherActionRepeatIntent(string PartyId, string MacroId, string ActionId, RepeatPolicy Repeat) : PlayerIntent;
+public sealed record SetProgramRepeatIntent(string PartyId, RepeatPolicy Repeat) : PlayerIntent;
+public sealed record SetProgramStepRepeatIntent(string PartyId, string StepId, RepeatPolicy Repeat) : PlayerIntent;
