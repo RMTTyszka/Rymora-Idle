@@ -176,12 +176,12 @@ public sealed record RepeatPolicy
     private RepeatPolicy(RepeatMode mode, int? count, float? seconds)
     {
         Mode = mode;
-        Count = count;
+        RepeatCount = count;
         Seconds = seconds;
     }
 
     public RepeatMode Mode { get; }
-    public int? Count { get; }
+    public int? RepeatCount { get; }
     public float? Seconds { get; }
 
     public static RepeatPolicy Once { get; } = new(RepeatMode.Once, count: 1, seconds: null);
@@ -361,7 +361,7 @@ public void Macro_updates_gather_action_repeat()
     macro.SetGatherActionRepeat("mine-1", RepeatPolicy.Count(5));
 
     var action = Assert.IsType<GatherMacroAction>(macro.Actions[0]);
-    Assert.Equal(5, action.Repeat.Count);
+    Assert.Equal(5, action.Repeat.RepeatCount);
 }
 ```
 
@@ -682,7 +682,7 @@ public sealed class PartyProgramTests
 
         Assert.Equal("macro-1", step.MacroId);
         Assert.Equal(RepeatMode.Count, step.Repeat.Mode);
-        Assert.Equal(3, step.Repeat.Count);
+        Assert.Equal(3, step.Repeat.RepeatCount);
     }
 
     [Fact]
@@ -1277,7 +1277,7 @@ public sealed class ProgramRunner
         return repeat.Mode switch
         {
             RepeatMode.Once => completedIterations < 1,
-            RepeatMode.Count => completedIterations < repeat.Count!.Value,
+            RepeatMode.Count => completedIterations < repeat.RepeatCount!.Value,
             RepeatMode.Forever => true,
             RepeatMode.Duration => elapsedSeconds < repeat.Seconds!.Value,
             _ => throw new ArgumentOutOfRangeException(nameof(repeat), "Unknown repeat mode.")
@@ -1739,7 +1739,7 @@ public void Application_adds_macro_to_program()
     var step = scenario.InputApplication.AddMacroToProgram("party-1", "macro-1", RepeatPolicy.Count(2));
 
     Assert.Equal("macro-1", step.MacroId);
-    Assert.Equal(2, step.Repeat.Count);
+    Assert.Equal(2, step.Repeat.RepeatCount);
 }
 
 [Fact]
@@ -1755,8 +1755,8 @@ public void Application_edits_macro_and_program_repeat()
     var macro = scenario.AssertParty.Automation.GetMacro("macro-1");
     var gather = Assert.IsType<GatherMacroAction>(macro.Actions[1]);
     Assert.Equal("Iron Loop", macro.Name);
-    Assert.Equal(4, gather.Repeat.Count);
-    Assert.Equal(2, scenario.AssertParty.Automation.Program.Steps[0].Repeat.Count);
+    Assert.Equal(4, gather.Repeat.RepeatCount);
+    Assert.Equal(2, scenario.AssertParty.Automation.Program.Steps[0].Repeat.RepeatCount);
 }
 ```
 
