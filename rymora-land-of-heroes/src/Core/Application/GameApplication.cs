@@ -1,3 +1,4 @@
+using RymoraLandOfHeroes.Core.Automation;
 using RymoraLandOfHeroes.Core.Combat;
 using RymoraLandOfHeroes.Core.Common;
 using RymoraLandOfHeroes.Core.Configuration;
@@ -73,6 +74,22 @@ public sealed class GameApplication
         return true;
     }
 
+    public void PlayProgram(string partyId)
+    {
+        var party = Parties.Get(partyId);
+        party.Automation.Runner.Play();
+    }
+
+    public void PauseProgram(string partyId)
+    {
+        Parties.Get(partyId).Automation.Runner.Pause();
+    }
+
+    public void StopProgram(string partyId)
+    {
+        Parties.Get(partyId).Automation.Runner.Stop();
+    }
+
     public void Update(float deltaTime)
     {
         if (deltaTime < 0)
@@ -144,6 +161,11 @@ public sealed class GameApplication
 
     private void RunPartyActions(GameParty party, float deltaTime)
     {
+        if (party.ActionQueue.IsIdle)
+        {
+            QueueNextAutomationAction(party);
+        }
+
         var current = party.ActionQueue.StartNextIfIdle();
         if (current is null)
         {
@@ -152,12 +174,19 @@ public sealed class GameApplication
 
         if (current.IsComplete(GetCurrentItemQuantity(party, current.Request)))
         {
-            party.ActionQueue.CompleteCurrentIfFinished(GetCurrentItemQuantity(party, current.Request));
+            var completed = party.ActionQueue.CompleteCurrentIfFinished(GetCurrentItemQuantity(party, current.Request));
+            NotifyAutomationActionCompleted(party, completed);
             return;
         }
 
         if (!CanExecuteCurrentAction(party, current.Request))
         {
+            if (current.Request.AutomationActionId is not null)
+            {
+                party.Automation.Runner.Fail("Party cannot run map actions.");
+                party.ActionQueue.Clear();
+            }
+
             return;
         }
 
@@ -186,6 +215,77 @@ public sealed class GameApplication
         }
     }
 
+    private void QueueNextAutomationAction(GameParty party)
+    {
+        var execution = party.Automation.Runner.TryStartNextAction(party.Automation);
+        if (execution is null)
+        {
+            return;
+        }
+
+        var request = CreateRequestForAutomationAction(party, execution);
+        if (request is null)
+        {
+            return;
+        }
+
+        party.ActionQueue.Enqueue(request);
+    }
+
+    private PartyActionRequest? CreateRequestForAutomationAction(GameParty party, MacroActionExecution execution)
+    {
+        switch (execution.Action)
+        {
+            case MoveToMacroAction move:
+                var travel = new PartyActionRequest(
+                    PartyActionType.Travel,
+                    PartyActionEndType.ByCount,
+                    Config.Travel.ActionTime,
+                    Destination: move.Destination,
+                    AutomationActionId: execution.ExecutionId);
+                var prepared = PrepareAction(party, travel);
+                if (prepared is null)
+                {
+                    party.Automation.Runner.Fail($"No path to destination ({move.Destination.X}, {move.Destination.Y}).");
+                }
+
+                return prepared;
+
+            case GatherMacroAction gather:
+                return CreateGatherRequestForAutomationAction(party, gather, execution.ExecutionId);
+
+            default:
+                party.Automation.Runner.Fail($"Unsupported Macro action: {execution.Action.Kind}.");
+                return null;
+        }
+    }
+
+    private PartyActionRequest? CreateGatherRequestForAutomationAction(GameParty party, GatherMacroAction gather, string executionId)
+    {
+        var terrain = World.GetTerrain(party.Position);
+        if (gather.Kind == MacroActionKind.Mine && !terrain.AllowsMining)
+        {
+            party.Automation.Runner.Fail($"Party cannot mine at ({party.Position.X}, {party.Position.Y}).");
+            return null;
+        }
+
+        if (gather.Kind == MacroActionKind.CutWood && !terrain.AllowsWoodcutting)
+        {
+            party.Automation.Runner.Fail($"Party cannot cut wood at ({party.Position.X}, {party.Position.Y}).");
+            return null;
+        }
+
+        return new PartyActionRequest(
+            gather.Kind == MacroActionKind.Mine ? PartyActionType.Mine : PartyActionType.CutWood,
+            PartyActionEndType.ByCount,
+            gather.Kind == MacroActionKind.Mine ? Config.Collection.MiningActionTime : Config.Collection.WoodcuttingActionTime,
+            LimitCount: 1,
+            ItemName: gather.ItemName,
+            ItemLevel: gather.ItemLevel,
+            ItemWeight: gather.ItemWeight,
+            AutomationActionId: executionId);
+    }
+
     private static bool CanExecuteCurrentAction(GameParty party, PartyActionRequest request)
     {
         return request.ActionType == PartyActionType.TransferItem || party.CanRunMapActions;
@@ -196,13 +296,15 @@ public sealed class GameApplication
         var path = state.Request.Path ?? Array.Empty<TilePosition>();
         if (state.ExecutedCount >= path.Count)
         {
-            party.ActionQueue.CompleteCurrentIfFinished();
+            var completed = party.ActionQueue.CompleteCurrentIfFinished();
+            NotifyAutomationActionCompleted(party, completed);
             return;
         }
 
         party.Position = path[state.ExecutedCount];
         state.MarkExecuted();
-        party.ActionQueue.CompleteCurrentIfFinished();
+        var travelCompleted = party.ActionQueue.CompleteCurrentIfFinished();
+        NotifyAutomationActionCompleted(party, travelCompleted);
 
         if (World.ShouldTriggerEncounter(party.Position, Config.EncounterProbability, Config.EncounterPolicy))
         {
@@ -215,6 +317,7 @@ public sealed class GameApplication
         var terrain = World.GetTerrain(party.Position);
         if ((requiresMining && !terrain.AllowsMining) || (!requiresMining && !terrain.AllowsWoodcutting))
         {
+            FailAutomationIfCurrentActionIsAutomated(party, state, "Collection action failed its current tile requirements.");
             party.ActionQueue.Clear();
             return;
         }
@@ -222,6 +325,7 @@ public sealed class GameApplication
         var request = state.Request;
         if (request.ItemName is null || request.ItemLevel is null || request.ItemWeight is null)
         {
+            FailAutomationIfCurrentActionIsAutomated(party, state, "Collection action failed its current tile requirements.");
             party.ActionQueue.Clear();
             return;
         }
@@ -239,7 +343,8 @@ public sealed class GameApplication
         }
 
         state.MarkExecuted();
-        party.ActionQueue.CompleteCurrentIfFinished(GetCurrentItemQuantity(party, request));
+        var completed = party.ActionQueue.CompleteCurrentIfFinished(GetCurrentItemQuantity(party, request));
+        NotifyAutomationActionCompleted(party, completed);
     }
 
     private void ExecuteTransfer(GameParty party, PartyActionState state)
@@ -273,7 +378,26 @@ public sealed class GameApplication
 
         targetParty.Inventory.AddItem(new Item(item.Name, item.Level, item.Weight, request.Quantity.Value));
         state.MarkExecuted();
-        party.ActionQueue.CompleteCurrentIfFinished();
+        var completed = party.ActionQueue.CompleteCurrentIfFinished();
+        NotifyAutomationActionCompleted(party, completed);
+    }
+
+    private static void NotifyAutomationActionCompleted(GameParty party, PartyActionState? completed)
+    {
+        if (completed?.Request.AutomationActionId is null)
+        {
+            return;
+        }
+
+        party.Automation.Runner.CompleteAction(completed.Request.AutomationActionId, completed.PassedTime);
+    }
+
+    private static void FailAutomationIfCurrentActionIsAutomated(GameParty party, PartyActionState state, string message)
+    {
+        if (state.Request.AutomationActionId is not null)
+        {
+            party.Automation.Runner.Fail(message);
+        }
     }
 
     private void RunCombatTurn(GameParty party, float deltaTime)

@@ -29,7 +29,8 @@ public sealed record PartyActionRequest(
     int? Quantity = null,
     string? TargetPartyId = null,
     TilePosition? Destination = null,
-    IReadOnlyList<TilePosition>? Path = null);
+    IReadOnlyList<TilePosition>? Path = null,
+    string? AutomationActionId = null);
 
 public sealed class PartyActionState
 {
@@ -90,6 +91,7 @@ public sealed class PartyActionQueue
 
     public PartyActionState? Current { get; private set; }
     public int PendingCount => _pending.Count;
+    public bool IsIdle => Current is null && _pending.Count == 0;
 
     public void Enqueue(PartyActionRequest request)
     {
@@ -108,12 +110,16 @@ public sealed class PartyActionQueue
         return Current;
     }
 
-    public void CompleteCurrentIfFinished(int currentItemQuantity = 0)
+    public PartyActionState? CompleteCurrentIfFinished(int currentItemQuantity = 0)
     {
-        if (Current?.IsComplete(currentItemQuantity) == true)
+        if (Current?.IsComplete(currentItemQuantity) != true)
         {
-            Current = null;
+            return null;
         }
+
+        var completed = Current;
+        Current = null;
+        return completed;
     }
 
     public void Clear()

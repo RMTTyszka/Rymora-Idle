@@ -1,3 +1,4 @@
+using RymoraLandOfHeroes.Core.Automation;
 using RymoraLandOfHeroes.Core.Application;
 using RymoraLandOfHeroes.Core.Common;
 using RymoraLandOfHeroes.Core.Configuration;
@@ -105,6 +106,68 @@ internal static class ApplicationObjectMother
             InputDeltaTime: 1,
             ExpectedActiveCombats: 0);
     }
+
+    public static AutomationProgramScenario ApplicationWithMiningProgram()
+    {
+        var party = new GameParty("party-1", new TilePosition(0, 0));
+        party.AddMember(TestObjectMother.CreateCreature("Miner"));
+        var macro = new PartyMacro("macro-1", "Mine Iron");
+        macro.AddAction(new MoveToMacroAction("move-1", new TilePosition(1, 0)));
+        macro.AddAction(new GatherMacroAction("mine-1", MacroActionKind.Mine, "Iron", 1, 3, RepeatPolicy.Once));
+        party.Automation.AddMacro(macro);
+        party.Automation.Program.AddStep("macro-1", RepeatPolicy.Once);
+
+        var application = new GameApplication(
+            TestObjectMother.CreateWorld(
+                random: new SequenceRandomSource(1),
+                minePositions: new[] { new TilePosition(1, 0) }),
+            new[] { party },
+            TestObjectMother.CreateGameConfig(),
+            TestObjectMother.CreateMonster,
+            new SequenceRandomSource(1));
+
+        return new AutomationProgramScenario(application, party);
+    }
+
+    public static AutomationProgramScenario ApplicationWithInvalidMiningProgram()
+    {
+        var party = new GameParty("party-1", new TilePosition(0, 0));
+        party.AddMember(TestObjectMother.CreateCreature("Miner"));
+        var macro = new PartyMacro("macro-1", "Invalid Mine");
+        macro.AddAction(new GatherMacroAction("mine-1", MacroActionKind.Mine, "Iron", 1, 3, RepeatPolicy.Once));
+        party.Automation.AddMacro(macro);
+        party.Automation.Program.AddStep("macro-1", RepeatPolicy.Once);
+
+        var application = new GameApplication(
+            TestObjectMother.CreateWorld(random: new SequenceRandomSource(1)),
+            new[] { party },
+            TestObjectMother.CreateGameConfig(),
+            TestObjectMother.CreateMonster,
+            new SequenceRandomSource(1));
+
+        return new AutomationProgramScenario(application, party);
+    }
+
+    public static AutomationProgramScenario ApplicationWithMiningProgramWithoutHero()
+    {
+        var party = new GameParty("party-1", new TilePosition(0, 0));
+        var macro = new PartyMacro("macro-1", "Mine Iron");
+        macro.AddAction(new MoveToMacroAction("move-1", new TilePosition(1, 0)));
+        macro.AddAction(new GatherMacroAction("mine-1", MacroActionKind.Mine, "Iron", 1, 3, RepeatPolicy.Once));
+        party.Automation.AddMacro(macro);
+        party.Automation.Program.AddStep("macro-1", RepeatPolicy.Once);
+
+        var application = new GameApplication(
+            TestObjectMother.CreateWorld(
+                random: new SequenceRandomSource(1),
+                minePositions: new[] { new TilePosition(1, 0) }),
+            new[] { party },
+            TestObjectMother.CreateGameConfig(),
+            TestObjectMother.CreateMonster,
+            new SequenceRandomSource(1));
+
+        return new AutomationProgramScenario(application, party);
+    }
 }
 
 internal sealed record MiningUpdateScenario(
@@ -131,3 +194,5 @@ internal sealed record TravelUpdateScenario(
     bool ExpectedIsInCombat);
 
 internal sealed record CombatUpdateScenario(GameApplication InputApplication, float InputDeltaTime, int ExpectedActiveCombats);
+
+internal sealed record AutomationProgramScenario(GameApplication InputApplication, GameParty AssertParty);
