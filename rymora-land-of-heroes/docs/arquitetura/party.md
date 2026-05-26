@@ -129,7 +129,7 @@ public sealed class PartyActionQueue
 
 ### 3.4 Ciclo de execucao
 
-O ciclo abaixo descreve a execucao depois que a acao ja foi programada. O fluxo de produto que transforma clique no mapa em `PartyActionRequest` ainda esta em design e deve ficar alinhado com `docs/arquitetura/ui.md` e `docs/arquitetura/mundo.md` antes de novas mudancas de codigo.
+O ciclo abaixo descreve a execucao depois que a acao ja foi programada. A UI pode criar acoes imediatas pelo mapa ou gravar Macros que depois emitem `PartyActionRequest` durante a execucao do Program.
 
 1. `StartNextIfIdle()` - se nao ha acao atual, pega da fila.
 2. `MarkStarted()` - inicia contagem.
@@ -156,9 +156,24 @@ senao:
 
 ---
 
-## 4. Inventario
+## 4. Macros e Program
 
-### 4.1 Estrutura
+Macros sao salvos por Party em `PartyAutomation`.
+
+- Um `Macro` tem nome e uma lista ordenada de acoes.
+- As acoes gravaveis na v1 sao `MoveTo`, `Mine` e `CutWood`.
+- Cada Party tem um `Program` ativo.
+- O `Program` e uma sequencia linear de usos de Macros.
+- Cada uso referencia um Macro salvo por `id` e define sua propria repeticao.
+- Editar um Macro afeta a proxima vez que esse Macro iniciar durante a execucao do Program.
+- O `ProgramRunner` controla estados `Play`, `Pause`, `Stop` e `Error`.
+- `Pause` e `Stop` sao cooperativos: a acao atual termina antes da mudanca de estado.
+
+---
+
+## 5. Inventario
+
+### 5.1 Estrutura
 
 ```csharp
 public sealed class Inventory
@@ -171,14 +186,14 @@ public sealed class Inventory
 }
 ```
 
-### 4.2 Regras
+### 5.2 Regras
 
 - Itens agrupaveis por `Name` + `Level`.
 - `AddItem` adiciona a instancia.
 - `RemoveItem` remove por nome, nivel e quantidade.
 - Limite de peso/espacos: adiado.
 
-### 4.3 Transferencia entre parties
+### 5.3 Transferencia entre parties
 
 - Exige que ambas parties estejam no mesmo tile.
 - Pode ser programada como acao (`TransferItem`).
@@ -186,9 +201,9 @@ public sealed class Inventory
 
 ---
 
-## 5. Coleta
+## 6. Coleta
 
-### 5.1 Mineracao
+### 6.1 Mineracao
 
 1. Acao `Mine` enfileirada com `TimeToExecute` e `LimitCount`.
 2. `TryMine()`:
@@ -199,7 +214,7 @@ public sealed class Inventory
    - se sucesso: adiciona material ao inventario da Party.
    - incrementa contagem executada.
 
-### 5.2 Corte de madeira
+### 6.2 Corte de madeira
 
 Mesmo fluxo da mineracao, trocando:
 - skill: `Lumberjacking`
@@ -208,15 +223,15 @@ Mesmo fluxo da mineracao, trocando:
 
 ---
 
-## 6. Viagem
+## 7. Viagem
 
-### 6.1 Waypoints
+### 7.1 Waypoints
 
 - Party pode ter multiplos destinos enfileirados.
 - `WayPoints: Queue<TilePosition>`.
 - Ao chegar em um waypoint, remove da fila.
 
-### 6.2 Movimento
+### 7.2 Movimento
 
 1. Core define caminho via World (pathfinding).
 2. Party avanca tile a tile a cada tick.
@@ -228,7 +243,7 @@ Mesmo fluxo da mineracao, trocando:
 
 ---
 
-## 7. Morte e retorno
+## 8. Morte e retorno
 
 1. Party morre em combate.
 2. Core limpa `ActionQueue` (Current + pending).

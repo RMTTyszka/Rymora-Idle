@@ -35,8 +35,10 @@ A alternancia e controlada pelo Application. UI apenas reage ao estado.
 - Botao de status (alterna painel de status detalhado).
 - Botao de combate (alterna para tela de combate).
 
-Implementacao atual provisoria:
+Implementacao atual:
 - `HudPresenter` mostra party selecionada, tela atual, posicao, acao atual, fila pendente e inventario.
+- A aba `Macros` permite iniciar `Record Macro`, salvar com nome, listar Macros da party e montar o Program ativo.
+- O painel de status mostra estado do Program, acao atual, proxima acao de Macro, erros e botoes `Play`, `Pause` e `Stop`.
 - HUD fica em `UiLayer/Hud` na cena `scenes/bootstrap.tscn`.
 - `Bootstrap` sincroniza HUD a cada `_Process` usando estado do Core.
 
@@ -62,21 +64,24 @@ Ao clicar com botao direito no mapa, mostra acoes disponiveis:
 - Mine (se terreno permite mineracao).
 - CutWood (se terreno permite corte).
 
-Implementacao atual provisoria:
+Implementacao atual:
 - `PopupMenu` em `scenes/bootstrap.tscn` mostra acoes do tile clicado.
 - `Move` aparece em tile caminhavel.
 - `Mine` aparece em tile com `AllowsMining`.
 - `Cut Wood` aparece em tile com `AllowsWoodcutting`.
 - `Mine` e `Cut Wood` enfileiram travel ate o tile alvo antes da coleta quando a party esta em outro tile.
+- Durante `Record Macro`, cliques no mapa e no menu contextual gravam acoes no Macro em edicao em vez de executa-las na fila da party.
 
-Foco atual de produto:
-- O menu/contexto deve evoluir para um fluxo de programacao de acoes da party, nao apenas disparar comandos de demo.
-- Esse fluxo precisa permitir escolher acao, alvo e modo de repeticao antes de enviar a intencao ao Application.
-- Os modos de repeticao confirmados na biblia sao: uma vez, repetir para sempre, repetir por quantidade definida e repetir por tempo definido.
+Fluxo de Macros:
+- `Record Macro` inicia uma sessao de gravacao para a party selecionada.
+- Clique esquerdo no mapa grava `MoveTo` quando a party esta gravando; fora da gravacao, continua enviando movimento imediato.
+- Clique direito abre o menu contextual; durante a gravacao, `Mine` e `Cut Wood` gravam acoes de Macro em vez de enfileirar coleta.
+- Salvar exige nome e cria um Macro da party com as acoes gravadas.
+- A aba `Macros` lista Macros salvos, adiciona Macros ao Program ativo e abre editores para ordenar/remover acoes e ajustar repeticoes.
 - A UI continua sem regra de jogo: ela mostra opcoes e envia intencoes; Application/Core validam requisitos e execucao.
 
 TODO tardio:
-- `Dungeon`/`EnterDungeon` nao faz parte do foco atual e nao deve aparecer como acao imediata enquanto o sistema de programacao de acoes no mapa nao estiver definido.
+- `Dungeon`/`EnterDungeon` nao faz parte do foco atual e nao deve aparecer como acao imediata ou acao de Macro nesta etapa.
 
 ---
 
@@ -87,26 +92,23 @@ TODO tardio:
 | Selecionar Party 1 | F1 |
 | Selecionar Party 2 | F2 |
 | Selecionar Party 3 | F3 |
-| Mover demo/provisorio | Clique esquerdo no mapa |
+| Mover imediato / gravar `MoveTo` | Clique esquerdo no mapa |
 | Abrir menu contextual | Clique direito no mapa |
 | Alternar para combate | Botao Combat |
 | Alternar status | Botao Status |
 
 Toda entrada e capturada por adaptadores Godot e convertida em intencoes para o Application.
 
-Implementacao atual provisoria:
+Implementacao atual:
 - `Bootstrap._UnhandledInput` captura clique esquerdo.
 - `Bootstrap._UnhandledInput` captura clique direito e abre menu contextual.
 - `WorldTileMapAdapter.ToTilePosition(Vector2 worldPosition)` converte posicao do mouse para `TilePosition`.
 - `GameApplication.EnqueueAction` recebe `PartyActionRequest` de `Travel` com `Destination`.
-- Clique esquerdo limpa a fila atual da party na demo para o movimento responder imediatamente ao jogador.
+- Fora de `Record Macro`, clique esquerdo limpa a fila atual da party para o movimento responder imediatamente ao jogador.
+- Quando a party esta em `Record Macro`, clique esquerdo grava `MoveTo` e o menu contextual grava `Mine`/`CutWood`.
 - Destino invalido imprime log com posicao atual, destino, caminhabilidade e tamanho do path.
 - `PartyPresenter` sincroniza a posicao visual da party apos cada `Update`.
 - `PartyPresenter` interpola entre tile atual e proximo waypoint usando progresso da acao, sem mudar regra tile-based do Core.
-
-Proximo fluxo a detalhar:
-- O clique no mapa deve abrir a programacao de acao para a party selecionada.
-- A decisao final sobre limpar, anexar, inserir ou editar a fila ainda precisa ser aprovada antes de implementar.
 
 ---
 

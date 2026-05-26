@@ -1,7 +1,7 @@
 # Proximos Passos - Rymora Land of Heroes
 
 Data: 2026-05-26
-Ultimo commit publicado: `edc2c50 feat: validate content and clean map tiles`
+Ultimo commit publicado: `45b377e feat: add macro automation panel`
 
 ---
 
@@ -18,7 +18,9 @@ Ultimo commit publicado: `edc2c50 feat: validate content and clean map tiles`
 - Validacao inicial de conteudo JSON foi implementada no loader Godot e falha cedo para referencias invalidas e atlas coords duplicadas.
 - Party ja possui fila de acoes com `Travel`, `Mine`, `CutWood` e `TransferItem`.
 - Acoes ja podem terminar por contagem, quantidade de item ou tempo.
-- UI atual ainda e provisoria: clique esquerdo move limpando fila; clique direito abre menu contextual com Move/Mine/Cut Wood.
+- Automacao por Macros esta implementada: cada Party tem Macros salvos, um Program ativo e controles de Play/Pause/Stop.
+- A aba `Macros` permite gravar Macro, salvar com nome, listar Macros da Party e montar o Program ativo.
+- Durante `Record Macro`, cliques no mapa/menu contextual gravam `MoveTo`, `Mine` e `CutWood` em vez de executar acoes imediatas.
 - Testes xUnit em `src/Tests` com ObjectMother.
 - Cena principal: `scenes/bootstrap.tscn`.
 - `project.godot` aponta para `res://scenes/bootstrap.tscn`.
@@ -49,31 +51,29 @@ Comando Godot usado:
 
 ## Proximas prioridades
 
-### 1. Programacao de acoes no mapa
+### 1. Automacao por Macros
 
-Objetivo: substituir o fluxo provisorio de clique/menu por um fluxo mais proximo do final para programar a fila de acoes da party selecionada.
+Estado atual: implementada para `MoveTo`, `Mine` e `CutWood`, com Macros por Party, Program linear ativo por Party e runner com `Play`, `Pause`, `Stop` e `Error`.
 
 Arquivos principais:
 
-- `docs/regras/biblia-rpg.md`
 - `docs/arquitetura/party.md`
 - `docs/arquitetura/ui.md`
-- `docs/arquitetura/mundo.md`
-- `src/Core/Party/PartyAction.cs`
+- `src/Core/Automation/*.cs`
 - `src/Core/Application/GameApplication.cs`
 - `src/Godot/Bootstrap/Bootstrap.cs`
 - `src/Godot/Presentation/HudPresenter.cs`
-- `src/Godot/World/WorldTileMapAdapter.cs`
+- `src/Godot/Presentation/MacrosPresenter.cs`
+- `src/Godot/Presentation/MacroEditorPresenter.cs`
+- `src/Godot/Presentation/ProgramEditorPresenter.cs`
 
-Escopo a detalhar antes de codigo:
+Fora deste slice / TODO:
 
-- Fluxo ideal do jogador desde clicar no mapa ate a party comecar a executar.
-- Como escolher acao e alvo: mover, minerar, cortar madeira e transferir itens.
-- Como escolher modo de repeticao: executar uma vez, repetir para sempre, repetir por quantidade ou repetir por tempo.
-- Como a nova acao interage com a fila atual: limpar, enfileirar, inserir, substituir ou editar.
-- Como mostrar requisitos, caminho, duracao, repeticao, invalidos e falhas.
-- Como a HUD apresenta fila, acao atual e progresso sem colocar regra de jogo na UI.
-- Core continua sem tipos Godot; Godot so converte input e apresenta estado.
+- Save/load de Macros e Program.
+- Acao `TransferItem` dentro de Macro.
+- Condicoes avancadas de execucao.
+- Grupos/sub-blocos no Program.
+- `Dungeon`/`EnterDungeon`.
 
 ### 2. Movimento visual suave
 
@@ -165,5 +165,5 @@ Notas:
 ## Prompt sugerido para nova sessao
 
 ```text
-Continue o prototipo Godot C# de Rymora Land of Heroes. Leia primeiro docs/proximos-passos.md, docs/arquitetura/visao-geral.md e docs/regras/biblia-rpg.md. Mantenha Core puro sem Godot refs. Proximo foco: detalhar e implementar programacao de acoes no mapa para party selecionada. Nao implementar dungeon agora; `Dungeon`/`EnterDungeon` e TODO tardio. Antes de codigo, feche o fluxo do jogador desde clicar no mapa ate a party comecar a executar.
+Continue o prototipo Godot C# de Rymora Land of Heroes. Leia primeiro docs/proximos-passos.md, docs/arquitetura/visao-geral.md e docs/regras/biblia-rpg.md. Mantenha Core puro sem Godot refs. Automacao por Macros para MoveTo/Mine/CutWood ja esta implementada. Proximo foco deve escolher entre persistir Macros/Program, expandir automacao, melhorar movimento visual ou encontros por viagem. Nao implementar dungeon agora; `Dungeon`/`EnterDungeon` e TODO tardio.
 ```
