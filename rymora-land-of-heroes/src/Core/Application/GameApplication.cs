@@ -15,6 +15,7 @@ public sealed class GameApplication
     private readonly Dictionary<string, CombatInstance> _combats = new();
     private readonly Func<CreatureTemplate, Creature> _monsterFactory;
     private readonly IRandomSource _randomSource;
+    private int _nextRecordingNumber;
 
     public GameApplication(
         WorldState world,
@@ -56,6 +57,30 @@ public sealed class GameApplication
                 break;
             case ExecuteMapActionIntent:
                 throw new NotSupportedException("ExecuteMapActionIntent needs item/action parameters; use EnqueueActionIntent for now.");
+            case StartRecordingMacroIntent startRecording:
+                StartRecordingMacro(startRecording.PartyId);
+                break;
+            case SaveRecordingMacroIntent saveRecording:
+                SaveRecordingMacro(saveRecording.PartyId, saveRecording.Name);
+                break;
+            case CancelRecordingMacroIntent cancelRecording:
+                CancelRecordingMacro(cancelRecording.PartyId);
+                break;
+            case RecordMoveActionIntent recordMove:
+                RecordMoveAction(recordMove.PartyId, recordMove.Target);
+                break;
+            case RecordGatherActionIntent recordGather:
+                RecordGatherAction(recordGather.PartyId, recordGather.Target, recordGather.Kind, recordGather.ItemName, recordGather.ItemLevel, recordGather.ItemWeight);
+                break;
+            case PlayProgramIntent playProgram:
+                PlayProgram(playProgram.PartyId);
+                break;
+            case PauseProgramIntent pauseProgram:
+                PauseProgram(pauseProgram.PartyId);
+                break;
+            case StopProgramIntent stopProgram:
+                StopProgram(stopProgram.PartyId);
+                break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(intent), "Unknown player intent.");
         }
@@ -88,6 +113,83 @@ public sealed class GameApplication
     public void StopProgram(string partyId)
     {
         Parties.Get(partyId).Automation.Runner.Stop();
+    }
+
+    public void StartRecordingMacro(string partyId)
+    {
+        var party = Parties.Get(partyId);
+        party.Automation.StartRecording(NextMacroId(party));
+    }
+
+    public void RecordMoveAction(string partyId, TilePosition target)
+    {
+        var recording = Parties.Get(partyId).Automation.Recording
+            ?? throw new InvalidOperationException("No Macro recording session is active.");
+        recording.RecordMove(target);
+    }
+
+    public void RecordGatherAction(string partyId, TilePosition target, MacroActionKind kind, string itemName, int itemLevel, float itemWeight)
+    {
+        var recording = Parties.Get(partyId).Automation.Recording
+            ?? throw new InvalidOperationException("No Macro recording session is active.");
+        recording.RecordGather(target, kind, itemName, itemLevel, itemWeight);
+    }
+
+    public PartyMacro SaveRecordingMacro(string partyId, string name)
+    {
+        return Parties.Get(partyId).Automation.SaveRecording(name);
+    }
+
+    public void CancelRecordingMacro(string partyId)
+    {
+        Parties.Get(partyId).Automation.CancelRecording();
+    }
+
+    public ProgramStep AddMacroToProgram(string partyId, string macroId, RepeatPolicy repeat)
+    {
+        var party = Parties.Get(partyId);
+        party.Automation.GetMacro(macroId);
+        return party.Automation.Program.AddStep(macroId, repeat);
+    }
+
+    public void MoveProgramStep(string partyId, string stepId, int newIndex)
+    {
+        Parties.Get(partyId).Automation.Program.MoveStep(stepId, newIndex);
+    }
+
+    public void RemoveProgramStep(string partyId, string stepId)
+    {
+        Parties.Get(partyId).Automation.Program.RemoveStep(stepId);
+    }
+
+    public void RenameMacro(string partyId, string macroId, string name)
+    {
+        Parties.Get(partyId).Automation.GetMacro(macroId).Rename(name);
+    }
+
+    public void RemoveMacroAction(string partyId, string macroId, string actionId)
+    {
+        Parties.Get(partyId).Automation.GetMacro(macroId).RemoveAction(actionId);
+    }
+
+    public void MoveMacroAction(string partyId, string macroId, string actionId, int newIndex)
+    {
+        Parties.Get(partyId).Automation.GetMacro(macroId).MoveAction(actionId, newIndex);
+    }
+
+    public void SetGatherActionRepeat(string partyId, string macroId, string actionId, RepeatPolicy repeat)
+    {
+        Parties.Get(partyId).Automation.GetMacro(macroId).SetGatherActionRepeat(actionId, repeat);
+    }
+
+    public void SetProgramRepeat(string partyId, RepeatPolicy repeat)
+    {
+        Parties.Get(partyId).Automation.Program.SetProgramRepeat(repeat);
+    }
+
+    public void SetProgramStepRepeat(string partyId, string stepId, RepeatPolicy repeat)
+    {
+        Parties.Get(partyId).Automation.Program.SetStepRepeat(stepId, repeat);
     }
 
     public void Update(float deltaTime)
@@ -214,6 +316,17 @@ public sealed class GameApplication
             default:
                 throw new ArgumentOutOfRangeException(nameof(current.Request.ActionType), "Unknown party action type.");
         }
+    }
+
+    private string NextMacroId(GameParty party)
+    {
+        do
+        {
+            _nextRecordingNumber++;
+        }
+        while (party.Automation.TryGetMacro($"macro-{_nextRecordingNumber}") is not null);
+
+        return $"macro-{_nextRecordingNumber}";
     }
 
     private void QueueNextAutomationAction(GameParty party)
