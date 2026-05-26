@@ -124,6 +124,30 @@ public sealed class ProgramRunnerTests
     }
 
     [Fact]
+    public void Pause_without_current_action_pauses_immediately()
+    {
+        var automation = CreateAutomationWithMiningMacro();
+        automation.Program.AddStep("macro-1", RepeatPolicy.Once);
+
+        automation.Runner.Play();
+        automation.Runner.Pause();
+
+        Assert.Equal(ProgramRunnerState.Paused, automation.Runner.State);
+    }
+
+    [Fact]
+    public void Stop_without_current_action_returns_to_idle_immediately()
+    {
+        var automation = CreateAutomationWithMiningMacro();
+        automation.Program.AddStep("macro-1", RepeatPolicy.Once);
+
+        automation.Runner.Play();
+        automation.Runner.Stop();
+
+        Assert.Equal(ProgramRunnerState.Idle, automation.Runner.State);
+    }
+
+    [Fact]
     public void Pause_waits_for_current_action_and_resume_continues_next_action()
     {
         var automation = CreateAutomationWithMiningMacro();
@@ -165,6 +189,35 @@ public sealed class ProgramRunnerTests
         Assert.Null(execution);
         Assert.Equal(ProgramRunnerState.Error, automation.Runner.State);
         Assert.Equal("Macro not found: missing-macro.", automation.Runner.ErrorMessage);
+    }
+
+    [Fact]
+    public void Empty_macro_reference_sets_error()
+    {
+        var automation = new PartyAutomation();
+        automation.AddMacro(new PartyMacro("macro-1", "Empty"));
+        automation.Program.AddStep("macro-1", RepeatPolicy.Once);
+
+        automation.Runner.Play();
+        var execution = automation.Runner.TryStartNextAction(automation);
+
+        Assert.Null(execution);
+        Assert.Equal(ProgramRunnerState.Error, automation.Runner.State);
+        Assert.Equal("Macro has no actions: macro-1.", automation.Runner.ErrorMessage);
+    }
+
+    [Fact]
+    public void CompleteAction_rejects_invalid_elapsed_seconds()
+    {
+        var automation = CreateAutomationWithMiningMacro();
+        automation.Program.AddStep("macro-1", RepeatPolicy.Once);
+
+        automation.Runner.Play();
+        var execution = automation.Runner.TryStartNextAction(automation)!;
+        var error = Assert.Throws<ArgumentOutOfRangeException>(() =>
+            automation.Runner.CompleteAction(execution.ExecutionId, float.NaN));
+
+        Assert.Equal("elapsedSeconds", error.ParamName);
     }
 
     private static void CompleteNext(PartyAutomation automation)

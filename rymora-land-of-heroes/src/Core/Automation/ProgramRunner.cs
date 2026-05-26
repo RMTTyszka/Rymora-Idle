@@ -55,6 +55,12 @@ public sealed class ProgramRunner
     {
         if (State == ProgramRunnerState.Running)
         {
+            if (_currentExecutionId is null)
+            {
+                State = ProgramRunnerState.Paused;
+                return;
+            }
+
             State = ProgramRunnerState.PauseRequested;
         }
     }
@@ -69,6 +75,12 @@ public sealed class ProgramRunner
 
         if (State is ProgramRunnerState.Running or ProgramRunnerState.PauseRequested)
         {
+            if (_currentExecutionId is null)
+            {
+                ResetToIdle();
+                return;
+            }
+
             State = ProgramRunnerState.StopRequested;
         }
     }
@@ -111,6 +123,11 @@ public sealed class ProgramRunner
         if (_currentExecutionId != executionId)
         {
             throw new InvalidOperationException($"Unknown automation execution id: {executionId}.");
+        }
+
+        if (!float.IsFinite(elapsedSeconds) || elapsedSeconds < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(elapsedSeconds), "Elapsed seconds must be finite and non-negative.");
         }
 
         _currentExecutionId = null;
@@ -189,10 +206,8 @@ public sealed class ProgramRunner
 
             if (_currentMacroActions.Count == 0)
             {
-                _programStepIndex++;
-                _stepIteration = 0;
-                _stepElapsedSeconds = 0;
-                continue;
+                Fail($"Macro has no actions: {macro.Id}.");
+                return false;
             }
 
             return true;
