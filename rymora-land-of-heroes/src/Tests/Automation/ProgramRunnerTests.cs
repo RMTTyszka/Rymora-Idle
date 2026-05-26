@@ -207,6 +207,22 @@ public sealed class ProgramRunnerTests
     }
 
     [Fact]
+    public void Empty_macro_reference_under_repeating_program_sets_error()
+    {
+        var automation = new PartyAutomation();
+        automation.AddMacro(new PartyMacro("macro-1", "Empty"));
+        automation.Program.AddStep("macro-1", RepeatPolicy.Once);
+        automation.Program.SetProgramRepeat(RepeatPolicy.Forever);
+
+        automation.Runner.Play();
+        var execution = automation.Runner.TryStartNextAction(automation);
+
+        Assert.Null(execution);
+        Assert.Equal(ProgramRunnerState.Error, automation.Runner.State);
+        Assert.Equal("Macro has no actions: macro-1.", automation.Runner.ErrorMessage);
+    }
+
+    [Fact]
     public void CompleteAction_rejects_invalid_elapsed_seconds()
     {
         var automation = CreateAutomationWithMiningMacro();
@@ -214,10 +230,21 @@ public sealed class ProgramRunnerTests
 
         automation.Runner.Play();
         var execution = automation.Runner.TryStartNextAction(automation)!;
-        var error = Assert.Throws<ArgumentOutOfRangeException>(() =>
-            automation.Runner.CompleteAction(execution.ExecutionId, float.NaN));
+        var invalidElapsedSeconds = new[]
+        {
+            float.NaN,
+            -1,
+            float.PositiveInfinity,
+            float.NegativeInfinity
+        };
 
-        Assert.Equal("elapsedSeconds", error.ParamName);
+        foreach (var elapsedSeconds in invalidElapsedSeconds)
+        {
+            var error = Assert.Throws<ArgumentOutOfRangeException>(() =>
+                automation.Runner.CompleteAction(execution.ExecutionId, elapsedSeconds));
+
+            Assert.Equal("elapsedSeconds", error.ParamName);
+        }
     }
 
     private static void CompleteNext(PartyAutomation automation)
