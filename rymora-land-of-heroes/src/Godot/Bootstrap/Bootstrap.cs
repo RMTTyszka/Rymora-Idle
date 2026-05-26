@@ -1,6 +1,7 @@
 using System;
 using Godot;
 using RymoraLandOfHeroes.Core.Application;
+using RymoraLandOfHeroes.Core.Automation;
 using RymoraLandOfHeroes.Core.Combat;
 using RymoraLandOfHeroes.Core.Common;
 using RymoraLandOfHeroes.Core.Content;
@@ -150,6 +151,11 @@ public partial class Bootstrap : Node2D
             return;
         }
 
+        if (_application.Parties.Get(BootstrapCoreFactory.PartyId).Automation.Recording is not null)
+        {
+            return;
+        }
+
         EnqueueTravel(_worldAdapter.ToTilePosition(GetGlobalMousePosition()), clearQueue: true);
     }
 
@@ -188,7 +194,14 @@ public partial class Bootstrap : Node2D
 
     private void OnContextMenuIdPressed(long id)
     {
-        switch ((ContextAction)id)
+        var action = (ContextAction)id;
+        if (_application?.Parties.Get(BootstrapCoreFactory.PartyId).Automation.Recording is not null)
+        {
+            RecordContextAction(action);
+            return;
+        }
+
+        switch (action)
         {
             case ContextAction.Move:
                 EnqueueTravel(_contextMenuTarget, clearQueue: true);
@@ -200,6 +213,52 @@ public partial class Bootstrap : Node2D
                 EnqueueGather(_contextMenuTarget, PartyActionType.CutWood);
                 break;
         }
+    }
+
+    private void RecordContextAction(ContextAction action)
+    {
+        if (_application is null || _worldAdapter is null || _content is null)
+        {
+            return;
+        }
+
+        switch (action)
+        {
+            case ContextAction.Move:
+                _application.RecordMoveAction(BootstrapCoreFactory.PartyId, _contextMenuTarget);
+                GD.Print($"Recorded MoveTo ({_contextMenuTarget.X}, {_contextMenuTarget.Y}).");
+                break;
+            case ContextAction.Mine:
+                RecordGatherAction(MacroActionKind.Mine, PartyActionType.Mine);
+                break;
+            case ContextAction.CutWood:
+                RecordGatherAction(MacroActionKind.CutWood, PartyActionType.CutWood);
+                break;
+        }
+    }
+
+    private void RecordGatherAction(MacroActionKind macroKind, PartyActionType partyActionType)
+    {
+        if (_application is null || _worldAdapter is null || _content is null)
+        {
+            return;
+        }
+
+        var material = _worldAdapter.GetMaterialForAction(_contextMenuTarget, partyActionType, _content.Materials);
+        if (material is null)
+        {
+            GD.Print($"Cannot record {macroKind}. Tile has no material.");
+            return;
+        }
+
+        _application.RecordGatherAction(
+            BootstrapCoreFactory.PartyId,
+            _contextMenuTarget,
+            macroKind,
+            material.Name,
+            material.Level,
+            material.Weight);
+        GD.Print($"Recorded {macroKind} at ({_contextMenuTarget.X}, {_contextMenuTarget.Y}).");
     }
 
     private bool EnqueueTravel(TilePosition destination, bool clearQueue)
