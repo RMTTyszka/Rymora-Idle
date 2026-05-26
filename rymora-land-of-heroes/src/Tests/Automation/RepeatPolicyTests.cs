@@ -21,6 +21,14 @@ public sealed class RepeatPolicyTests
     }
 
     [Fact]
+    public void Duration_rejects_nan_seconds()
+    {
+        var error = Assert.Throws<ArgumentOutOfRangeException>(() => RepeatPolicy.Duration(float.NaN));
+
+        Assert.Equal("seconds", error.ParamName);
+    }
+
+    [Fact]
     public void Once_has_expected_mode()
     {
         Assert.Equal(RepeatMode.Once, RepeatPolicy.Once.Mode);

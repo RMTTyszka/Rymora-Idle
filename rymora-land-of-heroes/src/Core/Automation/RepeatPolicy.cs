@@ -36,7 +36,7 @@ public sealed record RepeatPolicy
 
     public static RepeatPolicy Duration(float seconds)
     {
-        if (seconds <= 0)
+        if (!float.IsFinite(seconds) || seconds <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(seconds), "Repeat duration must be positive.");
         }

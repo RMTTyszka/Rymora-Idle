@@ -49,7 +49,7 @@ public sealed class GatherMacroAction : MacroAction
             throw new ArgumentOutOfRangeException(nameof(itemLevel), "Item level must be positive.");
         }
 
-        if (itemWeight < 0)
+        if (!float.IsFinite(itemWeight) || itemWeight < 0)
         {
             throw new ArgumentOutOfRangeException(nameof(itemWeight), "Item weight cannot be negative.");
         }

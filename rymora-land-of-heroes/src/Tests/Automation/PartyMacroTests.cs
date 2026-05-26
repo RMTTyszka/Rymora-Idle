@@ -27,4 +27,18 @@ public sealed class PartyMacroTests
 
         Assert.Contains("Gather action kind must be Mine or CutWood", error.Message);
     }
+
+    [Fact]
+    public void Gather_action_rejects_nan_item_weight()
+    {
+        var error = Assert.Throws<ArgumentOutOfRangeException>(() => new GatherMacroAction(
+            "gather-1",
+            MacroActionKind.Mine,
+            "Iron",
+            itemLevel: 1,
+            itemWeight: float.NaN,
+            RepeatPolicy.Once));
+
+        Assert.Equal("itemWeight", error.ParamName);
+    }
 }
