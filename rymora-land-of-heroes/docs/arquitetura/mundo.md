@@ -232,18 +232,21 @@ Durante viagem, a cada tile percorrido:
 
 ## 5. Acoes do mapa
 
-O menu contextual mostra acoes disponiveis baseadas no tile alvo:
+O mapa fornece contexto para programar a fila de acoes da party selecionada. A UI pode mostrar acoes disponiveis baseadas no tile alvo, mas a decisao final de execucao pertence ao Application/Core.
 
 | Acao | Requisito de terreno |
 |------|---------------------|
 | Move | Qualquer tile caminhavel |
 | Mine | `AllowsMining == true` |
 | CutWood | `AllowsWoodcutting == true` (Forest) |
-| EnterDungeon | `IsPlace == true` (Place ou City) |
 
-O adapter Godot usa `TerrainData` e metadados de `terrain_tiles.json` para montar o menu contextual e enfileirar `PartyActionRequest`. O Core valida a execucao por flags do terreno.
+O adapter Godot usa `TerrainData` e metadados de `terrain_tiles.json` para apresentar opcoes e converter o clique em `TilePosition`. A programacao deve produzir `PartyActionRequest` para a fila da party, respeitando os modos confirmados na biblia: uma vez, repetir para sempre, repetir por quantidade definida ou repetir por tempo definido.
 
-Dungeons sao tratadas como encontros fixos: ao entrar, o Application inicia uma sequencia de combates sem deslocamento no mapa.
+Transferencia de itens entre parties tambem e acao programavel, mas depende de selecao de party alvo e inventario, nao apenas de terreno.
+
+Fora do foco atual:
+- `Dungeon`/`EnterDungeon` fica como TODO tardio.
+- `Place` continua sendo terreno/local especial no mapa, mas nao gera acao de dungeon enquanto esse design nao for retomado.
 
 ---
 
@@ -277,15 +280,16 @@ public sealed class WorldState
 
 ## 7. Fluxos criticos
 
-### 7.1 Selecionar tile e agir
+### 7.1 Programar acao no mapa
 
-1. Input adapter Godot detecta clique direito no tilemap.
+1. Input adapter Godot detecta clique no tilemap conforme o fluxo de programacao aprovado.
 2. Traduz coordenada de pixel para `TilePosition`.
 3. Chama `WorldState.GetTerrain(position)`, `WorldState.GetRegion(position)` e `WorldState.GetZone(position)`.
-4. Application determina acoes validas.
-5. UI mostra menu contextual com acoes disponiveis.
-6. Jogador seleciona acao.
-7. Application enfileira acao na Party.
+4. Application/Core determinam quais acoes sao validas para a party selecionada, tile alvo e estado atual.
+5. UI apresenta opcoes de acao, requisitos, caminho e modo de repeticao sem duplicar regra.
+6. Jogador confirma a programacao.
+7. Application enfileira, substitui ou altera a fila da Party conforme a regra aprovada para esse fluxo.
+8. Party inicia a proxima acao quando o loop do Core avancar e a fila permitir.
 
 ### 7.2 Viajar
 
@@ -294,7 +298,7 @@ public sealed class WorldState
 3. A cada tile: cruza terreno + regiao + zona.
 4. Verifica encontro usando chance combinada e tabela da regiao por terreno.
 5. Se encontrar: Application inicia combate.
-5. Se chegar ao destino: proxima acao da fila.
+6. Se chegar ao destino: proxima acao da fila.
 
 ### 7.3 Morrer e voltar
 

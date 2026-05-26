@@ -64,6 +64,8 @@ public enum PartyActionType
 
 ### 3.2 Modos de termino
 
+A biblia confirma quatro formas de programar acoes da party: executar uma vez, repetir para sempre, repetir por uma quantidade definida ou repetir por tempo definido. A estrutura atual cobre contagem, quantidade de item e tempo; o fluxo final de UI/Application ainda precisa definir como representar repeticao infinita sem criar comportamento ambiguo.
+
 ```csharp
 public enum PartyActionEndType
 {
@@ -126,6 +128,8 @@ public sealed class PartyActionQueue
 ```
 
 ### 3.4 Ciclo de execucao
+
+O ciclo abaixo descreve a execucao depois que a acao ja foi programada. O fluxo de produto que transforma clique no mapa em `PartyActionRequest` ainda esta em design e deve ficar alinhado com `docs/arquitetura/ui.md` e `docs/arquitetura/mundo.md` antes de novas mudancas de codigo.
 
 1. `StartNextIfIdle()` - se nao ha acao atual, pega da fila.
 2. `MarkStarted()` - inicia contagem.

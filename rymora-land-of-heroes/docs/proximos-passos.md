@@ -1,7 +1,7 @@
 # Proximos Passos - Rymora Land of Heroes
 
-Data: 2026-05-23
-Ultimo commit publicado: `a109ac4 feat: add Godot C# prototype`
+Data: 2026-05-26
+Ultimo commit publicado: `edc2c50 feat: validate content and clean map tiles`
 
 ---
 
@@ -14,6 +14,11 @@ Ultimo commit publicado: `a109ac4 feat: add Godot C# prototype`
 - Regioes carregam de `assets/data/world/regions.json`, com safe spot, modificador de chance e encounters por bioma/terreno.
 - Zonas carregam de `assets/data/world/zones.json`, com nivel e modificador de chance.
 - `TerrainLayer`, `RegionLayer` e `ZoneLayer` usam TileSets editaveis e possuem mapa inicial pintado na cena; `DemoTileMapBuilder` fica apenas como fallback quando nao ha tiles pintados.
+- Atlas visual dos tiles hexagonais foi limpo: sem texto/labels dentro dos hexagonos e com celulas preenchidas para reduzir espacamento visual.
+- Validacao inicial de conteudo JSON foi implementada no loader Godot e falha cedo para referencias invalidas e atlas coords duplicadas.
+- Party ja possui fila de acoes com `Travel`, `Mine`, `CutWood` e `TransferItem`.
+- Acoes ja podem terminar por contagem, quantidade de item ou tempo.
+- UI atual ainda e provisoria: clique esquerdo move limpando fila; clique direito abre menu contextual com Move/Mine/Cut Wood.
 - Testes xUnit em `src/Tests` com ObjectMother.
 - Cena principal: `scenes/bootstrap.tscn`.
 - `project.godot` aponta para `res://scenes/bootstrap.tscn`.
@@ -44,38 +49,31 @@ Comando Godot usado:
 
 ## Proximas prioridades
 
-### 1. Modelo final de mapa em 3 layers
+### 1. Programacao de acoes no mapa
 
-Objetivo: mapa editavel em tres layers: terreno/bioma, regiao e zona. Regiao define encontros por bioma; zona define nivel.
+Objetivo: substituir o fluxo provisorio de clique/menu por um fluxo mais proximo do final para programar a fila de acoes da party selecionada.
 
 Arquivos principais:
 
-- `assets/data/world/terrain_tiles.json`
-- `assets/art/world/terrain_hex_atlas.png`
-- `assets/art/world/region_hex_atlas.png`
-- `assets/art/world/zone_hex_atlas.png`
-- `assets/world/terrain_hex_tileset.tres`
-- `assets/world/region_hex_tileset.tres`
-- `assets/world/zone_hex_tileset.tres`
-- `assets/data/world/regions.json`
-- `assets/data/world/zones.json`
-- `assets/data/content/encounters.json`
-- `src/Godot/World/DemoTileMapBuilder.cs`
+- `docs/regras/biblia-rpg.md`
+- `docs/arquitetura/party.md`
+- `docs/arquitetura/ui.md`
+- `docs/arquitetura/mundo.md`
+- `src/Core/Party/PartyAction.cs`
+- `src/Core/Application/GameApplication.cs`
+- `src/Godot/Bootstrap/Bootstrap.cs`
+- `src/Godot/Presentation/HudPresenter.cs`
 - `src/Godot/World/WorldTileMapAdapter.cs`
-- `src/Core/World/RegionData.cs`
-- `src/Core/Content/Templates.cs`
 
-Regras:
+Escopo a detalhar antes de codigo:
 
-- Mapa continua usando tilemap hexagonal 2D topdown.
-- Cada `TerrainType`/bioma continua tendo tile configuravel no catalogo.
-- Regioes vem de `RegionLayer` + `regions.json`.
-- Zonas vem de `ZoneLayer` + `zones.json`.
-- Encontros sao selecionados por `region + terrain`.
-- Nivel vem de `zone`.
-- Para editar mapa: abrir `scenes/bootstrap.tscn`, pintar `TerrainLayer`, `RegionLayer` e `ZoneLayer`, salvar a cena.
-- Core continua sem tipos Godot.
-- Atlas visual de tile deve ficar sem texto, siglas ou labels dentro dos hexagonos; o hexagono deve preencher a celula `96x96` sem padding visual; metadados ficam nos JSONs e em ferramentas de debug.
+- Fluxo ideal do jogador desde clicar no mapa ate a party comecar a executar.
+- Como escolher acao e alvo: mover, minerar, cortar madeira e transferir itens.
+- Como escolher modo de repeticao: executar uma vez, repetir para sempre, repetir por quantidade ou repetir por tempo.
+- Como a nova acao interage com a fila atual: limpar, enfileirar, inserir, substituir ou editar.
+- Como mostrar requisitos, caminho, duracao, repeticao, invalidos e falhas.
+- Como a HUD apresenta fila, acao atual e progresso sem colocar regra de jogo na UI.
+- Core continua sem tipos Godot; Godot so converte input e apresenta estado.
 
 ### 2. Movimento visual suave
 
@@ -115,24 +113,7 @@ Notas:
 - Decidir se `EncounterInterval` continua necessario ou se encontro por tile e suficiente para v1.
 - Adicionar testes para chance de encontro configurada via `GameConfig` se comportamento mudar.
 
-### 4. Tileset e mapa menos demo
-
-Objetivo: substituir `DemoTileMapBuilder` por fluxo de mapa mais proximo do final.
-
-Arquivos principais:
-
-- `assets/data/world/terrain_tiles.json`
-- `src/Godot/World/DemoTileMapBuilder.cs`
-- `src/Godot/World/WorldTileMapAdapter.cs`
-- `scenes/bootstrap.tscn`
-
-Opcoes:
-
-- Criar TileSet real no Godot e manter `terrain_tiles.json` como catalogo de metadata.
-- Manter builder apenas como fallback de desenvolvimento.
-- Adicionar mapa inicial editavel na cena, sem gerar tudo por codigo.
-
-### 5. Dados e validacao de conteudo
+### 4. Dados e validacao de conteudo
 
 Objetivo: falhar cedo quando JSON tiver erro.
 
@@ -156,6 +137,16 @@ Validacoes futuras uteis:
 
 - Toda regiao nao-safe usada no mapa tem encontros, se encontros forem obrigatorios.
 
+### 5. TODO tardio: Dungeon/EnterDungeon
+
+Objetivo: manter dungeon fora do foco atual. `Dungeon`/`EnterDungeon` so deve voltar depois que programacao de acoes no mapa, viagem, coleta, encontros e HUD estiverem mais proximos do resultado final.
+
+Notas:
+
+- Nao implementar dungeon agora.
+- Nao expor `EnterDungeon` como acao do menu contextual atual.
+- Quando voltar ao escopo, tratar como design proprio antes de codigo.
+
 ---
 
 ## Regras importantes para continuar
@@ -174,5 +165,5 @@ Validacoes futuras uteis:
 ## Prompt sugerido para nova sessao
 
 ```text
-Continue o prototipo Godot C# de Rymora Land of Heroes. Leia primeiro docs/proximos-passos.md, docs/arquitetura/visao-geral.md e docs/regras/biblia-rpg.md. Mantenha Core puro sem Godot refs. Proximo foco: mapa editavel em 3 layers (`TerrainLayer`, `RegionLayer`, `ZoneLayer`), encontros por `region + terrain` e nivel por zone. Depois rode build, testes e Godot headless.
+Continue o prototipo Godot C# de Rymora Land of Heroes. Leia primeiro docs/proximos-passos.md, docs/arquitetura/visao-geral.md e docs/regras/biblia-rpg.md. Mantenha Core puro sem Godot refs. Proximo foco: detalhar e implementar programacao de acoes no mapa para party selecionada. Nao implementar dungeon agora; `Dungeon`/`EnterDungeon` e TODO tardio. Antes de codigo, feche o fluxo do jogador desde clicar no mapa ate a party comecar a executar.
 ```

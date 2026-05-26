@@ -581,7 +581,7 @@ Confirmado:
 - Cada tipo de terreno/bioma deve possuir tile hexagonal configuravel.
 - Forest permite cortar madeira.
 - Mountain permite minerar.
-- Place permite entrar em dungeon.
+- Place pode permitir entrada em dungeon no futuro; `Dungeon`/`EnterDungeon` esta adiado como TODO tardio.
 - City e um tipo de Place.
 - Road usa velocidade de Road.
 - Plain usa velocidade de Plain.
@@ -677,6 +677,12 @@ Confirmado:
 - Uma acao pode ser configurada para repetir por uma quantidade definida de vezes.
 - Uma acao pode ser configurada para repetir por tempo definido.
 - Por enquanto, uma acao em loop para automaticamente quando nao consegue continuar por falha ou falta de requisito.
+
+Foco atual de detalhamento:
+
+- Definir o fluxo de programacao de acoes no mapa, desde clicar no mapa ate a party comecar a executar.
+- O fluxo deve cobrir as acoes ja existentes: Travel, Mine, CutWood e Transferir itens entre parties.
+- `Dungeon`/`EnterDungeon` nao faz parte deste foco e fica como TODO tardio.
 
 Confirmado:
 
@@ -997,6 +1003,12 @@ Confirmado:
 - Uma dungeon possui nivel.
 - O nivel da dungeon pode vir do nivel do Place.
 
+Adiado:
+
+- `Dungeon`/`EnterDungeon` nao deve ser implementado agora.
+- `Dungeon`/`EnterDungeon` fica como TODO tardio, depois que programacao de acoes no mapa, viagem, coleta, encontros e HUD estiverem mais proximos do resultado final.
+- Enquanto estiver adiado, `EnterDungeon` nao deve aparecer como acao imediata do mapa.
+
 Decisao pendente:
 
 - Definir como dungeons funcionam.
@@ -1018,8 +1030,8 @@ Confirmado:
 
 - City e safe spot: sem encontros, cura party ao entrar, potencial para lojas (regras de loja adiadas).
 - Regioes podem ser safe spot (sem encontros).
-- Dungeons existem como locais no mapa com encontros fixos, sem andares separados na primeira versao.
-- Dungeon nao interrompe viagem permanente - party entra, enfrenta encontros, sai ao vencer ou morrer.
+- Dungeon/EnterDungeon esta fora do foco imediato e fica como TODO tardio.
+- Quando dungeon voltar ao escopo, deve ter design proprio antes de implementacao.
 
 Decisao pendente:
 
@@ -1097,7 +1109,7 @@ Estas informacoes existem no prototipo antigo, mas nao devem virar regra final s
 5. [Confirmado] Morte: sistema completo (fantasma, igreja, recuperacao de corpo).
 6. [Confirmado] Inventario: por party; heroi nao possui inventario proprio e leva somente equipamento ao mudar de party.
 7. [Confirmado] Materiais: lista atual mantida provisionalmente.
-8. [Confirmado] Cidades: safe spot + lojas (regras adiadas). Dungeon: encontros fixos sem andares.
+8. [Confirmado] Cidades: safe spot + lojas (regras adiadas). [Adiado] Dungeon/EnterDungeon: TODO tardio, nao implementar agora.
 9. [Confirmado] Crafting: so planejamento, sem implementar na primeira versao.
 10. [Confirmado] Idle puro na v1. ValiantPoints como recurso do jogador (detalhamento adiado).
 

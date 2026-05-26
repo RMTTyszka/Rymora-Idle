@@ -61,7 +61,6 @@ Ao clicar com botao direito no mapa, mostra acoes disponiveis:
 - Move (sempre disponivel em tile caminhavel).
 - Mine (se terreno permite mineracao).
 - CutWood (se terreno permite corte).
-- EnterDungeon (se for Place).
 
 Implementacao atual provisoria:
 - `PopupMenu` em `scenes/bootstrap.tscn` mostra acoes do tile clicado.
@@ -69,7 +68,15 @@ Implementacao atual provisoria:
 - `Mine` aparece em tile com `AllowsMining`.
 - `Cut Wood` aparece em tile com `AllowsWoodcutting`.
 - `Mine` e `Cut Wood` enfileiram travel ate o tile alvo antes da coleta quando a party esta em outro tile.
-- `EnterDungeon` ainda nao foi implementado.
+
+Foco atual de produto:
+- O menu/contexto deve evoluir para um fluxo de programacao de acoes da party, nao apenas disparar comandos de demo.
+- Esse fluxo precisa permitir escolher acao, alvo e modo de repeticao antes de enviar a intencao ao Application.
+- Os modos de repeticao confirmados na biblia sao: uma vez, repetir para sempre, repetir por quantidade definida e repetir por tempo definido.
+- A UI continua sem regra de jogo: ela mostra opcoes e envia intencoes; Application/Core validam requisitos e execucao.
+
+TODO tardio:
+- `Dungeon`/`EnterDungeon` nao faz parte do foco atual e nao deve aparecer como acao imediata enquanto o sistema de programacao de acoes no mapa nao estiver definido.
 
 ---
 
@@ -80,7 +87,7 @@ Implementacao atual provisoria:
 | Selecionar Party 1 | F1 |
 | Selecionar Party 2 | F2 |
 | Selecionar Party 3 | F3 |
-| Enfileirar Move | Clique esquerdo no mapa |
+| Mover demo/provisorio | Clique esquerdo no mapa |
 | Abrir menu contextual | Clique direito no mapa |
 | Alternar para combate | Botao Combat |
 | Alternar status | Botao Status |
@@ -96,6 +103,10 @@ Implementacao atual provisoria:
 - Destino invalido imprime log com posicao atual, destino, caminhabilidade e tamanho do path.
 - `PartyPresenter` sincroniza a posicao visual da party apos cada `Update`.
 - `PartyPresenter` interpola entre tile atual e proximo waypoint usando progresso da acao, sem mudar regra tile-based do Core.
+
+Proximo fluxo a detalhar:
+- O clique no mapa deve abrir a programacao de acao para a party selecionada.
+- A decisao final sobre limpar, anexar, inserir ou editar a fila ainda precisa ser aprovada antes de implementar.
 
 ---
 
