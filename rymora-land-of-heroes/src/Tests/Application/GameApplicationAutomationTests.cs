@@ -57,4 +57,16 @@ public sealed class GameApplicationAutomationTests
         Assert.Equal(ProgramRunnerState.Error, scenario.AssertParty.Automation.Runner.State);
         Assert.Contains("cannot run map actions", scenario.AssertParty.Automation.Runner.ErrorMessage);
     }
+
+    [Fact]
+    public void Automated_map_action_with_dead_hero_sets_runner_error()
+    {
+        var scenario = ApplicationObjectMother.ApplicationWithMiningProgramWithDeadHero();
+
+        scenario.InputApplication.PlayProgram("party-1");
+        scenario.InputApplication.Update(1);
+
+        Assert.Equal(ProgramRunnerState.Error, scenario.AssertParty.Automation.Runner.State);
+        Assert.Contains("cannot run map actions", scenario.AssertParty.Automation.Runner.ErrorMessage);
+    }
 }

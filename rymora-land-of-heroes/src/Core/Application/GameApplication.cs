@@ -107,6 +107,7 @@ public sealed class GameApplication
 
             if (party.IsDefeated)
             {
+                FailActiveAutomationForDefeatedParty(party);
                 HandlePartyDeath(party);
                 continue;
             }
@@ -397,6 +398,17 @@ public sealed class GameApplication
         if (state.Request.AutomationActionId is not null)
         {
             party.Automation.Runner.Fail(message);
+        }
+    }
+
+    private static void FailActiveAutomationForDefeatedParty(GameParty party)
+    {
+        if (party.Automation.Runner.State is ProgramRunnerState.Running
+            or ProgramRunnerState.PauseRequested
+            or ProgramRunnerState.Paused
+            or ProgramRunnerState.StopRequested)
+        {
+            party.Automation.Runner.Fail("Party cannot run map actions.");
         }
     }
 

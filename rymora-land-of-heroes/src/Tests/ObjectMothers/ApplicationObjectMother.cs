@@ -168,6 +168,30 @@ internal static class ApplicationObjectMother
 
         return new AutomationProgramScenario(application, party);
     }
+
+    public static AutomationProgramScenario ApplicationWithMiningProgramWithDeadHero()
+    {
+        var party = new GameParty("party-1", new TilePosition(0, 0));
+        var hero = TestObjectMother.CreateCreature("Miner");
+        hero.TakeDamage(hero.MaxLife);
+        party.AddMember(hero);
+        var macro = new PartyMacro("macro-1", "Mine Iron");
+        macro.AddAction(new MoveToMacroAction("move-1", new TilePosition(1, 0)));
+        macro.AddAction(new GatherMacroAction("mine-1", MacroActionKind.Mine, "Iron", 1, 3, RepeatPolicy.Once));
+        party.Automation.AddMacro(macro);
+        party.Automation.Program.AddStep("macro-1", RepeatPolicy.Once);
+
+        var application = new GameApplication(
+            TestObjectMother.CreateWorld(
+                random: new SequenceRandomSource(1),
+                minePositions: new[] { new TilePosition(1, 0) }),
+            new[] { party },
+            TestObjectMother.CreateGameConfig(),
+            TestObjectMother.CreateMonster,
+            new SequenceRandomSource(1));
+
+        return new AutomationProgramScenario(application, party);
+    }
 }
 
 internal sealed record MiningUpdateScenario(
