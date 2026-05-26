@@ -5,6 +5,7 @@ public sealed class PartyAutomation
     private readonly List<PartyMacro> _macros = new();
 
     public IReadOnlyList<PartyMacro> Macros => _macros;
+    public PartyProgram Program { get; } = new();
     public MacroRecordingSession? Recording { get; private set; }
 
     public MacroRecordingSession StartRecording(string recordingId)
