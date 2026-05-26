@@ -6,7 +6,23 @@ public sealed class PartyAutomation
 
     public IReadOnlyList<PartyMacro> Macros => _macros;
     public PartyProgram Program { get; } = new();
+    public ProgramRunner Runner { get; } = new();
     public MacroRecordingSession? Recording { get; private set; }
+
+    public void AddMacro(PartyMacro macro)
+    {
+        if (macro is null)
+        {
+            throw new ArgumentNullException(nameof(macro));
+        }
+
+        if (TryGetMacro(macro.Id) is not null)
+        {
+            throw new InvalidOperationException($"Macro already exists: {macro.Id}.");
+        }
+
+        _macros.Add(macro);
+    }
 
     public MacroRecordingSession StartRecording(string recordingId)
     {
