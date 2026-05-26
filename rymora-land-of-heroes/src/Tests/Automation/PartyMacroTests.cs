@@ -41,4 +41,41 @@ public sealed class PartyMacroTests
 
         Assert.Equal("itemWeight", error.ParamName);
     }
+
+    [Fact]
+    public void Macro_can_remove_and_reorder_actions()
+    {
+        var macro = new PartyMacro("macro-1", "Mining Run");
+        macro.AddAction(new MoveToMacroAction("move-1", new TilePosition(1, 0)));
+        macro.AddAction(new GatherMacroAction("mine-1", MacroActionKind.Mine, "Iron", 1, 3, RepeatPolicy.Once));
+        macro.AddAction(new MoveToMacroAction("move-2", new TilePosition(2, 0)));
+
+        macro.RemoveAction("mine-1");
+        macro.MoveAction("move-2", newIndex: 0);
+
+        Assert.Collection(
+            macro.Actions,
+            action => Assert.Equal("move-2", action.Id),
+            action => Assert.Equal("move-1", action.Id));
+    }
+
+    [Fact]
+    public void Rename_requires_non_empty_name()
+    {
+        var macro = new PartyMacro("macro-1", "Mining Run");
+
+        Assert.Throws<ArgumentException>(() => macro.Rename(""));
+    }
+
+    [Fact]
+    public void Macro_updates_gather_action_repeat()
+    {
+        var macro = new PartyMacro("macro-1", "Mining Run");
+        macro.AddAction(new GatherMacroAction("mine-1", MacroActionKind.Mine, "Iron", 1, 3, RepeatPolicy.Once));
+
+        macro.SetGatherActionRepeat("mine-1", RepeatPolicy.Count(5));
+
+        var action = Assert.IsType<GatherMacroAction>(macro.Actions[0]);
+        Assert.Equal(5, action.Repeat.RepeatCount);
+    }
 }

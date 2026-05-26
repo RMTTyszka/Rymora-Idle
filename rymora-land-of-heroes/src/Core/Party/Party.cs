@@ -1,3 +1,4 @@
+using RymoraLandOfHeroes.Core.Automation;
 using RymoraLandOfHeroes.Core.Common;
 using RymoraLandOfHeroes.Core.Hero;
 
@@ -21,6 +22,7 @@ public sealed class Party
     public Creature? Leader => _members.Count == 0 ? null : _members[0];
     public PartyActionQueue ActionQueue { get; } = new();
     public Inventory Inventory { get; }
+    public PartyAutomation Automation { get; } = new();
     public TilePosition Position { get; set; }
     public bool IsInCombat { get; set; }
     public bool HasHero => _members.Count > 0;
