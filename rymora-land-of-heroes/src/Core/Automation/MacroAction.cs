@@ -35,7 +35,12 @@ public sealed class MoveToMacroAction : MacroAction
         Destination = destination;
     }
 
-    public TilePosition Destination { get; }
+    public TilePosition Destination { get; private set; }
+
+    public void SetDestination(TilePosition destination)
+    {
+        Destination = destination;
+    }
 }
 
 public sealed class GatherMacroAction : MacroAction

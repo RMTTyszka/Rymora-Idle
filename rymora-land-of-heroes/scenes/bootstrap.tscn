@@ -9,6 +9,9 @@
 [ext_resource type="TileSet" uid="uid://beei3f8b3856f" path="res://assets/world/terrain_hex_tileset.tres" id="7_terrain_tileset"]
 [ext_resource type="TileSet" uid="uid://doskbgx316bfr" path="res://assets/world/region_hex_tileset.tres" id="8_owppy"]
 [ext_resource type="TileSet" uid="uid://kqsik8hjfai" path="res://assets/world/zone_hex_tileset.tres" id="9_n7b26"]
+[ext_resource type="Script" path="res://src/Godot/Presentation/MacrosPresenter.cs" id="10_macros_presenter"]
+[ext_resource type="Script" path="res://src/Godot/Presentation/MacroEditorPresenter.cs" id="11_macro_editor"]
+[ext_resource type="Script" path="res://src/Godot/Presentation/ProgramEditorPresenter.cs" id="12_program_editor"]
 
 [node name="Bootstrap" type="Node2D" unique_id=1738267823]
 script = ExtResource("1_bootstrap")
@@ -37,13 +40,13 @@ visible = false
 script = ExtResource("5_combat_presenter")
 
 [node name="UiLayer" type="CanvasLayer" parent="." unique_id=1422838613]
-visible = false
+visible = true
 
 [node name="Hud" type="PanelContainer" parent="UiLayer" unique_id=569111040]
 offset_left = 12.0
 offset_top = 12.0
-offset_right = 332.0
-offset_bottom = 160.0
+offset_right = 452.0
+offset_bottom = 560.0
 script = ExtResource("6_hud_presenter")
 
 [node name="Margin" type="MarginContainer" parent="UiLayer/Hud" unique_id=1187220435]
@@ -53,9 +56,231 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Label" type="Label" parent="UiLayer/Hud/Margin" unique_id=1162746424]
+[node name="Tabs" type="TabContainer" parent="UiLayer/Hud/Margin"]
+layout_mode = 2
+
+[node name="Status" type="VBoxContainer" parent="UiLayer/Hud/Margin/Tabs"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UiLayer/Hud/Margin/Tabs/Status" unique_id=1162746424]
 layout_mode = 2
 text = "HUD"
+
+[node name="PlayButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Status"]
+layout_mode = 2
+text = "Play"
+
+[node name="PauseButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Status"]
+layout_mode = 2
+text = "Pause"
+
+[node name="StopButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Status"]
+layout_mode = 2
+text = "Stop"
+
+[node name="Macros" type="VBoxContainer" parent="UiLayer/Hud/Margin/Tabs"]
+layout_mode = 2
+script = ExtResource("10_macros_presenter")
+
+[node name="MacroName" type="LineEdit" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+placeholder_text = "Macro name"
+
+[node name="RecordButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+text = "Record Macro"
+
+[node name="SaveButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+text = "Save Recording"
+
+[node name="CancelButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+text = "Cancel Recording"
+
+[node name="MacroList" type="ItemList" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="AddToProgramButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+text = "Add To Program"
+
+[node name="EditMacroButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+text = "Edit Macro"
+
+[node name="ActiveProgramLabel" type="Label" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+text = "Active Program"
+
+[node name="ProgramList" type="ItemList" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+
+[node name="MoveStepUpButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+text = "Move Step Up"
+
+[node name="MoveStepDownButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+text = "Move Step Down"
+
+[node name="RemoveStepButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+text = "Remove Step"
+
+[node name="StepRepeat" type="LineEdit" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+placeholder_text = "Selected step repeat count"
+
+[node name="SetStepRepeatButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+text = "Set Step Repeat"
+
+[node name="EditProgramButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+text = "Open Program Editor"
+
+[node name="MacroEditor" type="Window" parent="UiLayer"]
+title = "Macro Editor"
+position = Vector2i(480, 80)
+size = Vector2i(420, 520)
+visible = false
+script = ExtResource("11_macro_editor")
+
+[node name="Margin" type="MarginContainer" parent="UiLayer/MacroEditor"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Rows" type="VBoxContainer" parent="UiLayer/MacroEditor/Margin"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="UiLayer/MacroEditor/Margin/Rows"]
+layout_mode = 2
+text = "Macro Editor"
+
+[node name="NameEdit" type="LineEdit" parent="UiLayer/MacroEditor/Margin/Rows"]
+layout_mode = 2
+placeholder_text = "Macro name"
+
+[node name="RenameButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows"]
+layout_mode = 2
+text = "Rename"
+
+[node name="ActionList" type="ItemList" parent="UiLayer/MacroEditor/Margin/Rows"]
+custom_minimum_size = Vector2(0, 170)
+layout_mode = 2
+
+[node name="ActionButtons" type="HBoxContainer" parent="UiLayer/MacroEditor/Margin/Rows"]
+layout_mode = 2
+
+[node name="MoveUpButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows/ActionButtons"]
+layout_mode = 2
+text = "Up"
+
+[node name="MoveDownButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows/ActionButtons"]
+layout_mode = 2
+text = "Down"
+
+[node name="RemoveButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows/ActionButtons"]
+layout_mode = 2
+text = "Remove"
+
+[node name="MoveFields" type="HBoxContainer" parent="UiLayer/MacroEditor/Margin/Rows"]
+layout_mode = 2
+
+[node name="MoveX" type="LineEdit" parent="UiLayer/MacroEditor/Margin/Rows/MoveFields"]
+layout_mode = 2
+placeholder_text = "Move X"
+
+[node name="MoveY" type="LineEdit" parent="UiLayer/MacroEditor/Margin/Rows/MoveFields"]
+layout_mode = 2
+placeholder_text = "Move Y"
+
+[node name="SetMoveButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows/MoveFields"]
+layout_mode = 2
+text = "Set MoveTo"
+
+[node name="RepeatFields" type="HBoxContainer" parent="UiLayer/MacroEditor/Margin/Rows"]
+layout_mode = 2
+
+[node name="RepeatCount" type="LineEdit" parent="UiLayer/MacroEditor/Margin/Rows/RepeatFields"]
+layout_mode = 2
+placeholder_text = "Gather repeat"
+
+[node name="SetRepeatButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows/RepeatFields"]
+layout_mode = 2
+text = "Set Repeat"
+
+[node name="ProgramEditor" type="Window" parent="UiLayer"]
+title = "Program Editor"
+position = Vector2i(920, 80)
+size = Vector2i(420, 460)
+visible = false
+script = ExtResource("12_program_editor")
+
+[node name="Margin" type="MarginContainer" parent="UiLayer/ProgramEditor"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Rows" type="VBoxContainer" parent="UiLayer/ProgramEditor/Margin"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="UiLayer/ProgramEditor/Margin/Rows"]
+layout_mode = 2
+text = "Program Editor"
+
+[node name="StepList" type="ItemList" parent="UiLayer/ProgramEditor/Margin/Rows"]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+
+[node name="StepButtons" type="HBoxContainer" parent="UiLayer/ProgramEditor/Margin/Rows"]
+layout_mode = 2
+
+[node name="MoveUpButton" type="Button" parent="UiLayer/ProgramEditor/Margin/Rows/StepButtons"]
+layout_mode = 2
+text = "Up"
+
+[node name="MoveDownButton" type="Button" parent="UiLayer/ProgramEditor/Margin/Rows/StepButtons"]
+layout_mode = 2
+text = "Down"
+
+[node name="RemoveButton" type="Button" parent="UiLayer/ProgramEditor/Margin/Rows/StepButtons"]
+layout_mode = 2
+text = "Remove"
+
+[node name="StepRepeatFields" type="HBoxContainer" parent="UiLayer/ProgramEditor/Margin/Rows"]
+layout_mode = 2
+
+[node name="StepRepeat" type="LineEdit" parent="UiLayer/ProgramEditor/Margin/Rows/StepRepeatFields"]
+layout_mode = 2
+placeholder_text = "Step repeat"
+
+[node name="SetStepRepeatButton" type="Button" parent="UiLayer/ProgramEditor/Margin/Rows/StepRepeatFields"]
+layout_mode = 2
+text = "Set Step Repeat"
+
+[node name="ProgramRepeatFields" type="HBoxContainer" parent="UiLayer/ProgramEditor/Margin/Rows"]
+layout_mode = 2
+
+[node name="ProgramRepeat" type="LineEdit" parent="UiLayer/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
+layout_mode = 2
+placeholder_text = "Program repeat"
+
+[node name="SetProgramRepeatButton" type="Button" parent="UiLayer/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
+layout_mode = 2
+text = "Set Program Repeat"
 
 [node name="ContextMenu" type="PopupMenu" parent="UiLayer" unique_id=576348448]
 

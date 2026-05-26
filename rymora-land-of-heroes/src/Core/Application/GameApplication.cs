@@ -99,6 +99,9 @@ public sealed class GameApplication
             case MoveMacroActionIntent moveMacroAction:
                 MoveMacroAction(moveMacroAction.PartyId, moveMacroAction.MacroId, moveMacroAction.ActionId, moveMacroAction.NewIndex);
                 break;
+            case SetMoveActionDestinationIntent setMoveActionDestination:
+                SetMoveActionDestination(setMoveActionDestination.PartyId, setMoveActionDestination.MacroId, setMoveActionDestination.ActionId, setMoveActionDestination.Destination);
+                break;
             case SetGatherActionRepeatIntent setGatherActionRepeat:
                 SetGatherActionRepeat(setGatherActionRepeat.PartyId, setGatherActionRepeat.MacroId, setGatherActionRepeat.ActionId, setGatherActionRepeat.Repeat);
                 break;
@@ -207,6 +210,11 @@ public sealed class GameApplication
     public void SetGatherActionRepeat(string partyId, string macroId, string actionId, RepeatPolicy repeat)
     {
         Parties.Get(partyId).Automation.GetMacro(macroId).SetGatherActionRepeat(actionId, repeat);
+    }
+
+    public void SetMoveActionDestination(string partyId, string macroId, string actionId, TilePosition destination)
+    {
+        Parties.Get(partyId).Automation.GetMacro(macroId).SetMoveActionDestination(actionId, destination);
     }
 
     public void SetProgramRepeat(string partyId, RepeatPolicy repeat)

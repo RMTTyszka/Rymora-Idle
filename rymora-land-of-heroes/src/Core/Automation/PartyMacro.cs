@@ -1,3 +1,5 @@
+using RymoraLandOfHeroes.Core.Common;
+
 namespace RymoraLandOfHeroes.Core.Automation;
 
 public sealed class PartyMacro
@@ -84,5 +86,21 @@ public sealed class PartyMacro
         }
 
         gather.SetRepeat(repeat);
+    }
+
+    public void SetMoveActionDestination(string actionId, TilePosition destination)
+    {
+        var action = _actions.FirstOrDefault(action => action.Id == actionId);
+        if (action is null)
+        {
+            throw new InvalidOperationException($"Macro action not found: {actionId}.");
+        }
+
+        if (action is not MoveToMacroAction move)
+        {
+            throw new InvalidOperationException($"Macro action does not support destination editing: {actionId}.");
+        }
+
+        move.SetDestination(destination);
     }
 }

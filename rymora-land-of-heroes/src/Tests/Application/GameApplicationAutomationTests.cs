@@ -109,12 +109,15 @@ public sealed class GameApplicationAutomationTests
         var step = scenario.AssertParty.Automation.Program.Steps[0];
 
         scenario.InputApplication.RenameMacro("party-1", "macro-1", "Iron Loop");
+        scenario.InputApplication.SetMoveActionDestination("party-1", "macro-1", "move-1", new TilePosition(2, 0));
         scenario.InputApplication.SetGatherActionRepeat("party-1", "macro-1", "mine-1", RepeatPolicy.Count(4));
         scenario.InputApplication.SetProgramStepRepeat("party-1", step.Id, RepeatPolicy.Count(2));
 
         var macro = scenario.AssertParty.Automation.GetMacro("macro-1");
+        var move = Assert.IsType<MoveToMacroAction>(macro.Actions[0]);
         var gather = Assert.IsType<GatherMacroAction>(macro.Actions[1]);
         Assert.Equal("Iron Loop", macro.Name);
+        Assert.Equal(new TilePosition(2, 0), move.Destination);
         Assert.Equal(4, gather.Repeat.RepeatCount);
         Assert.Equal(2, scenario.AssertParty.Automation.Program.Steps[0].Repeat.RepeatCount);
     }
@@ -164,6 +167,7 @@ public sealed class GameApplicationAutomationTests
         var scenario = ApplicationObjectMother.ApplicationWithMiningProgram();
 
         scenario.InputApplication.HandleInput(new RenameMacroIntent("party-1", "macro-1", "Iron Loop"));
+        scenario.InputApplication.HandleInput(new SetMoveActionDestinationIntent("party-1", "macro-1", "move-1", new TilePosition(2, 0)));
         scenario.InputApplication.HandleInput(new SetGatherActionRepeatIntent("party-1", "macro-1", "mine-1", RepeatPolicy.Count(4)));
         scenario.InputApplication.HandleInput(new MoveMacroActionIntent("party-1", "macro-1", "mine-1", 0));
         scenario.InputApplication.HandleInput(new RemoveMacroActionIntent("party-1", "macro-1", "move-1"));

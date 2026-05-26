@@ -27,6 +27,7 @@ public partial class Bootstrap : Node2D
     private PartyPresenter? _partyPresenter;
     private CombatPresenter? _combatPresenter;
     private HudPresenter? _hudPresenter;
+    private MacrosPresenter? _macrosPresenter;
     private PopupMenu? _contextMenu;
     private GameContent? _content;
     private MaterialItem? _startupMineMaterial;
@@ -46,6 +47,7 @@ public partial class Bootstrap : Node2D
         _partyPresenter = GetNode<PartyPresenter>("PartyPresenter");
         _combatPresenter = GetNode<CombatPresenter>("CombatLayer/CombatPresenter");
         _hudPresenter = GetNode<HudPresenter>("UiLayer/Hud");
+        _macrosPresenter = GetNodeOrNull<MacrosPresenter>("UiLayer/Hud/Margin/Tabs/Macros");
         _contextMenu = GetNode<PopupMenu>("UiLayer/ContextMenu");
         _contextMenu.IdPressed += OnContextMenuIdPressed;
         _content = JsonGameContentLoader.LoadDefault();
@@ -89,6 +91,7 @@ public partial class Bootstrap : Node2D
                 ItemWeight: _startupMineMaterial.Weight));
 
         _partyPresenter.Sync(_application.Parties.Get(BootstrapCoreFactory.PartyId), _worldAdapter);
+        _macrosPresenter?.Bind(_application, _application.Parties.Get(BootstrapCoreFactory.PartyId));
 
         GD.Print($"Rymora Godot bootstrap ready. World from TileMapLayer. Mine queued: {queued}.");
     }
@@ -106,6 +109,7 @@ public partial class Bootstrap : Node2D
         var party = _application.Parties.Get(BootstrapCoreFactory.PartyId);
         _partyPresenter.Sync(party, _worldAdapter);
         _hudPresenter.Sync(_application, party);
+        _macrosPresenter?.Bind(_application, party);
         SyncCombatOverlay(party.IsInCombat);
 
         if (_startupMineMaterial is null)

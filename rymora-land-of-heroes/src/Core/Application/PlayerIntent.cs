@@ -28,6 +28,7 @@ public sealed record RemoveProgramStepIntent(string PartyId, string StepId) : Pl
 public sealed record RenameMacroIntent(string PartyId, string MacroId, string Name) : PlayerIntent;
 public sealed record RemoveMacroActionIntent(string PartyId, string MacroId, string ActionId) : PlayerIntent;
 public sealed record MoveMacroActionIntent(string PartyId, string MacroId, string ActionId, int NewIndex) : PlayerIntent;
+public sealed record SetMoveActionDestinationIntent(string PartyId, string MacroId, string ActionId, TilePosition Destination) : PlayerIntent;
 public sealed record SetGatherActionRepeatIntent(string PartyId, string MacroId, string ActionId, RepeatPolicy Repeat) : PlayerIntent;
 public sealed record SetProgramRepeatIntent(string PartyId, RepeatPolicy Repeat) : PlayerIntent;
 public sealed record SetProgramStepRepeatIntent(string PartyId, string StepId, RepeatPolicy Repeat) : PlayerIntent;

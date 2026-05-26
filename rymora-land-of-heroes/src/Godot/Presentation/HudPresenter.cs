@@ -17,7 +17,7 @@ public partial class HudPresenter : PanelContainer
 
     public override void _Ready()
     {
-        _label = GetNode<Label>("Margin/Label");
+        _label = GetNodeOrNull<Label>("Margin/Tabs/Status/Label");
         _playButton = GetNodeOrNull<Button>("Margin/Tabs/Status/PlayButton");
         _pauseButton = GetNodeOrNull<Button>("Margin/Tabs/Status/PauseButton");
         _stopButton = GetNodeOrNull<Button>("Margin/Tabs/Status/StopButton");
