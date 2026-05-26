@@ -26,6 +26,21 @@ public sealed class MacroRecordingSessionTests
     }
 
     [Fact]
+    public void Invalid_record_gather_leaves_actions_unchanged()
+    {
+        var recording = new MacroRecordingSession("recording-1");
+
+        Assert.Throws<ArgumentException>(() => recording.RecordGather(
+            target: new TilePosition(2, 0),
+            kind: MacroActionKind.MoveTo,
+            itemName: "Iron",
+            itemLevel: 1,
+            itemWeight: 3));
+
+        Assert.Empty(recording.Actions);
+    }
+
+    [Fact]
     public void Save_requires_macro_name()
     {
         var recording = new MacroRecordingSession("recording-1");
@@ -40,5 +55,18 @@ public sealed class MacroRecordingSessionTests
 
         Assert.NotNull(party.Automation);
         Assert.Empty(party.Automation.Macros);
+    }
+
+    [Fact]
+    public void Saving_duplicate_macro_id_is_rejected()
+    {
+        var automation = new PartyAutomation();
+        automation.StartRecording("recording-1");
+        automation.SaveRecording("Mining Run");
+        automation.StartRecording("recording-1");
+
+        var error = Assert.Throws<InvalidOperationException>(() => automation.SaveRecording("Mining Run Again"));
+
+        Assert.Contains("Macro already exists", error.Message);
     }
 }

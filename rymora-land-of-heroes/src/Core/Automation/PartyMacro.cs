@@ -13,7 +13,10 @@ public sealed class PartyMacro
         Name = name;
         if (actions is not null)
         {
-            _actions.AddRange(actions);
+            foreach (var action in actions)
+            {
+                AddAction(action);
+            }
         }
     }
 
@@ -29,7 +32,13 @@ public sealed class PartyMacro
 
     public void AddAction(MacroAction action)
     {
-        _actions.Add(action ?? throw new ArgumentNullException(nameof(action)));
+        ArgumentNullException.ThrowIfNull(action);
+        if (_actions.Any(existing => existing.Id == action.Id))
+        {
+            throw new InvalidOperationException($"Macro action already exists: {action.Id}.");
+        }
+
+        _actions.Add(action);
     }
 
     public void RemoveAction(string actionId)

@@ -23,8 +23,13 @@ public sealed class MacroRecordingSession
 
     public void RecordGather(TilePosition target, MacroActionKind kind, string itemName, int itemLevel, float itemWeight)
     {
-        RecordMove(target);
-        _actions.Add(new GatherMacroAction(NextActionId(kind == MacroActionKind.Mine ? "mine" : "cutwood"), kind, itemName, itemLevel, itemWeight, RepeatPolicy.Once));
+        var nextActionNumber = _nextActionNumber;
+        var move = new MoveToMacroAction($"{Id}-move-{nextActionNumber + 1}", target);
+        var gather = new GatherMacroAction($"{Id}-{(kind == MacroActionKind.Mine ? "mine" : "cutwood")}-{nextActionNumber + 2}", kind, itemName, itemLevel, itemWeight, RepeatPolicy.Once);
+
+        _nextActionNumber = nextActionNumber + 2;
+        _actions.Add(move);
+        _actions.Add(gather);
     }
 
     public PartyMacro Save(string name)

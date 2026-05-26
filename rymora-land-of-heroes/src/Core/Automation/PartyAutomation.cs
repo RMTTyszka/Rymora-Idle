@@ -26,6 +26,11 @@ public sealed class PartyAutomation
         }
 
         var macro = Recording.Save(name);
+        if (TryGetMacro(macro.Id) is not null)
+        {
+            throw new InvalidOperationException($"Macro already exists: {macro.Id}.");
+        }
+
         _macros.Add(macro);
         Recording = null;
         return macro;

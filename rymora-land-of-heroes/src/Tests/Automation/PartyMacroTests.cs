@@ -78,4 +78,30 @@ public sealed class PartyMacroTests
         var action = Assert.IsType<GatherMacroAction>(macro.Actions[0]);
         Assert.Equal(5, action.Repeat.RepeatCount);
     }
+
+    [Fact]
+    public void Constructor_rejects_duplicate_action_ids()
+    {
+        var actions = new MacroAction[]
+        {
+            new MoveToMacroAction("move-1", new TilePosition(1, 0)),
+            new MoveToMacroAction("move-1", new TilePosition(2, 0))
+        };
+
+        var error = Assert.Throws<InvalidOperationException>(() => new PartyMacro("macro-1", "Mining Run", actions));
+
+        Assert.Contains("Macro action already exists", error.Message);
+    }
+
+    [Fact]
+    public void Add_action_rejects_duplicate_action_id()
+    {
+        var macro = new PartyMacro("macro-1", "Mining Run");
+        macro.AddAction(new MoveToMacroAction("move-1", new TilePosition(1, 0)));
+
+        var error = Assert.Throws<InvalidOperationException>(() =>
+            macro.AddAction(new MoveToMacroAction("move-1", new TilePosition(2, 0))));
+
+        Assert.Contains("Macro action already exists", error.Message);
+    }
 }
