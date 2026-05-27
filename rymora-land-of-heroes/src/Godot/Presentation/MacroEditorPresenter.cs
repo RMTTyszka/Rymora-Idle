@@ -21,7 +21,8 @@ public partial class MacroEditorPresenter : Window
     private LineEdit? _moveX;
     private LineEdit? _moveY;
     private Button? _setMoveButton;
-    private LineEdit? _repeatCount;
+    private OptionButton? _repeatMode;
+    private LineEdit? _repeatValue;
     private Button? _setRepeatButton;
     private GameApplication? _application;
     private Party? _party;
@@ -41,8 +42,11 @@ public partial class MacroEditorPresenter : Window
         _moveX = GetNodeOrNull<LineEdit>("Margin/Rows/MoveFields/MoveX");
         _moveY = GetNodeOrNull<LineEdit>("Margin/Rows/MoveFields/MoveY");
         _setMoveButton = GetNodeOrNull<Button>("Margin/Rows/MoveFields/SetMoveButton");
-        _repeatCount = GetNodeOrNull<LineEdit>("Margin/Rows/RepeatFields/RepeatCount");
+        _repeatMode = GetNodeOrNull<OptionButton>("Margin/Rows/RepeatFields/RepeatMode");
+        _repeatValue = GetNodeOrNull<LineEdit>("Margin/Rows/RepeatFields/RepeatCount");
         _setRepeatButton = GetNodeOrNull<Button>("Margin/Rows/RepeatFields/SetRepeatButton");
+
+        RepeatPolicyUi.Configure(_repeatMode);
 
         CloseRequested += Hide;
         if (_renameButton is not null) _renameButton.Pressed += OnRenamePressed;
@@ -180,21 +184,20 @@ public partial class MacroEditorPresenter : Window
 
     private void OnSetRepeatPressed()
     {
-        if (_application is null || _party is null || _macroId is null || _repeatCount is null)
+        if (_application is null || _party is null || _macroId is null)
         {
             return;
         }
 
         var actionId = GetSelectedActionId();
-        if (actionId is null || !int.TryParse(_repeatCount.Text, out var count) || count <= 0)
+        if (actionId is null || !RepeatPolicyUi.TryRead(_repeatMode, _repeatValue, out var repeat))
         {
-            GD.Print("Action repeat must be a positive whole number.");
             return;
         }
 
         try
         {
-            _application.SetGatherActionRepeat(_party.Id, _macroId, actionId, RepeatPolicy.Count(count));
+            _application.SetGatherActionRepeat(_party.Id, _macroId, actionId, repeat);
             _changed?.Invoke();
             Refresh();
         }
@@ -220,9 +223,9 @@ public partial class MacroEditorPresenter : Window
             if (_moveY is not null) _moveY.Text = move.Destination.Y.ToString();
         }
 
-        if (action is GatherMacroAction gather && _repeatCount is not null)
+        if (action is GatherMacroAction gather)
         {
-            _repeatCount.Text = (gather.Repeat.RepeatCount ?? 1).ToString();
+            RepeatPolicyUi.Write(_repeatMode, _repeatValue, gather.Repeat);
         }
     }
 
@@ -248,13 +251,8 @@ public partial class MacroEditorPresenter : Window
         return action switch
         {
             MoveToMacroAction move => $"{action.Id}: MoveTo ({move.Destination.X}, {move.Destination.Y})",
-            GatherMacroAction gather => $"{action.Id}: {gather.Kind} repeat {FormatRepeat(gather.Repeat)}",
+            GatherMacroAction gather => $"{action.Id}: {gather.Kind} repeat {RepeatPolicyUi.Format(gather.Repeat)}",
             _ => $"{action.Id}: {action.Kind}"
         };
-    }
-
-    private static string FormatRepeat(RepeatPolicy repeat)
-    {
-        return repeat.Mode == RepeatMode.Count ? (repeat.RepeatCount?.ToString() ?? "count") : repeat.Mode.ToString();
     }
 }

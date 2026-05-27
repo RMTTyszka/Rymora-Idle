@@ -15,9 +15,11 @@ public partial class ProgramEditorPresenter : Window
     private Button? _moveUpButton;
     private Button? _moveDownButton;
     private Button? _removeButton;
-    private LineEdit? _stepRepeat;
+    private OptionButton? _stepRepeatMode;
+    private LineEdit? _stepRepeatValue;
     private Button? _setStepRepeatButton;
-    private LineEdit? _programRepeat;
+    private OptionButton? _programRepeatMode;
+    private LineEdit? _programRepeatValue;
     private Button? _setProgramRepeatButton;
     private GameApplication? _application;
     private Party? _party;
@@ -31,10 +33,15 @@ public partial class ProgramEditorPresenter : Window
         _moveUpButton = GetNodeOrNull<Button>("Margin/Rows/StepButtons/MoveUpButton");
         _moveDownButton = GetNodeOrNull<Button>("Margin/Rows/StepButtons/MoveDownButton");
         _removeButton = GetNodeOrNull<Button>("Margin/Rows/StepButtons/RemoveButton");
-        _stepRepeat = GetNodeOrNull<LineEdit>("Margin/Rows/StepRepeatFields/StepRepeat");
+        _stepRepeatMode = GetNodeOrNull<OptionButton>("Margin/Rows/StepRepeatFields/StepRepeatMode");
+        _stepRepeatValue = GetNodeOrNull<LineEdit>("Margin/Rows/StepRepeatFields/StepRepeat");
         _setStepRepeatButton = GetNodeOrNull<Button>("Margin/Rows/StepRepeatFields/SetStepRepeatButton");
-        _programRepeat = GetNodeOrNull<LineEdit>("Margin/Rows/ProgramRepeatFields/ProgramRepeat");
+        _programRepeatMode = GetNodeOrNull<OptionButton>("Margin/Rows/ProgramRepeatFields/ProgramRepeatMode");
+        _programRepeatValue = GetNodeOrNull<LineEdit>("Margin/Rows/ProgramRepeatFields/ProgramRepeat");
         _setProgramRepeatButton = GetNodeOrNull<Button>("Margin/Rows/ProgramRepeatFields/SetProgramRepeatButton");
+
+        RepeatPolicyUi.Configure(_stepRepeatMode);
+        RepeatPolicyUi.Configure(_programRepeatMode);
 
         CloseRequested += Hide;
         if (_moveUpButton is not null) _moveUpButton.Pressed += () => MoveSelectedStep(-1);
@@ -67,13 +74,10 @@ public partial class ProgramEditorPresenter : Window
 
         if (_titleLabel is not null)
         {
-            _titleLabel.Text = $"Program Editor: repeat {FormatRepeat(_party.Automation.Program.Repeat)}";
+            _titleLabel.Text = $"Program Editor: repeat {RepeatPolicyUi.Format(_party.Automation.Program.Repeat)}";
         }
 
-        if (_programRepeat is not null)
-        {
-            _programRepeat.Text = (_party.Automation.Program.Repeat.RepeatCount ?? 1).ToString();
-        }
+        RepeatPolicyUi.Write(_programRepeatMode, _programRepeatValue, _party.Automation.Program.Repeat);
 
         var selectedStep = GetSelectedStepId();
         _stepIds.Clear();
@@ -82,7 +86,7 @@ public partial class ProgramEditorPresenter : Window
         {
             var macro = _party.Automation.TryGetMacro(step.MacroId);
             _stepIds.Add(step.Id);
-            _stepList?.AddItem($"{step.Id}: {macro?.Name ?? step.MacroId} repeat {FormatRepeat(step.Repeat)}");
+            _stepList?.AddItem($"{step.Id}: {macro?.Name ?? step.MacroId} repeat {RepeatPolicyUi.Format(step.Repeat)}");
         }
 
         if (_stepList is not null && _stepIds.Count > 0)
@@ -132,13 +136,13 @@ public partial class ProgramEditorPresenter : Window
 
     private void OnSetStepRepeatPressed()
     {
-        if (_application is null || _party is null || _stepRepeat is null)
+        if (_application is null || _party is null)
         {
             return;
         }
 
         var stepId = GetSelectedStepId();
-        if (stepId is null || !TryBuildCountRepeat(_stepRepeat.Text, out var repeat))
+        if (stepId is null || !RepeatPolicyUi.TryRead(_stepRepeatMode, _stepRepeatValue, out var repeat))
         {
             return;
         }
@@ -150,7 +154,7 @@ public partial class ProgramEditorPresenter : Window
 
     private void OnSetProgramRepeatPressed()
     {
-        if (_application is null || _party is null || _programRepeat is null || !TryBuildCountRepeat(_programRepeat.Text, out var repeat))
+        if (_application is null || _party is null || !RepeatPolicyUi.TryRead(_programRepeatMode, _programRepeatValue, out var repeat))
         {
             return;
         }
@@ -167,7 +171,7 @@ public partial class ProgramEditorPresenter : Window
 
     private void FillSelectedStepFields()
     {
-        if (_party is null || _stepRepeat is null)
+        if (_party is null)
         {
             return;
         }
@@ -176,7 +180,7 @@ public partial class ProgramEditorPresenter : Window
         var step = _party.Automation.Program.Steps.FirstOrDefault(step => step.Id == stepId);
         if (step is not null)
         {
-            _stepRepeat.Text = (step.Repeat.RepeatCount ?? 1).ToString();
+            RepeatPolicyUi.Write(_stepRepeatMode, _stepRepeatValue, step.Repeat);
         }
     }
 
@@ -192,21 +196,4 @@ public partial class ProgramEditorPresenter : Window
         return selected is { Length: > 0 } ? selected[0] : -1;
     }
 
-    private static bool TryBuildCountRepeat(string text, out RepeatPolicy repeat)
-    {
-        repeat = RepeatPolicy.Once;
-        if (!int.TryParse(text, out var count) || count <= 0)
-        {
-            GD.Print("Repeat must be a positive whole number.");
-            return false;
-        }
-
-        repeat = RepeatPolicy.Count(count);
-        return true;
-    }
-
-    private static string FormatRepeat(RepeatPolicy repeat)
-    {
-        return repeat.Mode == RepeatMode.Count ? (repeat.RepeatCount?.ToString() ?? "count") : repeat.Mode.ToString();
-    }
 }

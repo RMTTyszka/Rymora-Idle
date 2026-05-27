@@ -130,9 +130,12 @@ text = "Move Step Down"
 layout_mode = 2
 text = "Remove Step"
 
+[node name="StepRepeatMode" type="OptionButton" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+layout_mode = 2
+
 [node name="StepRepeat" type="LineEdit" parent="UiLayer/Hud/Margin/Tabs/Macros"]
 layout_mode = 2
-placeholder_text = "Selected step repeat count"
+placeholder_text = "Selected step repeat value"
 
 [node name="SetStepRepeatButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
 layout_mode = 2
@@ -210,9 +213,12 @@ text = "Set MoveTo"
 [node name="RepeatFields" type="HBoxContainer" parent="UiLayer/MacroEditor/Margin/Rows"]
 layout_mode = 2
 
+[node name="RepeatMode" type="OptionButton" parent="UiLayer/MacroEditor/Margin/Rows/RepeatFields"]
+layout_mode = 2
+
 [node name="RepeatCount" type="LineEdit" parent="UiLayer/MacroEditor/Margin/Rows/RepeatFields"]
 layout_mode = 2
-placeholder_text = "Gather repeat"
+placeholder_text = "Repeat value"
 
 [node name="SetRepeatButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows/RepeatFields"]
 layout_mode = 2
@@ -263,9 +269,12 @@ text = "Remove"
 [node name="StepRepeatFields" type="HBoxContainer" parent="UiLayer/ProgramEditor/Margin/Rows"]
 layout_mode = 2
 
+[node name="StepRepeatMode" type="OptionButton" parent="UiLayer/ProgramEditor/Margin/Rows/StepRepeatFields"]
+layout_mode = 2
+
 [node name="StepRepeat" type="LineEdit" parent="UiLayer/ProgramEditor/Margin/Rows/StepRepeatFields"]
 layout_mode = 2
-placeholder_text = "Step repeat"
+placeholder_text = "Step repeat value"
 
 [node name="SetStepRepeatButton" type="Button" parent="UiLayer/ProgramEditor/Margin/Rows/StepRepeatFields"]
 layout_mode = 2
@@ -274,9 +283,12 @@ text = "Set Step Repeat"
 [node name="ProgramRepeatFields" type="HBoxContainer" parent="UiLayer/ProgramEditor/Margin/Rows"]
 layout_mode = 2
 
+[node name="ProgramRepeatMode" type="OptionButton" parent="UiLayer/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
+layout_mode = 2
+
 [node name="ProgramRepeat" type="LineEdit" parent="UiLayer/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
 layout_mode = 2
-placeholder_text = "Program repeat"
+placeholder_text = "Program repeat value"
 
 [node name="SetProgramRepeatButton" type="Button" parent="UiLayer/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
 layout_mode = 2

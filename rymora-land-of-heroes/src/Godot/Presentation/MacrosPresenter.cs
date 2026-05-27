@@ -21,7 +21,8 @@ public partial class MacrosPresenter : Control
     private Button? _moveStepUpButton;
     private Button? _moveStepDownButton;
     private Button? _removeStepButton;
-    private LineEdit? _stepRepeat;
+    private OptionButton? _stepRepeatMode;
+    private LineEdit? _stepRepeatValue;
     private Button? _setStepRepeatButton;
     private Label? _activeProgramLabel;
     private MacroEditorPresenter? _macroEditor;
@@ -45,11 +46,14 @@ public partial class MacrosPresenter : Control
         _moveStepUpButton = GetNodeOrNull<Button>("MoveStepUpButton");
         _moveStepDownButton = GetNodeOrNull<Button>("MoveStepDownButton");
         _removeStepButton = GetNodeOrNull<Button>("RemoveStepButton");
-        _stepRepeat = GetNodeOrNull<LineEdit>("StepRepeat");
+        _stepRepeatMode = GetNodeOrNull<OptionButton>("StepRepeatMode");
+        _stepRepeatValue = GetNodeOrNull<LineEdit>("StepRepeat");
         _setStepRepeatButton = GetNodeOrNull<Button>("SetStepRepeatButton");
         _activeProgramLabel = GetNodeOrNull<Label>("ActiveProgramLabel");
         _macroEditor = GetNodeOrNull<MacroEditorPresenter>("../../../../MacroEditor");
         _programEditor = GetNodeOrNull<ProgramEditorPresenter>("../../../../ProgramEditor");
+
+        RepeatPolicyUi.Configure(_stepRepeatMode);
 
         if (_recordButton is not null) _recordButton.Pressed += OnRecordPressed;
         if (_saveButton is not null) _saveButton.Pressed += OnSavePressed;
@@ -122,7 +126,7 @@ public partial class MacrosPresenter : Control
         {
             var macro = _party.Automation.TryGetMacro(step.MacroId);
             _stepIds.Add(step.Id);
-            _programList.AddItem($"{macro?.Name ?? step.MacroId} | repeat {FormatRepeat(step.Repeat)}");
+            _programList.AddItem($"{macro?.Name ?? step.MacroId} | repeat {RepeatPolicyUi.Format(step.Repeat)}");
         }
 
         SelectById(_programList, _stepIds, selectedStep);
@@ -256,13 +260,13 @@ public partial class MacrosPresenter : Control
 
     private void OnSetStepRepeatPressed()
     {
-        if (_application is null || _party is null || _stepRepeat is null)
+        if (_application is null || _party is null)
         {
             return;
         }
 
         var stepId = GetSelectedStepId();
-        if (stepId is null || !TryBuildCountRepeat(_stepRepeat.Text, out var repeat))
+        if (stepId is null || !RepeatPolicyUi.TryRead(_stepRepeatMode, _stepRepeatValue, out var repeat))
         {
             return;
         }
@@ -318,37 +322,14 @@ public partial class MacrosPresenter : Control
         return -1;
     }
 
-    private static bool TryBuildCountRepeat(string text, out RepeatPolicy repeat)
-    {
-        repeat = RepeatPolicy.Once;
-        if (!int.TryParse(text, out var count) || count <= 0)
-        {
-            GD.Print("Repeat must be a positive whole number.");
-            return false;
-        }
-
-        repeat = RepeatPolicy.Count(count);
-        return true;
-    }
-
     private static string FormatAction(MacroAction? action)
     {
         return action switch
         {
             null => "none",
             MoveToMacroAction move => $"MoveTo ({move.Destination.X}, {move.Destination.Y})",
-            GatherMacroAction gather => $"{gather.Kind} x{FormatRepeat(gather.Repeat)}",
+            GatherMacroAction gather => $"{gather.Kind} x{RepeatPolicyUi.Format(gather.Repeat)}",
             _ => action.Kind.ToString()
-        };
-    }
-
-    private static string FormatRepeat(RepeatPolicy repeat)
-    {
-        return repeat.Mode switch
-        {
-            RepeatMode.Count => repeat.RepeatCount?.ToString() ?? "count",
-            RepeatMode.Duration => $"{repeat.Seconds:0.##}s",
-            _ => repeat.Mode.ToString()
         };
     }
 }

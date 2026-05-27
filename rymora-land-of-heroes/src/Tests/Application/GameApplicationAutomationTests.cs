@@ -72,6 +72,21 @@ public sealed class GameApplicationAutomationTests
     }
 
     [Fact]
+    public void Manual_action_clear_interrupts_running_program_instead_of_wedging_runner()
+    {
+        var scenario = ApplicationObjectMother.ApplicationWithMiningProgram();
+
+        scenario.InputApplication.PlayProgram("party-1");
+        scenario.InputApplication.Update(0);
+        scenario.InputApplication.ClearActionQueueForManualAction("party-1");
+        scenario.InputApplication.Update(1);
+
+        Assert.True(scenario.AssertParty.ActionQueue.IsIdle);
+        Assert.Equal(ProgramRunnerState.Error, scenario.AssertParty.Automation.Runner.State);
+        Assert.Equal("Program interrupted by manual action.", scenario.AssertParty.Automation.Runner.ErrorMessage);
+    }
+
+    [Fact]
     public void Application_records_macro_action_without_moving_party()
     {
         var scenario = ApplicationObjectMother.ApplicationWithMiningProgram();

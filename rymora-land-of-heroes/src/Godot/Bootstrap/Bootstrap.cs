@@ -283,7 +283,7 @@ public partial class Bootstrap : Node2D
 
         if (clearQueue)
         {
-            party.ActionQueue.Clear();
+            _application.ClearActionQueueForManualAction(BootstrapCoreFactory.PartyId);
         }
 
         var queued = _application.EnqueueAction(
@@ -331,7 +331,7 @@ public partial class Bootstrap : Node2D
             return;
         }
 
-        party.ActionQueue.Clear();
+        _application.ClearActionQueueForManualAction(BootstrapCoreFactory.PartyId);
         if (party.Position != target && !EnqueueTravel(target, clearQueue: false))
         {
             return;

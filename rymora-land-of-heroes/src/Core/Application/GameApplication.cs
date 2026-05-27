@@ -129,6 +129,20 @@ public sealed class GameApplication
         return true;
     }
 
+    public void ClearActionQueueForManualAction(string partyId)
+    {
+        var party = Parties.Get(partyId);
+        if (party.Automation.Runner.State is ProgramRunnerState.Running
+            or ProgramRunnerState.PauseRequested
+            or ProgramRunnerState.Paused
+            or ProgramRunnerState.StopRequested)
+        {
+            party.Automation.Runner.Fail("Program interrupted by manual action.");
+        }
+
+        party.ActionQueue.Clear();
+    }
+
     public void PlayProgram(string partyId)
     {
         var party = Parties.Get(partyId);
