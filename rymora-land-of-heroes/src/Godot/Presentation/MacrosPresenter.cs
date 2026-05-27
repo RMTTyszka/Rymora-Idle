@@ -9,6 +9,9 @@ namespace RymoraLandOfHeroes.GodotAdapter.Presentation;
 
 public partial class MacrosPresenter : Control
 {
+    public event Action? Closed;
+
+    private Button? _closeButton;
     private LineEdit? _macroName;
     private Button? _recordButton;
     private Button? _saveButton;
@@ -34,27 +37,29 @@ public partial class MacrosPresenter : Control
 
     public override void _Ready()
     {
-        _macroName = GetNodeOrNull<LineEdit>("MacroName");
-        _recordButton = GetNodeOrNull<Button>("RecordButton");
-        _saveButton = GetNodeOrNull<Button>("SaveButton");
-        _cancelButton = GetNodeOrNull<Button>("CancelButton");
-        _macroList = GetNodeOrNull<ItemList>("MacroList");
-        _addToProgramButton = GetNodeOrNull<Button>("AddToProgramButton");
-        _editMacroButton = GetNodeOrNull<Button>("EditMacroButton");
-        _editProgramButton = GetNodeOrNull<Button>("EditProgramButton");
-        _programList = GetNodeOrNull<ItemList>("ProgramList");
-        _moveStepUpButton = GetNodeOrNull<Button>("MoveStepUpButton");
-        _moveStepDownButton = GetNodeOrNull<Button>("MoveStepDownButton");
-        _removeStepButton = GetNodeOrNull<Button>("RemoveStepButton");
-        _stepRepeatMode = GetNodeOrNull<OptionButton>("StepRepeatMode");
-        _stepRepeatValue = GetNodeOrNull<LineEdit>("StepRepeat");
-        _setStepRepeatButton = GetNodeOrNull<Button>("SetStepRepeatButton");
-        _activeProgramLabel = GetNodeOrNull<Label>("ActiveProgramLabel");
-        _macroEditor = GetNodeOrNull<MacroEditorPresenter>("../../../../MacroEditor");
-        _programEditor = GetNodeOrNull<ProgramEditorPresenter>("../../../../ProgramEditor");
+        _closeButton = GetNodeOrNull<Button>("Margin/Rows/Header/CloseButton");
+        _macroName = GetNodeOrNull<LineEdit>("Margin/Rows/Scroll/Content/MacroName");
+        _recordButton = GetNodeOrNull<Button>("Margin/Rows/Scroll/Content/RecordButton");
+        _saveButton = GetNodeOrNull<Button>("Margin/Rows/Scroll/Content/SaveButton");
+        _cancelButton = GetNodeOrNull<Button>("Margin/Rows/Scroll/Content/CancelButton");
+        _macroList = GetNodeOrNull<ItemList>("Margin/Rows/Scroll/Content/MacroList");
+        _addToProgramButton = GetNodeOrNull<Button>("Margin/Rows/Scroll/Content/AddToProgramButton");
+        _editMacroButton = GetNodeOrNull<Button>("Margin/Rows/Scroll/Content/EditMacroButton");
+        _editProgramButton = GetNodeOrNull<Button>("Margin/Rows/Scroll/Content/EditProgramButton");
+        _programList = GetNodeOrNull<ItemList>("Margin/Rows/Scroll/Content/ProgramList");
+        _moveStepUpButton = GetNodeOrNull<Button>("Margin/Rows/Scroll/Content/MoveStepUpButton");
+        _moveStepDownButton = GetNodeOrNull<Button>("Margin/Rows/Scroll/Content/MoveStepDownButton");
+        _removeStepButton = GetNodeOrNull<Button>("Margin/Rows/Scroll/Content/RemoveStepButton");
+        _stepRepeatMode = GetNodeOrNull<OptionButton>("Margin/Rows/Scroll/Content/StepRepeatMode");
+        _stepRepeatValue = GetNodeOrNull<LineEdit>("Margin/Rows/Scroll/Content/StepRepeat");
+        _setStepRepeatButton = GetNodeOrNull<Button>("Margin/Rows/Scroll/Content/SetStepRepeatButton");
+        _activeProgramLabel = GetNodeOrNull<Label>("Margin/Rows/Scroll/Content/ActiveProgramLabel");
+        _macroEditor = GetNodeOrNull<MacroEditorPresenter>("../MacroEditor");
+        _programEditor = GetNodeOrNull<ProgramEditorPresenter>("../ProgramEditor");
 
         RepeatPolicyUi.Configure(_stepRepeatMode);
 
+        if (_closeButton is not null) _closeButton.Pressed += OnClosePressed;
         if (_recordButton is not null) _recordButton.Pressed += OnRecordPressed;
         if (_saveButton is not null) _saveButton.Pressed += OnSavePressed;
         if (_cancelButton is not null) _cancelButton.Pressed += OnCancelPressed;
@@ -65,6 +70,12 @@ public partial class MacrosPresenter : Control
         if (_moveStepDownButton is not null) _moveStepDownButton.Pressed += () => MoveSelectedStep(1);
         if (_removeStepButton is not null) _removeStepButton.Pressed += OnRemoveStepPressed;
         if (_setStepRepeatButton is not null) _setStepRepeatButton.Pressed += OnSetStepRepeatPressed;
+    }
+
+    private void OnClosePressed()
+    {
+        Hide();
+        Closed?.Invoke();
     }
 
     public void Bind(GameApplication application, Party party)

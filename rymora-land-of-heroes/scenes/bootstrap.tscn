@@ -42,11 +42,25 @@ script = ExtResource("5_combat_presenter")
 [node name="UiLayer" type="CanvasLayer" parent="." unique_id=1422838613]
 visible = true
 
-[node name="Hud" type="PanelContainer" parent="UiLayer" unique_id=569111040]
-offset_left = 12.0
+[node name="MenuRail" type="PanelContainer" parent="UiLayer"]
+offset_left = 8.0
 offset_top = 12.0
-offset_right = 452.0
-offset_bottom = 560.0
+offset_right = 56.0
+offset_bottom = 80.0
+
+[node name="Rows" type="VBoxContainer" parent="UiLayer/MenuRail"]
+layout_mode = 2
+
+[node name="MacrosButton" type="Button" parent="UiLayer/MenuRail/Rows"]
+layout_mode = 2
+tooltip_text = "Macros"
+text = "M"
+
+[node name="Hud" type="PanelContainer" parent="UiLayer" unique_id=569111040]
+offset_left = 68.0
+offset_top = 12.0
+offset_right = 388.0
+offset_bottom = 180.0
 script = ExtResource("6_hud_presenter")
 
 [node name="Margin" type="MarginContainer" parent="UiLayer/Hud" unique_id=1187220435]
@@ -56,92 +70,129 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Tabs" type="TabContainer" parent="UiLayer/Hud/Margin"]
+[node name="Rows" type="VBoxContainer" parent="UiLayer/Hud/Margin"]
 layout_mode = 2
 
-[node name="Status" type="VBoxContainer" parent="UiLayer/Hud/Margin/Tabs"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="UiLayer/Hud/Margin/Tabs/Status" unique_id=1162746424]
+[node name="Label" type="Label" parent="UiLayer/Hud/Margin/Rows" unique_id=1162746424]
 layout_mode = 2
 text = "HUD"
 
-[node name="PlayButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Status"]
+[node name="Controls" type="HBoxContainer" parent="UiLayer/Hud/Margin/Rows"]
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="UiLayer/Hud/Margin/Rows/Controls"]
 layout_mode = 2
 text = "Play"
 
-[node name="PauseButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Status"]
+[node name="PauseButton" type="Button" parent="UiLayer/Hud/Margin/Rows/Controls"]
 layout_mode = 2
 text = "Pause"
 
-[node name="StopButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Status"]
+[node name="StopButton" type="Button" parent="UiLayer/Hud/Margin/Rows/Controls"]
 layout_mode = 2
 text = "Stop"
 
-[node name="Macros" type="VBoxContainer" parent="UiLayer/Hud/Margin/Tabs"]
-layout_mode = 2
+[node name="MacrosModal" type="PanelContainer" parent="UiLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 72.0
+offset_top = 24.0
+offset_right = -24.0
+offset_bottom = -24.0
+visible = false
 script = ExtResource("10_macros_presenter")
 
-[node name="MacroName" type="LineEdit" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="Margin" type="MarginContainer" parent="UiLayer/MacrosModal"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="Rows" type="VBoxContainer" parent="UiLayer/MacrosModal/Margin"]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="UiLayer/MacrosModal/Margin/Rows/Header"]
+layout_mode = 2
+text = "Macros"
+
+[node name="CloseButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Header"]
+layout_mode = 2
+text = "Close"
+
+[node name="Scroll" type="ScrollContainer" parent="UiLayer/MacrosModal/Margin/Rows"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Content" type="VBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll"]
+layout_mode = 2
+
+[node name="MacroName" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 placeholder_text = "Macro name"
 
-[node name="RecordButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="RecordButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 text = "Record Macro"
 
-[node name="SaveButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="SaveButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 text = "Save Recording"
 
-[node name="CancelButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="CancelButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 text = "Cancel Recording"
 
-[node name="MacroList" type="ItemList" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="MacroList" type="ItemList" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
-[node name="AddToProgramButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="AddToProgramButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 text = "Add To Program"
 
-[node name="EditMacroButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="EditMacroButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 text = "Edit Macro"
 
-[node name="ActiveProgramLabel" type="Label" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="ActiveProgramLabel" type="Label" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 text = "Active Program"
 
-[node name="ProgramList" type="ItemList" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="ProgramList" type="ItemList" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
-[node name="MoveStepUpButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="MoveStepUpButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 text = "Move Step Up"
 
-[node name="MoveStepDownButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="MoveStepDownButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 text = "Move Step Down"
 
-[node name="RemoveStepButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="RemoveStepButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 text = "Remove Step"
 
-[node name="StepRepeatMode" type="OptionButton" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="StepRepeatMode" type="OptionButton" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 
-[node name="StepRepeat" type="LineEdit" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="StepRepeat" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 placeholder_text = "Selected step repeat value"
 
-[node name="SetStepRepeatButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="SetStepRepeatButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 text = "Set Step Repeat"
 
-[node name="EditProgramButton" type="Button" parent="UiLayer/Hud/Margin/Tabs/Macros"]
+[node name="EditProgramButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
 layout_mode = 2
 text = "Open Program Editor"
 

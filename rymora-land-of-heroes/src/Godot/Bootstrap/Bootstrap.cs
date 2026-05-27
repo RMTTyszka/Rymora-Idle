@@ -28,6 +28,7 @@ public partial class Bootstrap : Node2D
     private CombatPresenter? _combatPresenter;
     private HudPresenter? _hudPresenter;
     private MacrosPresenter? _macrosPresenter;
+    private Button? _macrosButton;
     private PopupMenu? _contextMenu;
     private GameContent? _content;
     private MaterialItem? _startupMineMaterial;
@@ -47,9 +48,20 @@ public partial class Bootstrap : Node2D
         _partyPresenter = GetNode<PartyPresenter>("PartyPresenter");
         _combatPresenter = GetNode<CombatPresenter>("CombatLayer/CombatPresenter");
         _hudPresenter = GetNode<HudPresenter>("UiLayer/Hud");
-        _macrosPresenter = GetNodeOrNull<MacrosPresenter>("UiLayer/Hud/Margin/Tabs/Macros");
+        _macrosPresenter = GetNodeOrNull<MacrosPresenter>("UiLayer/MacrosModal");
+        _macrosButton = GetNodeOrNull<Button>("UiLayer/MenuRail/Rows/MacrosButton");
         _contextMenu = GetNode<PopupMenu>("UiLayer/ContextMenu");
         _contextMenu.IdPressed += OnContextMenuIdPressed;
+        if (_macrosButton is not null)
+        {
+            _macrosButton.Pressed += OpenMacrosModal;
+        }
+
+        if (_macrosPresenter is not null)
+        {
+            _macrosPresenter.Closed += OnMacrosModalClosed;
+        }
+
         _content = JsonGameContentLoader.LoadDefault();
 
         regionLayer.Visible = false;
@@ -194,6 +206,17 @@ public partial class Bootstrap : Node2D
 
         _contextMenu.Position = new Vector2I((int)mouseButton.Position.X, (int)mouseButton.Position.Y);
         _contextMenu.Popup();
+    }
+
+    private void OpenMacrosModal()
+    {
+        _hudPresenter?.Hide();
+        _macrosPresenter?.Show();
+    }
+
+    private void OnMacrosModalClosed()
+    {
+        _hudPresenter?.Show();
     }
 
     private void OnContextMenuIdPressed(long id)

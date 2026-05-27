@@ -17,10 +17,10 @@ public partial class HudPresenter : PanelContainer
 
     public override void _Ready()
     {
-        _label = GetNodeOrNull<Label>("Margin/Tabs/Status/Label");
-        _playButton = GetNodeOrNull<Button>("Margin/Tabs/Status/PlayButton");
-        _pauseButton = GetNodeOrNull<Button>("Margin/Tabs/Status/PauseButton");
-        _stopButton = GetNodeOrNull<Button>("Margin/Tabs/Status/StopButton");
+        _label = GetNodeOrNull<Label>("Margin/Rows/Label");
+        _playButton = GetNodeOrNull<Button>("Margin/Rows/Controls/PlayButton");
+        _pauseButton = GetNodeOrNull<Button>("Margin/Rows/Controls/PauseButton");
+        _stopButton = GetNodeOrNull<Button>("Margin/Rows/Controls/StopButton");
 
         if (_playButton is not null)
         {
