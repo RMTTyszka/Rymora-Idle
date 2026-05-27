@@ -54,8 +54,8 @@ public partial class MacrosPresenter : Control
         _stepRepeatValue = GetNodeOrNull<LineEdit>("Margin/Rows/Scroll/Content/StepRepeat");
         _setStepRepeatButton = GetNodeOrNull<Button>("Margin/Rows/Scroll/Content/SetStepRepeatButton");
         _activeProgramLabel = GetNodeOrNull<Label>("Margin/Rows/Scroll/Content/ActiveProgramLabel");
-        _macroEditor = GetNodeOrNull<MacroEditorPresenter>("../MacroEditor");
-        _programEditor = GetNodeOrNull<ProgramEditorPresenter>("../ProgramEditor");
+        _macroEditor = GetNodeOrNull<MacroEditorPresenter>("Margin/Rows/Scroll/Content/Editors/MacroEditor");
+        _programEditor = GetNodeOrNull<ProgramEditorPresenter>("Margin/Rows/Scroll/Content/Editors/ProgramEditor");
 
         RepeatPolicyUi.Configure(_stepRepeatMode);
 

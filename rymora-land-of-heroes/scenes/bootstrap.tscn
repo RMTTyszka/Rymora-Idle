@@ -196,14 +196,15 @@ text = "Set Step Repeat"
 layout_mode = 2
 text = "Open Program Editor"
 
-[node name="MacroEditor" type="Window" parent="UiLayer"]
-title = "Macro Editor"
-position = Vector2i(480, 80)
-size = Vector2i(420, 520)
+[node name="Editors" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+layout_mode = 2
+
+[node name="MacroEditor" type="PanelContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors"]
+layout_mode = 2
 visible = false
 script = ExtResource("11_macro_editor")
 
-[node name="Margin" type="MarginContainer" parent="UiLayer/MacroEditor"]
+[node name="Margin" type="MarginContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -212,77 +213,75 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Rows" type="VBoxContainer" parent="UiLayer/MacroEditor/Margin"]
+[node name="Rows" type="VBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin"]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="UiLayer/MacroEditor/Margin/Rows"]
+[node name="TitleLabel" type="Label" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
 layout_mode = 2
 text = "Macro Editor"
 
-[node name="NameEdit" type="LineEdit" parent="UiLayer/MacroEditor/Margin/Rows"]
+[node name="NameEdit" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
 layout_mode = 2
 placeholder_text = "Macro name"
 
-[node name="RenameButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows"]
+[node name="RenameButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
 layout_mode = 2
 text = "Rename"
 
-[node name="ActionList" type="ItemList" parent="UiLayer/MacroEditor/Margin/Rows"]
+[node name="ActionList" type="ItemList" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
 custom_minimum_size = Vector2(0, 170)
 layout_mode = 2
 
-[node name="ActionButtons" type="HBoxContainer" parent="UiLayer/MacroEditor/Margin/Rows"]
+[node name="ActionButtons" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
 layout_mode = 2
 
-[node name="MoveUpButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows/ActionButtons"]
+[node name="MoveUpButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/ActionButtons"]
 layout_mode = 2
 text = "Up"
 
-[node name="MoveDownButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows/ActionButtons"]
+[node name="MoveDownButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/ActionButtons"]
 layout_mode = 2
 text = "Down"
 
-[node name="RemoveButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows/ActionButtons"]
+[node name="RemoveButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/ActionButtons"]
 layout_mode = 2
 text = "Remove"
 
-[node name="MoveFields" type="HBoxContainer" parent="UiLayer/MacroEditor/Margin/Rows"]
+[node name="MoveFields" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
 layout_mode = 2
 
-[node name="MoveX" type="LineEdit" parent="UiLayer/MacroEditor/Margin/Rows/MoveFields"]
+[node name="MoveX" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/MoveFields"]
 layout_mode = 2
 placeholder_text = "Move X"
 
-[node name="MoveY" type="LineEdit" parent="UiLayer/MacroEditor/Margin/Rows/MoveFields"]
+[node name="MoveY" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/MoveFields"]
 layout_mode = 2
 placeholder_text = "Move Y"
 
-[node name="SetMoveButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows/MoveFields"]
+[node name="SetMoveButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/MoveFields"]
 layout_mode = 2
 text = "Set MoveTo"
 
-[node name="RepeatFields" type="HBoxContainer" parent="UiLayer/MacroEditor/Margin/Rows"]
+[node name="RepeatFields" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
 layout_mode = 2
 
-[node name="RepeatMode" type="OptionButton" parent="UiLayer/MacroEditor/Margin/Rows/RepeatFields"]
+[node name="RepeatMode" type="OptionButton" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/RepeatFields"]
 layout_mode = 2
 
-[node name="RepeatCount" type="LineEdit" parent="UiLayer/MacroEditor/Margin/Rows/RepeatFields"]
+[node name="RepeatCount" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/RepeatFields"]
 layout_mode = 2
 placeholder_text = "Repeat value"
 
-[node name="SetRepeatButton" type="Button" parent="UiLayer/MacroEditor/Margin/Rows/RepeatFields"]
+[node name="SetRepeatButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/RepeatFields"]
 layout_mode = 2
 text = "Set Repeat"
 
-[node name="ProgramEditor" type="Window" parent="UiLayer"]
-title = "Program Editor"
-position = Vector2i(920, 80)
-size = Vector2i(420, 460)
+[node name="ProgramEditor" type="PanelContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors"]
+layout_mode = 2
 visible = false
 script = ExtResource("12_program_editor")
 
-[node name="Margin" type="MarginContainer" parent="UiLayer/ProgramEditor"]
+[node name="Margin" type="MarginContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -291,57 +290,57 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Rows" type="VBoxContainer" parent="UiLayer/ProgramEditor/Margin"]
+[node name="Rows" type="VBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin"]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="UiLayer/ProgramEditor/Margin/Rows"]
+[node name="TitleLabel" type="Label" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows"]
 layout_mode = 2
 text = "Program Editor"
 
-[node name="StepList" type="ItemList" parent="UiLayer/ProgramEditor/Margin/Rows"]
+[node name="StepList" type="ItemList" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows"]
 custom_minimum_size = Vector2(0, 190)
 layout_mode = 2
 
-[node name="StepButtons" type="HBoxContainer" parent="UiLayer/ProgramEditor/Margin/Rows"]
+[node name="StepButtons" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows"]
 layout_mode = 2
 
-[node name="MoveUpButton" type="Button" parent="UiLayer/ProgramEditor/Margin/Rows/StepButtons"]
+[node name="MoveUpButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepButtons"]
 layout_mode = 2
 text = "Up"
 
-[node name="MoveDownButton" type="Button" parent="UiLayer/ProgramEditor/Margin/Rows/StepButtons"]
+[node name="MoveDownButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepButtons"]
 layout_mode = 2
 text = "Down"
 
-[node name="RemoveButton" type="Button" parent="UiLayer/ProgramEditor/Margin/Rows/StepButtons"]
+[node name="RemoveButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepButtons"]
 layout_mode = 2
 text = "Remove"
 
-[node name="StepRepeatFields" type="HBoxContainer" parent="UiLayer/ProgramEditor/Margin/Rows"]
+[node name="StepRepeatFields" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows"]
 layout_mode = 2
 
-[node name="StepRepeatMode" type="OptionButton" parent="UiLayer/ProgramEditor/Margin/Rows/StepRepeatFields"]
+[node name="StepRepeatMode" type="OptionButton" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepRepeatFields"]
 layout_mode = 2
 
-[node name="StepRepeat" type="LineEdit" parent="UiLayer/ProgramEditor/Margin/Rows/StepRepeatFields"]
+[node name="StepRepeat" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepRepeatFields"]
 layout_mode = 2
 placeholder_text = "Step repeat value"
 
-[node name="SetStepRepeatButton" type="Button" parent="UiLayer/ProgramEditor/Margin/Rows/StepRepeatFields"]
+[node name="SetStepRepeatButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepRepeatFields"]
 layout_mode = 2
 text = "Set Step Repeat"
 
-[node name="ProgramRepeatFields" type="HBoxContainer" parent="UiLayer/ProgramEditor/Margin/Rows"]
+[node name="ProgramRepeatFields" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows"]
 layout_mode = 2
 
-[node name="ProgramRepeatMode" type="OptionButton" parent="UiLayer/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
+[node name="ProgramRepeatMode" type="OptionButton" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
 layout_mode = 2
 
-[node name="ProgramRepeat" type="LineEdit" parent="UiLayer/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
+[node name="ProgramRepeat" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
 layout_mode = 2
 placeholder_text = "Program repeat value"
 
-[node name="SetProgramRepeatButton" type="Button" parent="UiLayer/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
+[node name="SetProgramRepeatButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
 layout_mode = 2
 text = "Set Program Repeat"
 

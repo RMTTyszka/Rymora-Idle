@@ -8,7 +8,7 @@ using RymoraLandOfHeroes.Core.Party;
 
 namespace RymoraLandOfHeroes.GodotAdapter.Presentation;
 
-public partial class ProgramEditorPresenter : Window
+public partial class ProgramEditorPresenter : PanelContainer
 {
     private Label? _titleLabel;
     private ItemList? _stepList;
@@ -43,7 +43,6 @@ public partial class ProgramEditorPresenter : Window
         RepeatPolicyUi.Configure(_stepRepeatMode);
         RepeatPolicyUi.Configure(_programRepeatMode);
 
-        CloseRequested += Hide;
         if (_moveUpButton is not null) _moveUpButton.Pressed += () => MoveSelectedStep(-1);
         if (_moveDownButton is not null) _moveDownButton.Pressed += () => MoveSelectedStep(1);
         if (_removeButton is not null) _removeButton.Pressed += OnRemovePressed;
@@ -61,8 +60,8 @@ public partial class ProgramEditorPresenter : Window
 
     public void Open()
     {
+        Show();
         Refresh();
-        PopupCentered();
     }
 
     private void Refresh()

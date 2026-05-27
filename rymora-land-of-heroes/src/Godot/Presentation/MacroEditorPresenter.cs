@@ -9,7 +9,7 @@ using RymoraLandOfHeroes.Core.Party;
 
 namespace RymoraLandOfHeroes.GodotAdapter.Presentation;
 
-public partial class MacroEditorPresenter : Window
+public partial class MacroEditorPresenter : PanelContainer
 {
     private Label? _titleLabel;
     private LineEdit? _nameEdit;
@@ -48,7 +48,6 @@ public partial class MacroEditorPresenter : Window
 
         RepeatPolicyUi.Configure(_repeatMode);
 
-        CloseRequested += Hide;
         if (_renameButton is not null) _renameButton.Pressed += OnRenamePressed;
         if (_moveUpButton is not null) _moveUpButton.Pressed += () => MoveSelectedAction(-1);
         if (_moveDownButton is not null) _moveDownButton.Pressed += () => MoveSelectedAction(1);
@@ -68,8 +67,8 @@ public partial class MacroEditorPresenter : Window
     public void Open(string macroId)
     {
         _macroId = macroId;
+        Show();
         Refresh();
-        PopupCentered();
     }
 
     private void Refresh()
