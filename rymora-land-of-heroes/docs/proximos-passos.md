@@ -19,7 +19,7 @@ Ultimo commit publicado: `45b377e feat: add macro automation panel`
 - Party ja possui fila de acoes com `Travel`, `Mine`, `CutWood` e `TransferItem`.
 - Acoes ja podem terminar por contagem, quantidade de item ou tempo.
 - Automacao por Macros esta implementada: cada Party tem Macros salvos, um Program ativo e controles de Play/Pause/Stop.
-- A aba `Macros` permite gravar Macro, salvar com nome, listar Macros da Party e montar o Program ativo.
+- O menu esquerdo `Macros` abre o modal full-screen para gravar Macro, salvar com nome, listar Macros da Party e montar o Program ativo.
 - Durante `Record Macro`, cliques no mapa/menu contextual gravam `MoveTo`, `Mine` e `CutWood` em vez de executar acoes imediatas.
 - Testes xUnit em `src/Tests` com ObjectMother.
 - Cena principal: `scenes/bootstrap.tscn`.
