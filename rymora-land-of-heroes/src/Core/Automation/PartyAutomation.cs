@@ -58,6 +58,25 @@ public sealed class PartyAutomation
         Recording = null;
     }
 
+    public void Restore(
+        IEnumerable<PartyMacro> macros,
+        MacroRecordingSession? recording,
+        RepeatPolicy programRepeat,
+        IEnumerable<ProgramStep> programSteps,
+        int nextProgramStepNumber,
+        ProgramRunnerRuntimeState runnerState)
+    {
+        _macros.Clear();
+        foreach (var macro in macros)
+        {
+            AddMacro(macro);
+        }
+
+        Recording = recording;
+        Program.Restore(programRepeat, programSteps, nextProgramStepNumber);
+        Runner.Restore(runnerState);
+    }
+
     public PartyMacro GetMacro(string macroId)
     {
         return TryGetMacro(macroId)

@@ -108,7 +108,8 @@ internal static class JsonGameContentLoader
                 new RollRange(config.Combat.HitRollRange.Min, config.Combat.HitRollRange.Max),
                 new RollRange(config.Combat.EvadeRollRange.Min, config.Combat.EvadeRollRange.Max),
                 config.Combat.BaseCriticalMultiplier,
-                new TargetingConfig(config.Combat.Targeting.LowLifeWeight, config.Combat.Targeting.ThreatWeight)));
+                new TargetingConfig(config.Combat.Targeting.LowLifeWeight, config.Combat.Targeting.ThreatWeight)),
+            new SaveConfig(config.Save.AutoSaveIntervalSeconds));
     }
 
     private static IReadOnlyList<WeaponTemplate> LoadWeapons(string path)
@@ -235,6 +236,7 @@ internal static class JsonGameContentLoader
         public CollectionConfigDto Collection { get; set; } = new();
         public TravelConfigDto Travel { get; set; } = new();
         public CombatConfigDto Combat { get; set; } = new();
+        public SaveConfigDto Save { get; set; } = new();
     }
 
     private sealed class EncounterPolicyDto
@@ -275,6 +277,11 @@ internal static class JsonGameContentLoader
         public RollRangeDto EvadeRollRange { get; set; } = new();
         public float BaseCriticalMultiplier { get; set; }
         public TargetingConfigDto Targeting { get; set; } = new();
+    }
+
+    private sealed class SaveConfigDto
+    {
+        public float AutoSaveIntervalSeconds { get; set; }
     }
 
     private sealed class RollRangeDto

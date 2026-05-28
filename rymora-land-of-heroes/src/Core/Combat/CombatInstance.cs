@@ -15,14 +15,36 @@ public sealed class CombatInstance
         IEnumerable<Creature> monsters,
         CombatConfig config,
         IRandomSource? randomSource = null)
+        : this(
+            heroes.Select(hero => new Combatant(hero)).ToArray(),
+            monsters.Select(monster => new Combatant(monster)).ToArray(),
+            config,
+            randomSource)
+    {
+    }
+
+    private CombatInstance(
+        IReadOnlyList<Combatant> heroes,
+        IReadOnlyList<Combatant> monsters,
+        CombatConfig config,
+        IRandomSource? randomSource = null)
     {
         _config = config;
         _config.HitRollRange.Validate();
         _config.EvadeRollRange.Validate();
         _randomSource = randomSource ?? new SystemRandomSource();
-        Heroes = heroes.Select(hero => new Combatant(hero)).ToArray();
-        Monsters = monsters.Select(monster => new Combatant(monster)).ToArray();
+        Heroes = heroes;
+        Monsters = monsters;
         UpdateState();
+    }
+
+    public static CombatInstance Restore(
+        IEnumerable<Combatant> heroes,
+        IEnumerable<Combatant> monsters,
+        CombatConfig config,
+        IRandomSource? randomSource = null)
+    {
+        return new CombatInstance(heroes.ToArray(), monsters.ToArray(), config, randomSource);
     }
 
     public IReadOnlyList<Combatant> Heroes { get; }

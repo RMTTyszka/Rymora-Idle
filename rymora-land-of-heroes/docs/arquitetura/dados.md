@@ -16,46 +16,49 @@ O dominio **Data** cobre save/load, configuracao do jogo e progressao persistent
 
 ### 2.1 Formato
 
-Serializacao em JSON (ou Godot Resource format). 1 arquivo de save por jogador.
+Serializacao em JSON. 1 arquivo de save por jogador na v1.
+
+Implementacao atual:
+
+- Core define DTOs versionados em `src/Core/Data/SaveData.cs`.
+- Core cria snapshot com `SaveSnapshotBuilder` e restaura com `SaveRestorer`.
+- Godot persiste JSON via `src/Godot/Data/JsonSaveStore.cs`.
+- Caminho default: `user://saves/save-1.json`.
+- Save invalido aborta load com erro claro e nao sobrescreve arquivo existente.
+- O Core nao le arquivo e nao conhece JSON.
 
 ### 2.2 Conteudo do save
 
 ```csharp
-public sealed record SaveData
-{
-    public string SaveVersion;
-    public DateTime SavedAt;
-    public float PlayTime;
-
-    // Parties
-    public List<PartySaveData> Parties;
-
-    // Itens no chao (corpo de heroi morto)
-    public List<CorpseSaveData> Corpses;
-
-    // Progressao global
-    public Dictionary<string, float> GlobalProperties; // ValiantPoints, etc
-}
+public sealed record SaveData(
+    string SaveVersion,
+    DateTimeOffset SavedAtUtc,
+    float PlayTimeSeconds,
+    string? SelectedPartyId,
+    string CurrentScreen,
+    IReadOnlyList<PartySaveData> Parties,
+    IReadOnlyList<CombatSaveData> ActiveCombats);
 ```
 
 ```csharp
-public sealed record PartySaveData
-{
-    public string PartyId;
-    public TilePosition Position;
-    public bool IsAlive;
-    public List<HeroSaveData> Members;
-    public List<ActionSaveData> ActionQueue;
-    public InventorySaveData Inventory;
-}
+public sealed record PartySaveData(
+    string PartyId,
+    TilePositionSaveData Position,
+    bool IsInCombat,
+    IReadOnlyList<CreatureSaveData> Members,
+    IReadOnlyList<ItemSaveData> InventoryItems,
+    ActionQueueSaveData ActionQueue,
+    AutomationSaveData Automation);
 ```
 
 `TilePosition` serializa coordenadas logicas do Core. Save nao grava tipos Godot como `Vector2I`.
 
+O save atual cobre parties, membros, vida atual/maxima, stats, equipamento, inventario, fila atual, progresso parcial, acoes pendentes, Macros, Program, Runner e combates ativos. RNG interno, multiplos slots e cloud save ficam fora da v1.
+
 ### 2.3 Quando salvar
 
 - Automatico: a cada N segundos (configuravel).
-- Manual: botao de save na UI (se houver).
+- Manual: adiado.
 - Ao fechar o jogo.
 
 ---
@@ -76,6 +79,7 @@ public sealed record GameConfig
     public CollectionConfig Collection;
     public TravelConfig Travel;
     public CombatConfig Combat;
+    public SaveConfig Save;
 }
 
 public sealed record ProgressionConfig
@@ -115,6 +119,11 @@ public sealed record CollectionConfig
 public sealed record TravelConfig
 {
     public float ActionTime;
+}
+
+public sealed record SaveConfig
+{
+    public float AutoSaveIntervalSeconds;
 }
 
 public sealed record CombatConfig

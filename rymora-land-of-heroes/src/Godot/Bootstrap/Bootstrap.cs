@@ -5,9 +5,11 @@ using RymoraLandOfHeroes.Core.Automation;
 using RymoraLandOfHeroes.Core.Combat;
 using RymoraLandOfHeroes.Core.Common;
 using RymoraLandOfHeroes.Core.Content;
+using RymoraLandOfHeroes.Core.Data;
 using RymoraLandOfHeroes.Core.Party;
 using RymoraLandOfHeroes.Core.World;
 using RymoraLandOfHeroes.GodotAdapter.Content;
+using RymoraLandOfHeroes.GodotAdapter.Data;
 using RymoraLandOfHeroes.GodotAdapter.Presentation;
 using RymoraLandOfHeroes.GodotAdapter.World;
 
@@ -28,6 +30,7 @@ public partial class Bootstrap : Node2D
     private CombatPresenter? _combatPresenter;
     private HudPresenter? _hudPresenter;
     private MacrosPresenter? _macrosPresenter;
+    private JsonSaveStore? _saveStore;
     private Button? _macrosButton;
     private PopupMenu? _contextMenu;
     private GameContent? _content;
@@ -37,6 +40,7 @@ public partial class Bootstrap : Node2D
     private bool _miningLogged;
     private bool _wasInCombat;
     private float _elapsed;
+    private float _saveElapsed;
 
     public override void _Ready()
     {
@@ -63,6 +67,7 @@ public partial class Bootstrap : Node2D
         }
 
         _content = JsonGameContentLoader.LoadDefault();
+        _saveStore = new JsonSaveStore(ProjectSettings.GlobalizePath("user://saves/save-1.json"));
 
         regionLayer.Visible = false;
         zoneLayer.Visible = false;
@@ -79,33 +84,43 @@ public partial class Bootstrap : Node2D
         _worldAdapter.ZoneLayer = zoneLayer;
         var world = _worldAdapter.CreateWorld();
         var startPosition = _worldAdapter.FindFirstPosition(TerrainType.Mine);
-        _startupMineMaterial = _worldAdapter.GetMaterialForAction(
-            startPosition,
-            PartyActionType.Mine,
-            _content.Materials);
-        if (_startupMineMaterial is null)
+        var save = _saveStore.TryLoad();
+        _application = save is null
+            ? BootstrapCoreFactory.CreateApplication(world, startPosition, _content)
+            : SaveRestorer.Restore(save, world, _content.Config, _content.Creatures.CreateCreature);
+        if (_application.UI.SelectedPartyId is null)
         {
-            throw new InvalidOperationException("Starting mine tile has no mining material.");
+            _application.SelectParty(BootstrapCoreFactory.PartyId);
         }
 
-        _application = BootstrapCoreFactory.CreateApplication(world, startPosition, _content);
-        _application.SelectParty(BootstrapCoreFactory.PartyId);
-
-        var queued = _application.EnqueueAction(
-            BootstrapCoreFactory.PartyId,
-            new PartyActionRequest(
+        var queued = false;
+        if (save is null)
+        {
+            _startupMineMaterial = _worldAdapter.GetMaterialForAction(
+                startPosition,
                 PartyActionType.Mine,
-                PartyActionEndType.ByCount,
-                _application.Config.Collection.MiningActionTime,
-                LimitCount: 1,
-                ItemName: _startupMineMaterial.Name,
-                ItemLevel: _startupMineMaterial.Level,
-                ItemWeight: _startupMineMaterial.Weight));
+                _content.Materials);
+            if (_startupMineMaterial is null)
+            {
+                throw new InvalidOperationException("Starting mine tile has no mining material.");
+            }
+
+            queued = _application.EnqueueAction(
+                BootstrapCoreFactory.PartyId,
+                new PartyActionRequest(
+                    PartyActionType.Mine,
+                    PartyActionEndType.ByCount,
+                    _application.Config.Collection.MiningActionTime,
+                    LimitCount: 1,
+                    ItemName: _startupMineMaterial.Name,
+                    ItemLevel: _startupMineMaterial.Level,
+                    ItemWeight: _startupMineMaterial.Weight));
+        }
 
         _partyPresenter.Sync(_application.Parties.Get(BootstrapCoreFactory.PartyId), _worldAdapter);
         _macrosPresenter?.Bind(_application, _application.Parties.Get(BootstrapCoreFactory.PartyId));
 
-        GD.Print($"Rymora Godot bootstrap ready. World from TileMapLayer. Mine queued: {queued}.");
+        GD.Print($"Rymora Godot bootstrap ready. World from TileMapLayer. Save loaded: {save is not null}. Mine queued: {queued}.");
     }
 
     public override void _Process(double delta)
@@ -117,6 +132,13 @@ public partial class Bootstrap : Node2D
 
         _elapsed += (float)delta;
         _application.Update((float)delta);
+        _saveElapsed += (float)delta;
+        if (_application.Config.Save.AutoSaveIntervalSeconds > 0
+            && _saveElapsed >= _application.Config.Save.AutoSaveIntervalSeconds)
+        {
+            SaveCurrentGame();
+            _saveElapsed = 0;
+        }
 
         var party = _application.Parties.Get(BootstrapCoreFactory.PartyId);
         _partyPresenter.Sync(party, _worldAdapter);
@@ -137,6 +159,25 @@ public partial class Bootstrap : Node2D
 
         _miningLogged = true;
         GD.Print($"Rymora Core loop OK. {_startupMineMaterial.Name}={quantity}. Elapsed={_elapsed:0.00}s.");
+    }
+
+    public override void _Notification(int what)
+    {
+        if (what == NotificationWMCloseRequest)
+        {
+            SaveCurrentGame();
+        }
+    }
+
+    private void SaveCurrentGame()
+    {
+        if (_application is null || _saveStore is null)
+        {
+            return;
+        }
+
+        _saveStore.Save(_application.CreateSaveData(DateTimeOffset.UtcNow));
+        GD.Print("Rymora game saved.");
     }
 
     public override void _UnhandledInput(InputEvent @event)

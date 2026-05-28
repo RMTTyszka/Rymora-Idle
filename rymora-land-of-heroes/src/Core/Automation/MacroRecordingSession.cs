@@ -13,7 +13,20 @@ public sealed class MacroRecordingSession
         Id = id;
     }
 
+    public MacroRecordingSession(string id, IEnumerable<MacroAction> actions, int nextActionNumber)
+        : this(id)
+    {
+        if (nextActionNumber < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(nextActionNumber), "Next action number cannot be negative.");
+        }
+
+        _actions.AddRange(actions);
+        _nextActionNumber = nextActionNumber;
+    }
+
     public string Id { get; }
+    public int NextActionNumber => _nextActionNumber;
     public IReadOnlyList<MacroAction> Actions => _actions;
 
     public void RecordMove(TilePosition target)

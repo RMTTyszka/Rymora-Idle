@@ -13,6 +13,20 @@ public sealed class Creature
         Equipment equipment,
         LifeConfig lifeConfig,
         SpriteReference sprite = default)
+        : this(name, attributes, skills, properties, equipment, lifeConfig, sprite, life: null, maxLife: null)
+    {
+    }
+
+    private Creature(
+        string name,
+        StatBlock<AttributeType> attributes,
+        StatBlock<SkillType> skills,
+        StatBlock<PropertyType> properties,
+        Equipment equipment,
+        LifeConfig lifeConfig,
+        SpriteReference sprite,
+        float? life,
+        float? maxLife)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
@@ -22,8 +36,27 @@ public sealed class Creature
         Properties = properties;
         Equipment = equipment;
         Sprite = sprite;
-        MaxLife = lifeConfig.BaseLife + Attributes[AttributeType.Vitality].GetValue() * lifeConfig.VitalityLifeMultiplier;
-        Life = MaxLife;
+        var calculatedMaxLife = lifeConfig.BaseLife + Attributes[AttributeType.Vitality].GetValue() * lifeConfig.VitalityLifeMultiplier;
+        MaxLife = maxLife ?? calculatedMaxLife;
+        Life = life ?? MaxLife;
+    }
+
+    public static Creature Restore(
+        string name,
+        StatBlock<AttributeType> attributes,
+        StatBlock<SkillType> skills,
+        StatBlock<PropertyType> properties,
+        Equipment equipment,
+        SpriteReference sprite,
+        float life,
+        float maxLife)
+    {
+        if (!float.IsFinite(maxLife) || !float.IsFinite(life) || maxLife < 0 || life < 0 || life > maxLife)
+        {
+            throw new ArgumentOutOfRangeException(nameof(life), "Saved life must be between zero and max life.");
+        }
+
+        return new Creature(name, attributes, skills, properties, equipment, new LifeConfig(0, 0), sprite, life, maxLife);
     }
 
     public string Name { get; }

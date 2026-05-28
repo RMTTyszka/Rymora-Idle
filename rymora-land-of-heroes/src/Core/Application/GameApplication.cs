@@ -3,6 +3,7 @@ using RymoraLandOfHeroes.Core.Combat;
 using RymoraLandOfHeroes.Core.Common;
 using RymoraLandOfHeroes.Core.Configuration;
 using RymoraLandOfHeroes.Core.Content;
+using RymoraLandOfHeroes.Core.Data;
 using RymoraLandOfHeroes.Core.Hero;
 using RymoraLandOfHeroes.Core.Party;
 using RymoraLandOfHeroes.Core.World;
@@ -22,14 +23,21 @@ public sealed class GameApplication
         IEnumerable<GameParty> parties,
         GameConfig config,
         Func<CreatureTemplate, Creature> monsterFactory,
-        IRandomSource? randomSource = null)
+        IRandomSource? randomSource = null,
+        float playTimeSeconds = 0)
     {
+        if (!float.IsFinite(playTimeSeconds) || playTimeSeconds < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(playTimeSeconds), "Play time must be finite and non-negative.");
+        }
+
         World = world;
         Parties = new PartyRegistry(parties);
         Config = config;
         UI = new UIState();
         _monsterFactory = monsterFactory;
         _randomSource = randomSource ?? new SystemRandomSource();
+        PlayTimeSeconds = playTimeSeconds;
     }
 
     public WorldState World { get; }
@@ -37,6 +45,12 @@ public sealed class GameApplication
     public UIState UI { get; }
     public GameConfig Config { get; }
     public IReadOnlyDictionary<string, CombatInstance> ActiveCombats => _combats;
+    public float PlayTimeSeconds { get; private set; }
+
+    public SaveData CreateSaveData(DateTimeOffset savedAtUtc)
+    {
+        return SaveSnapshotBuilder.Create(this, savedAtUtc);
+    }
 
     public void SelectParty(string partyId)
     {
@@ -248,6 +262,8 @@ public sealed class GameApplication
             throw new ArgumentOutOfRangeException(nameof(deltaTime), "Delta time cannot be negative.");
         }
 
+        PlayTimeSeconds += deltaTime;
+
         foreach (var party in Parties.All)
         {
             if (party.IsInCombat)
@@ -283,6 +299,14 @@ public sealed class GameApplication
         party.IsInCombat = true;
         SyncScreen();
         return combat;
+    }
+
+    public void RestoreActiveCombat(string partyId, CombatInstance combat)
+    {
+        var party = Parties.Get(partyId);
+        _combats[partyId] = combat;
+        party.IsInCombat = true;
+        SyncScreen();
     }
 
     private PartyActionRequest? PrepareAction(GameParty party, PartyActionRequest request)

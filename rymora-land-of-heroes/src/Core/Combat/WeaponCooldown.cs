@@ -5,9 +5,14 @@ namespace RymoraLandOfHeroes.Core.Combat;
 public sealed class WeaponCooldown
 {
     public WeaponCooldown(WeaponTemplate weapon, float attackSpeedBonus)
+        : this(weapon, attackSpeedBonus, totalCooldownOverride: null)
+    {
+    }
+
+    private WeaponCooldown(WeaponTemplate weapon, float attackSpeedBonus, float? totalCooldownOverride)
     {
         Weapon = weapon;
-        TotalCooldown = CalculateTotalCooldown(weapon, attackSpeedBonus);
+        TotalCooldown = totalCooldownOverride ?? CalculateTotalCooldown(weapon, attackSpeedBonus);
         CurrentCooldown = TotalCooldown;
     }
 
@@ -29,6 +34,18 @@ public sealed class WeaponCooldown
     public void Reset()
     {
         CurrentCooldown = TotalCooldown;
+    }
+
+    public static WeaponCooldown Restore(WeaponTemplate weapon, float currentCooldown, float totalCooldown)
+    {
+        if (!float.IsFinite(currentCooldown) || !float.IsFinite(totalCooldown) || currentCooldown < 0 || totalCooldown < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(currentCooldown), "Cooldown values cannot be negative.");
+        }
+
+        var cooldown = new WeaponCooldown(weapon, attackSpeedBonus: 0, totalCooldownOverride: totalCooldown);
+        cooldown.CurrentCooldown = currentCooldown;
+        return cooldown;
     }
 
     public static float CalculateTotalCooldown(WeaponTemplate weapon, float attackSpeedBonus)

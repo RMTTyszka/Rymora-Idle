@@ -19,6 +19,7 @@ Ultimo commit publicado: `45b377e feat: add macro automation panel`
 - Party ja possui fila de acoes com `Travel`, `Mine`, `CutWood` e `TransferItem`.
 - Acoes ja podem terminar por contagem, quantidade de item ou tempo.
 - Automacao por Macros esta implementada: cada Party tem Macros salvos, um Program ativo e controles de Play/Pause/Stop.
+- Save/load completo esta implementado em JSON: parties, herois, inventario, fila, progresso parcial, automacao, combate ativo, tela e party selecionada.
 - O menu esquerdo `Macros` abre o modal full-screen para gravar Macro, salvar com nome, listar Macros da Party e montar o Program ativo.
 - Durante `Record Macro`, cliques no mapa/menu contextual gravam `MoveTo`, `Mine` e `CutWood` em vez de executar acoes imediatas.
 - Testes xUnit em `src/Tests` com ObjectMother.
@@ -37,7 +38,7 @@ Ultimo commit publicado: `45b377e feat: add macro automation panel`
 Resultado esperado do smoke test Godot:
 
 ```text
-Rymora Godot bootstrap ready. World from TileMapLayer. Mine queued: True.
+Rymora Godot bootstrap ready. World from TileMapLayer. Save loaded: False. Mine queued: True.
 Rymora Core loop OK. Iron=1. Elapsed=...
 ```
 
@@ -69,11 +70,17 @@ Arquivos principais:
 
 Fora deste slice / TODO:
 
-- Save/load de Macros e Program.
 - Acao `TransferItem` dentro de Macro.
 - Condicoes avancadas de execucao.
 - Grupos/sub-blocos no Program.
 - `Dungeon`/`EnterDungeon`.
+
+Limitacoes atuais de save/load:
+
+- 1 slot fixo em `user://saves/save-1.json`.
+- Sem cloud save, criptografia ou compressao.
+- Estado interno do RNG nao e serializado.
+- Save manual por UI ainda nao existe.
 
 ### 2. Movimento visual suave
 
@@ -165,5 +172,5 @@ Notas:
 ## Prompt sugerido para nova sessao
 
 ```text
-Continue o prototipo Godot C# de Rymora Land of Heroes. Leia primeiro docs/proximos-passos.md, docs/arquitetura/visao-geral.md e docs/regras/biblia-rpg.md. Mantenha Core puro sem Godot refs. Automacao por Macros para MoveTo/Mine/CutWood ja esta implementada. Proximo foco deve escolher entre persistir Macros/Program, expandir automacao, melhorar movimento visual ou encontros por viagem. Nao implementar dungeon agora; `Dungeon`/`EnterDungeon` e TODO tardio.
+Continue o prototipo Godot C# de Rymora Land of Heroes. Leia primeiro docs/proximos-passos.md, docs/arquitetura/visao-geral.md e docs/regras/biblia-rpg.md. Mantenha Core puro sem Godot refs. Automacao por Macros para MoveTo/Mine/CutWood ja esta implementada. Save/load completo em JSON ja esta implementado. Proximo foco deve escolher entre expandir automacao, melhorar movimento visual, refinar encontros por viagem ou adicionar UI manual de save/load. Nao implementar dungeon agora; `Dungeon`/`EnterDungeon` e TODO tardio.
 ```

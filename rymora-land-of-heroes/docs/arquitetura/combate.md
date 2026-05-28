@@ -170,6 +170,14 @@ Eventos sao publicados para adaptadores Godot renderizarem (floating text, anima
 - Todos monstros mortos -> `HeroesVictory`. Limpa instancia, sem loot implementado ainda.
 - Todos herois mortos -> `MonstersVictory`. Party morre, acao de morte inicia.
 
+### 8.1 Persistencia atual
+
+- Combate ativo e salvo por Party.
+- Herois sao referenciados pelo indice do membro na Party.
+- Monstros sao salvos completos, incluindo vida, stats, sprite e equipamento.
+- Cooldowns atuais das armas sao salvos para continuar o combate apos load.
+- Eventos ja publicados e subscribers nao entram no save; presenters reassinam eventos no bootstrap.
+
 ---
 
 ## 9. Efeitos e condicoes

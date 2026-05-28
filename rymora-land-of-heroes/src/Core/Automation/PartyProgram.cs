@@ -7,6 +7,7 @@ public sealed class PartyProgram
 
     public IReadOnlyList<ProgramStep> Steps => _steps;
     public RepeatPolicy Repeat { get; private set; } = RepeatPolicy.Once;
+    public int NextStepNumber => _nextStepNumber;
 
     public ProgramStep AddStep(string macroId, RepeatPolicy repeat)
     {
@@ -59,6 +60,19 @@ public sealed class PartyProgram
         }
 
         _steps[index].SetRepeat(repeat);
+    }
+
+    public void Restore(RepeatPolicy repeat, IEnumerable<ProgramStep> steps, int nextStepNumber)
+    {
+        if (nextStepNumber < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(nextStepNumber), "Next step number cannot be negative.");
+        }
+
+        _steps.Clear();
+        _steps.AddRange(steps);
+        Repeat = repeat ?? throw new ArgumentNullException(nameof(repeat));
+        _nextStepNumber = nextStepNumber;
     }
 
     private string NextStepId()

@@ -10,6 +10,21 @@ public enum ProgramRunnerState
     Error
 }
 
+public sealed record ProgramRunnerRuntimeState(
+    ProgramRunnerState State,
+    string? ErrorMessage,
+    IReadOnlyList<MacroAction> CurrentMacroActions,
+    MacroAction? CurrentAction,
+    int ProgramStepIndex,
+    int MacroActionIndex,
+    int StepIteration,
+    int ProgramIteration,
+    int ActionIteration,
+    float ProgramElapsedSeconds,
+    float StepElapsedSeconds,
+    float ActionElapsedSeconds,
+    string? CurrentExecutionId);
+
 public sealed class ProgramRunner
 {
     private IReadOnlyList<MacroAction> _currentMacroActions = Array.Empty<MacroAction>();
@@ -27,6 +42,41 @@ public sealed class ProgramRunner
     public string? ErrorMessage { get; private set; }
     public MacroAction? CurrentAction { get; private set; }
     public MacroAction? NextAction => _macroActionIndex < _currentMacroActions.Count ? _currentMacroActions[_macroActionIndex] : null;
+
+    public ProgramRunnerRuntimeState CaptureState()
+    {
+        return new ProgramRunnerRuntimeState(
+            State,
+            ErrorMessage,
+            _currentMacroActions.ToArray(),
+            CurrentAction,
+            _programStepIndex,
+            _macroActionIndex,
+            _stepIteration,
+            _programIteration,
+            _actionIteration,
+            _programElapsedSeconds,
+            _stepElapsedSeconds,
+            _actionElapsedSeconds,
+            _currentExecutionId);
+    }
+
+    public void Restore(ProgramRunnerRuntimeState state)
+    {
+        State = state.State;
+        ErrorMessage = state.ErrorMessage;
+        _currentMacroActions = state.CurrentMacroActions.ToArray();
+        CurrentAction = state.CurrentAction;
+        _programStepIndex = state.ProgramStepIndex;
+        _macroActionIndex = state.MacroActionIndex;
+        _stepIteration = state.StepIteration;
+        _programIteration = state.ProgramIteration;
+        _actionIteration = state.ActionIteration;
+        _programElapsedSeconds = state.ProgramElapsedSeconds;
+        _stepElapsedSeconds = state.StepElapsedSeconds;
+        _actionElapsedSeconds = state.ActionElapsedSeconds;
+        _currentExecutionId = state.CurrentExecutionId;
+    }
 
     public void Play()
     {

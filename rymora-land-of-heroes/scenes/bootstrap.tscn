@@ -9,9 +9,9 @@
 [ext_resource type="TileSet" uid="uid://beei3f8b3856f" path="res://assets/world/terrain_hex_tileset.tres" id="7_terrain_tileset"]
 [ext_resource type="TileSet" uid="uid://doskbgx316bfr" path="res://assets/world/region_hex_tileset.tres" id="8_owppy"]
 [ext_resource type="TileSet" uid="uid://kqsik8hjfai" path="res://assets/world/zone_hex_tileset.tres" id="9_n7b26"]
-[ext_resource type="Script" path="res://src/Godot/Presentation/MacrosPresenter.cs" id="10_macros_presenter"]
-[ext_resource type="Script" path="res://src/Godot/Presentation/MacroEditorPresenter.cs" id="11_macro_editor"]
-[ext_resource type="Script" path="res://src/Godot/Presentation/ProgramEditorPresenter.cs" id="12_program_editor"]
+[ext_resource type="Script" uid="uid://cpmb138x3vbji" path="res://src/Godot/Presentation/MacrosPresenter.cs" id="10_macros_presenter"]
+[ext_resource type="Script" uid="uid://dtrrlquyc1vem" path="res://src/Godot/Presentation/MacroEditorPresenter.cs" id="11_macro_editor"]
+[ext_resource type="Script" uid="uid://d14dela66436y" path="res://src/Godot/Presentation/ProgramEditorPresenter.cs" id="12_program_editor"]
 
 [node name="Bootstrap" type="Node2D" unique_id=1738267823]
 script = ExtResource("1_bootstrap")
@@ -40,18 +40,17 @@ visible = false
 script = ExtResource("5_combat_presenter")
 
 [node name="UiLayer" type="CanvasLayer" parent="." unique_id=1422838613]
-visible = true
 
-[node name="MenuRail" type="PanelContainer" parent="UiLayer"]
+[node name="MenuRail" type="PanelContainer" parent="UiLayer" unique_id=1292597604]
 offset_left = 8.0
 offset_top = 12.0
 offset_right = 56.0
 offset_bottom = 80.0
 
-[node name="Rows" type="VBoxContainer" parent="UiLayer/MenuRail"]
+[node name="Rows" type="VBoxContainer" parent="UiLayer/MenuRail" unique_id=761191076]
 layout_mode = 2
 
-[node name="MacrosButton" type="Button" parent="UiLayer/MenuRail/Rows"]
+[node name="MacrosButton" type="Button" parent="UiLayer/MenuRail/Rows" unique_id=204623362]
 layout_mode = 2
 tooltip_text = "Macros"
 text = "M"
@@ -70,29 +69,30 @@ theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Rows" type="VBoxContainer" parent="UiLayer/Hud/Margin"]
+[node name="Rows" type="VBoxContainer" parent="UiLayer/Hud/Margin" unique_id=1183892551]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="UiLayer/Hud/Margin/Rows" unique_id=1162746424]
 layout_mode = 2
 text = "HUD"
 
-[node name="Controls" type="HBoxContainer" parent="UiLayer/Hud/Margin/Rows"]
+[node name="Controls" type="HBoxContainer" parent="UiLayer/Hud/Margin/Rows" unique_id=565087629]
 layout_mode = 2
 
-[node name="PlayButton" type="Button" parent="UiLayer/Hud/Margin/Rows/Controls"]
+[node name="PlayButton" type="Button" parent="UiLayer/Hud/Margin/Rows/Controls" unique_id=1779034046]
 layout_mode = 2
 text = "Play"
 
-[node name="PauseButton" type="Button" parent="UiLayer/Hud/Margin/Rows/Controls"]
+[node name="PauseButton" type="Button" parent="UiLayer/Hud/Margin/Rows/Controls" unique_id=1860602506]
 layout_mode = 2
 text = "Pause"
 
-[node name="StopButton" type="Button" parent="UiLayer/Hud/Margin/Rows/Controls"]
+[node name="StopButton" type="Button" parent="UiLayer/Hud/Margin/Rows/Controls" unique_id=2110960185]
 layout_mode = 2
 text = "Stop"
 
-[node name="MacrosModal" type="PanelContainer" parent="UiLayer"]
+[node name="MacrosModal" type="PanelContainer" parent="UiLayer" unique_id=401778075]
+visible = false
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -100,259 +100,254 @@ offset_left = 72.0
 offset_top = 24.0
 offset_right = -24.0
 offset_bottom = -24.0
-visible = false
 script = ExtResource("10_macros_presenter")
 
-[node name="Margin" type="MarginContainer" parent="UiLayer/MacrosModal"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+[node name="Margin" type="MarginContainer" parent="UiLayer/MacrosModal" unique_id=1011930882]
+layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="Rows" type="VBoxContainer" parent="UiLayer/MacrosModal/Margin"]
+[node name="Rows" type="VBoxContainer" parent="UiLayer/MacrosModal/Margin" unique_id=1454316257]
 layout_mode = 2
 
-[node name="Header" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows"]
+[node name="Header" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows" unique_id=249728754]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="UiLayer/MacrosModal/Margin/Rows/Header"]
+[node name="Title" type="Label" parent="UiLayer/MacrosModal/Margin/Rows/Header" unique_id=1025076736]
 layout_mode = 2
 text = "Macros"
 
-[node name="CloseButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Header"]
+[node name="CloseButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Header" unique_id=1561939181]
 layout_mode = 2
 text = "Close"
 
-[node name="Scroll" type="ScrollContainer" parent="UiLayer/MacrosModal/Margin/Rows"]
+[node name="Scroll" type="ScrollContainer" parent="UiLayer/MacrosModal/Margin/Rows" unique_id=410676328]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Content" type="VBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll"]
+[node name="Content" type="VBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll" unique_id=363508119]
 layout_mode = 2
 
-[node name="MacroName" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="MacroName" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=262802190]
 layout_mode = 2
 placeholder_text = "Macro name"
 
-[node name="RecordButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="RecordButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=815489387]
 layout_mode = 2
 text = "Record Macro"
 
-[node name="SaveButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="SaveButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=1147351248]
 layout_mode = 2
 text = "Save Recording"
 
-[node name="CancelButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="CancelButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=1038994868]
 layout_mode = 2
 text = "Cancel Recording"
 
-[node name="MacroList" type="ItemList" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="MacroList" type="ItemList" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=4295675]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
-[node name="AddToProgramButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="AddToProgramButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=1799341339]
 layout_mode = 2
 text = "Add To Program"
 
-[node name="EditMacroButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="EditMacroButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=915322234]
 layout_mode = 2
 text = "Edit Macro"
 
-[node name="ActiveProgramLabel" type="Label" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="ActiveProgramLabel" type="Label" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=265281106]
 layout_mode = 2
 text = "Active Program"
 
-[node name="ProgramList" type="ItemList" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="ProgramList" type="ItemList" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=126158855]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 
-[node name="MoveStepUpButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="MoveStepUpButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=1587539088]
 layout_mode = 2
 text = "Move Step Up"
 
-[node name="MoveStepDownButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="MoveStepDownButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=1696761668]
 layout_mode = 2
 text = "Move Step Down"
 
-[node name="RemoveStepButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="RemoveStepButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=206884682]
 layout_mode = 2
 text = "Remove Step"
 
-[node name="StepRepeatMode" type="OptionButton" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="StepRepeatMode" type="OptionButton" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=337103740]
 layout_mode = 2
 
-[node name="StepRepeat" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="StepRepeat" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=375775291]
 layout_mode = 2
 placeholder_text = "Selected step repeat value"
 
-[node name="SetStepRepeatButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="SetStepRepeatButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=1831629714]
 layout_mode = 2
 text = "Set Step Repeat"
 
-[node name="EditProgramButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="EditProgramButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=748647962]
 layout_mode = 2
 text = "Open Program Editor"
 
-[node name="Editors" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content"]
+[node name="Editors" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content" unique_id=487046750]
 layout_mode = 2
 
-[node name="MacroEditor" type="PanelContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors"]
-layout_mode = 2
+[node name="MacroEditor" type="PanelContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors" unique_id=1229023181]
 visible = false
+layout_mode = 2
 script = ExtResource("11_macro_editor")
 
-[node name="Margin" type="MarginContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+[node name="Margin" type="MarginContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor" unique_id=1462712141]
+layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Rows" type="VBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin"]
+[node name="Rows" type="VBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin" unique_id=1630821053]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
+[node name="TitleLabel" type="Label" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows" unique_id=84048523]
 layout_mode = 2
 text = "Macro Editor"
 
-[node name="NameEdit" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
+[node name="NameEdit" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows" unique_id=598245110]
 layout_mode = 2
 placeholder_text = "Macro name"
 
-[node name="RenameButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
+[node name="RenameButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows" unique_id=1075989342]
 layout_mode = 2
 text = "Rename"
 
-[node name="ActionList" type="ItemList" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
+[node name="ActionList" type="ItemList" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows" unique_id=1388482437]
 custom_minimum_size = Vector2(0, 170)
 layout_mode = 2
 
-[node name="ActionButtons" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
+[node name="ActionButtons" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows" unique_id=1750766564]
 layout_mode = 2
 
-[node name="MoveUpButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/ActionButtons"]
+[node name="MoveUpButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/ActionButtons" unique_id=2084530725]
 layout_mode = 2
 text = "Up"
 
-[node name="MoveDownButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/ActionButtons"]
+[node name="MoveDownButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/ActionButtons" unique_id=685645782]
 layout_mode = 2
 text = "Down"
 
-[node name="RemoveButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/ActionButtons"]
+[node name="RemoveButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/ActionButtons" unique_id=418287762]
 layout_mode = 2
 text = "Remove"
 
-[node name="MoveFields" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
+[node name="MoveFields" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows" unique_id=498077710]
 layout_mode = 2
 
-[node name="MoveX" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/MoveFields"]
+[node name="MoveX" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/MoveFields" unique_id=2136273997]
 layout_mode = 2
 placeholder_text = "Move X"
 
-[node name="MoveY" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/MoveFields"]
+[node name="MoveY" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/MoveFields" unique_id=997264111]
 layout_mode = 2
 placeholder_text = "Move Y"
 
-[node name="SetMoveButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/MoveFields"]
+[node name="SetMoveButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/MoveFields" unique_id=1658687208]
 layout_mode = 2
 text = "Set MoveTo"
 
-[node name="RepeatFields" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows"]
+[node name="RepeatFields" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows" unique_id=77137711]
 layout_mode = 2
 
-[node name="RepeatMode" type="OptionButton" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/RepeatFields"]
+[node name="RepeatMode" type="OptionButton" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/RepeatFields" unique_id=234272062]
 layout_mode = 2
 
-[node name="RepeatCount" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/RepeatFields"]
+[node name="RepeatCount" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/RepeatFields" unique_id=73114798]
 layout_mode = 2
 placeholder_text = "Repeat value"
 
-[node name="SetRepeatButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/RepeatFields"]
+[node name="SetRepeatButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/MacroEditor/Margin/Rows/RepeatFields" unique_id=1725235761]
 layout_mode = 2
 text = "Set Repeat"
 
-[node name="ProgramEditor" type="PanelContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors"]
-layout_mode = 2
+[node name="ProgramEditor" type="PanelContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors" unique_id=1286699777]
 visible = false
+layout_mode = 2
 script = ExtResource("12_program_editor")
 
-[node name="Margin" type="MarginContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+[node name="Margin" type="MarginContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor" unique_id=199217712]
+layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 8
 
-[node name="Rows" type="VBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin"]
+[node name="Rows" type="VBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin" unique_id=1472751544]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows"]
+[node name="TitleLabel" type="Label" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows" unique_id=1257209587]
 layout_mode = 2
 text = "Program Editor"
 
-[node name="StepList" type="ItemList" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows"]
+[node name="StepList" type="ItemList" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows" unique_id=735498941]
 custom_minimum_size = Vector2(0, 190)
 layout_mode = 2
 
-[node name="StepButtons" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows"]
+[node name="StepButtons" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows" unique_id=1511419930]
 layout_mode = 2
 
-[node name="MoveUpButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepButtons"]
+[node name="MoveUpButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepButtons" unique_id=1501370895]
 layout_mode = 2
 text = "Up"
 
-[node name="MoveDownButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepButtons"]
+[node name="MoveDownButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepButtons" unique_id=231939555]
 layout_mode = 2
 text = "Down"
 
-[node name="RemoveButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepButtons"]
+[node name="RemoveButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepButtons" unique_id=306209982]
 layout_mode = 2
 text = "Remove"
 
-[node name="StepRepeatFields" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows"]
+[node name="StepRepeatFields" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows" unique_id=1941944038]
 layout_mode = 2
 
-[node name="StepRepeatMode" type="OptionButton" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepRepeatFields"]
+[node name="StepRepeatMode" type="OptionButton" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepRepeatFields" unique_id=944217243]
 layout_mode = 2
 
-[node name="StepRepeat" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepRepeatFields"]
+[node name="StepRepeat" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepRepeatFields" unique_id=1169070949]
 layout_mode = 2
 placeholder_text = "Step repeat value"
 
-[node name="SetStepRepeatButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepRepeatFields"]
+[node name="SetStepRepeatButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/StepRepeatFields" unique_id=1019952048]
 layout_mode = 2
 text = "Set Step Repeat"
 
-[node name="ProgramRepeatFields" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows"]
+[node name="ProgramRepeatFields" type="HBoxContainer" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows" unique_id=1408754754]
 layout_mode = 2
 
-[node name="ProgramRepeatMode" type="OptionButton" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
+[node name="ProgramRepeatMode" type="OptionButton" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/ProgramRepeatFields" unique_id=397307352]
 layout_mode = 2
 
-[node name="ProgramRepeat" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
+[node name="ProgramRepeat" type="LineEdit" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/ProgramRepeatFields" unique_id=1461262033]
 layout_mode = 2
 placeholder_text = "Program repeat value"
 
-[node name="SetProgramRepeatButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/ProgramRepeatFields"]
+[node name="SetProgramRepeatButton" type="Button" parent="UiLayer/MacrosModal/Margin/Rows/Scroll/Content/Editors/ProgramEditor/Margin/Rows/ProgramRepeatFields" unique_id=1478040987]
 layout_mode = 2
 text = "Set Program Repeat"
 
 [node name="ContextMenu" type="PopupMenu" parent="UiLayer" unique_id=576348448]
 
 [node name="ZoneLayer" type="TileMapLayer" parent="." unique_id=337566574]
+visible = false
 modulate = Color(1, 1, 1, 0.35)
 z_index = 2
 tile_map_data = PackedByteArray("AAD7//z/AAAAAAAAAAD7//3/AAAAAAAAAAD7//7/AAAAAAAAAAD7////AAAAAAAAAAD7/wAAAAAAAAAAAAD7/wEAAAAAAAAAAAD7/wIAAAAAAAAAAAD7/wMAAAAAAAAAAAD7/wQAAAAAAAAAAAD8//z/AAAAAAAAAAD8//3/AAAAAAAAAAD8//7/AAAAAAAAAAD8////AAAAAAAAAAD8/wAAAAAAAAAAAAD8/wEAAAAAAAAAAAD8/wIAAAAAAAAAAAD8/wMAAAAAAAAAAAD8/wQAAAAAAAAAAAD9//z/AAAAAAAAAAD9//3/AAABAAAAAAD9//7/AAABAAAAAAD9////AAABAAAAAAD9/wAAAAABAAAAAAD9/wEAAAABAAAAAAD9/wIAAAABAAAAAAD9/wMAAAABAAAAAAD9/wQAAAAAAAAAAAD+//z/AAAAAAAAAAD+//3/AAABAAAAAAD+//7/AAABAAAAAAD+////AAABAAAAAAD+/wAAAAABAAAAAAD+/wEAAAABAAAAAAD+/wIAAAABAAAAAAD+/wMAAAABAAAAAAD+/wQAAAAAAAAAAAD///z/AAAAAAAAAAD///3/AAABAAAAAAD///7/AAABAAAAAAD/////AAACAAAAAAD//wAAAAACAAAAAAD//wEAAAACAAAAAAD//wIAAAABAAAAAAD//wMAAAABAAAAAAD//wQAAAAAAAAAAAAAAPz/AAAAAAAAAAAAAP3/AAABAAAAAAAAAP7/AAABAAAAAAAAAP//AAACAAAAAAAAAAAAAAACAAAAAAAAAAEAAAACAAAAAAAAAAIAAAABAAAAAAAAAAMAAAABAAAAAAAAAAQAAAAAAAAAAAABAPz/AAAAAAAAAAABAP3/AAABAAAAAAABAP7/AAABAAAAAAABAP//AAACAAAAAAABAAAAAAACAAAAAAABAAEAAAACAAAAAAABAAIAAAABAAAAAAABAAMAAAABAAAAAAABAAQAAAAAAAAAAAACAPz/AAAAAAAAAAACAP3/AAABAAAAAAACAP7/AAABAAAAAAACAP//AAABAAAAAAACAAAAAAABAAAAAAACAAEAAAABAAAAAAACAAIAAAABAAAAAAACAAMAAAABAAAAAAACAAQAAAAAAAAAAAADAPz/AAAAAAAAAAADAP3/AAABAAAAAAADAP7/AAABAAAAAAADAP//AAABAAAAAAADAAAAAAABAAAAAAADAAEAAAABAAAAAAADAAIAAAABAAAAAAADAAMAAAABAAAAAAADAAQAAAAAAAAAAAAEAPz/AAAAAAAAAAAEAP3/AAAAAAAAAAAEAP7/AAAAAAAAAAAEAP//AAAAAAAAAAAEAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAAEAAIAAAAAAAAAAAAEAAMAAAAAAAAAAAAEAAQAAAAAAAAAAAAFAPz/AAAAAAAAAAAFAP3/AAAAAAAAAAAFAP7/AAAAAAAAAAAFAP//AAAAAAAAAAAFAAAAAAAAAAAAAAAFAAEAAAAAAAAAAAAFAAIAAAAAAAAAAAAFAAMAAAAAAAAAAAAFAAQAAAAAAAAAAAAGAPz/AAAAAAAAAAAGAP3/AAAAAAAAAAAGAP7/AAAAAAAAAAAGAP//AAAAAAAAAAAGAAAAAAAAAAAAAAAGAAEAAAAAAAAAAAAGAAIAAAAAAAAAAAAGAAMAAAAAAAAAAAAGAAQAAAAAAAAAAAA=")
 tile_set = ExtResource("9_n7b26")
 
 [node name="RegionLayer" type="TileMapLayer" parent="." unique_id=398838403]
+visible = false
 modulate = Color(1, 1, 1, 0.35)
 z_index = 1
 tile_map_data = PackedByteArray("AAD7//z/AAAAAAAAAAD7//3/AAAAAAAAAAD7//7/AAAAAAAAAAD7////AAAAAAAAAAD7/wAAAAAAAAAAAAD7/wEAAAAAAAAAAAD7/wIAAAAAAAAAAAD7/wMAAAAAAAAAAAD7/wQAAAAAAAAAAAD8//z/AAAAAAAAAAD8//3/AAAAAAAAAAD8//7/AAAAAAAAAAD8////AAAAAAAAAAD8/wAAAAAAAAAAAAD8/wEAAAAAAAAAAAD8/wIAAAAAAAAAAAD8/wMAAAAAAAAAAAD8/wQAAAAAAAAAAAD9//z/AAAAAAAAAAD9//3/AAAAAAAAAAD9//7/AAAAAAAAAAD9////AAAAAAAAAAD9/wAAAAAAAAAAAAD9/wEAAAAAAAAAAAD9/wIAAAAAAAAAAAD9/wMAAAAAAAAAAAD9/wQAAAAAAAAAAAD+//z/AAAAAAAAAAD+//3/AAAAAAAAAAD+//7/AAAAAAAAAAD+////AAAAAAAAAAD+/wAAAAAAAAAAAAD+/wEAAAAAAAAAAAD+/wIAAAAAAAAAAAD+/wMAAAAAAAAAAAD+/wQAAAAAAAAAAAD///z/AAAAAAAAAAD///3/AAAAAAAAAAD///7/AAAAAAAAAAD/////AAAAAAAAAAD//wAAAAAAAAAAAAD//wEAAAAAAAAAAAD//wIAAAAAAAAAAAD//wMAAAAAAAAAAAD//wQAAAAAAAAAAAAAAPz/AAAAAAAAAAAAAP3/AAAAAAAAAAAAAP7/AAAAAAAAAAAAAP//AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAQAAAAAAAAAAAABAPz/AAAAAAAAAAABAP3/AAAAAAAAAAABAP7/AAAAAAAAAAABAP//AAAAAAAAAAABAAAAAAAAAAAAAAABAAEAAAAAAAAAAAABAAIAAAAAAAAAAAABAAMAAAAAAAAAAAABAAQAAAAAAAAAAAACAPz/AAAAAAAAAAACAP3/AAAAAAAAAAACAP7/AAAAAAAAAAACAP//AAAAAAAAAAACAAAAAAAAAAAAAAACAAEAAAAAAAAAAAACAAIAAAAAAAAAAAACAAMAAAAAAAAAAAACAAQAAAAAAAAAAAADAPz/AAAAAAAAAAADAP3/AAAAAAAAAAADAP7/AAAAAAAAAAADAP//AAAAAAAAAAADAAAAAAAAAAAAAAADAAEAAAAAAAAAAAADAAIAAAAAAAAAAAADAAMAAAAAAAAAAAADAAQAAAAAAAAAAAAEAPz/AAAAAAAAAAAEAP3/AAAAAAAAAAAEAP7/AAAAAAAAAAAEAP//AAAAAAAAAAAEAAAAAAAAAAAAAAAEAAEAAAAAAAAAAAAEAAIAAAAAAAAAAAAEAAMAAAAAAAAAAAAEAAQAAAAAAAAAAAAFAPz/AAAAAAAAAAAFAP3/AAAAAAAAAAAFAP7/AAAAAAAAAAAFAP//AAAAAAAAAAAFAAAAAAABAAAAAAAFAAEAAAAAAAAAAAAFAAIAAAAAAAAAAAAFAAMAAAAAAAAAAAAFAAQAAAAAAAAAAAAGAPz/AAAAAAAAAAAGAP3/AAAAAAAAAAAGAP7/AAAAAAAAAAAGAP//AAAAAAAAAAAGAAAAAAAAAAAAAAAGAAEAAAAAAAAAAAAGAAIAAAAAAAAAAAAGAAMAAAAAAAAAAAAGAAQAAAAAAAAAAAA=")

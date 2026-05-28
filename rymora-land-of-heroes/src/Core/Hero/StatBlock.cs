@@ -23,4 +23,12 @@ public sealed class StatBlock<TStat>
 
         return new StatBlock<TStat>(stats);
     }
+
+    public static StatBlock<TStat> FromInstances(IReadOnlyDictionary<TStat, StatInstance> stats)
+    {
+        var restored = Enum.GetValues<TStat>()
+            .ToDictionary(stat => stat, stat => stats[stat]);
+
+        return new StatBlock<TStat>(restored);
+    }
 }

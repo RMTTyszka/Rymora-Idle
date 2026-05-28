@@ -25,9 +25,10 @@ O fluxo de inicializacao:
 2. `Bootstrap` (adaptador Godot) carrega config/conteudo JSON.
 3. Content loaders montam catalogos runtime (armas, materiais, criaturas, encontros, terrain tiles).
 4. World adapter le o tilemap usando catalogo de terrain tiles e popula `WorldState`.
-5. Party registry cria as parties com herois iniciais.
-6. Estado inicial: `CurrentScreen = Map`, `SelectedParty = Party1`.
-7. Presenters sincronizam com estado inicial.
+5. `Bootstrap` procura `user://saves/save-1.json`.
+6. Se save existe e valida, `SaveRestorer` cria `GameApplication` com estado restaurado.
+7. Se save nao existe, `BootstrapCoreFactory` cria jogo novo com party inicial.
+8. Presenters sincronizam com estado inicial ou restaurado.
 
 Implementacao inicial existente:
 
@@ -42,7 +43,9 @@ Implementacao inicial existente:
 - Combat presenter: `src/Godot/Presentation/CombatPresenter.cs`.
 - Projeto Godot C#: `Rymora-Land-of-Heroes.csproj`, referenciando `src/Core/RymoraLandOfHeroes.Core.csproj`.
 
-O bootstrap atual e uma prova de integracao finalista: carrega JSON de config/conteudo, cria mapa em `TileMapLayer` se a cena estiver vazia, converte esse mapa para `WorldState`, cria `GameApplication`, seleciona `party-1`, enfileira uma acao `Mine` usando material do catalogo e imprime no console quando o Core adiciona o item ao inventario da party.
+O bootstrap atual carrega JSON de config/conteudo, cria mapa em `TileMapLayer` se a cena estiver vazia, converte esse mapa para `WorldState` e tenta carregar `user://saves/save-1.json`. Sem save, cria jogo novo, seleciona `party-1`, enfileira uma acao `Mine` de smoke usando material do catalogo e imprime no console quando o Core adiciona o item ao inventario da party. Com save valido, restaura o estado e nao enfileira a acao inicial de smoke.
+
+Autosave usa `GameConfig.Save.AutoSaveIntervalSeconds` e tambem salva ao fechar a janela. Save invalido aborta load com erro claro e nao sobrescreve o arquivo salvo.
 
 ---
 
@@ -131,11 +134,14 @@ public sealed class GameApplication
     public PartyRegistry Parties { get; }
     public UIState UI { get; }
     public GameConfig Config { get; }
+    public float PlayTimeSeconds { get; }
 
-    public GameApplication(WorldState world, IEnumerable<Party> parties, GameConfig config, Func<CreatureTemplate, Creature> monsterFactory);
+    public GameApplication(WorldState world, IEnumerable<Party> parties, GameConfig config, Func<CreatureTemplate, Creature> monsterFactory, IRandomSource? randomSource = null, float playTimeSeconds = 0);
     public void SelectParty(string partyId);
     public bool EnqueueAction(string partyId, PartyActionRequest request);
     public void Update(float deltaTime);
     public void HandleInput(PlayerIntent intent);
+    public SaveData CreateSaveData(DateTimeOffset savedAtUtc);
+    public void RestoreActiveCombat(string partyId, CombatInstance combat);
 }
 ```

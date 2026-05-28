@@ -61,7 +61,8 @@ internal static class TestObjectMother
                 HitRollRange: new RollRange(1, 1),
                 EvadeRollRange: new RollRange(1, 1),
                 BaseCriticalMultiplier: 1.5f,
-                Targeting: new TargetingConfig(LowLifeWeight: 100, ThreatWeight: 1)));
+                Targeting: new TargetingConfig(LowLifeWeight: 100, ThreatWeight: 1)),
+            Save: new SaveConfig(AutoSaveIntervalSeconds: 30));
     }
 
     public static WorldState CreateWorld(

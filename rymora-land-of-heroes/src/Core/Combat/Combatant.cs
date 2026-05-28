@@ -16,6 +16,13 @@ public sealed class Combatant
 			: new WeaponCooldown(creature.Equipment.Offhand, attackSpeed);
 	}
 
+	private Combatant(Creature creature, WeaponCooldown mainHandCooldown, WeaponCooldown? offhandCooldown)
+	{
+		Creature = creature;
+		MainHandCooldown = mainHandCooldown;
+		OffhandCooldown = offhandCooldown;
+	}
+
 	public Creature Creature { get; }
 	public WeaponCooldown MainHandCooldown { get; }
 	public WeaponCooldown? OffhandCooldown { get; }
@@ -30,6 +37,11 @@ public sealed class Combatant
 				yield return OffhandCooldown;
 			}
 		}
+	}
+
+	public static Combatant Restore(Creature creature, WeaponCooldown mainHandCooldown, WeaponCooldown? offhandCooldown)
+	{
+		return new Combatant(creature, mainHandCooldown, offhandCooldown);
 	}
 
 	private static WeaponCooldown CreateCooldown(WeaponTemplate? weapon, float attackSpeed, string slotName)

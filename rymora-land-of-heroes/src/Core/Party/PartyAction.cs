@@ -39,6 +39,27 @@ public sealed class PartyActionState
         Request = request;
     }
 
+    public static PartyActionState Restore(
+        PartyActionRequest request,
+        float currentTime,
+        float passedTime,
+        int executedCount,
+        bool started)
+    {
+        if (!float.IsFinite(currentTime) || !float.IsFinite(passedTime) || currentTime < 0 || passedTime < 0 || executedCount < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(currentTime), "Action state values cannot be negative.");
+        }
+
+        return new PartyActionState(request)
+        {
+            CurrentTime = currentTime,
+            PassedTime = passedTime,
+            ExecutedCount = executedCount,
+            Started = started
+        };
+    }
+
     public PartyActionRequest Request { get; }
     public float CurrentTime { get; private set; }
     public float PassedTime { get; private set; }
@@ -90,6 +111,7 @@ public sealed class PartyActionQueue
     private readonly Queue<PartyActionRequest> _pending = new();
 
     public PartyActionState? Current { get; private set; }
+    public IReadOnlyList<PartyActionRequest> PendingRequests => _pending.ToArray();
     public int PendingCount => _pending.Count;
     public bool IsIdle => Current is null && _pending.Count == 0;
 
@@ -126,5 +148,15 @@ public sealed class PartyActionQueue
     {
         _pending.Clear();
         Current = null;
+    }
+
+    public void Restore(PartyActionState? current, IEnumerable<PartyActionRequest> pending)
+    {
+        _pending.Clear();
+        Current = current;
+        foreach (var request in pending)
+        {
+            _pending.Enqueue(request);
+        }
     }
 }

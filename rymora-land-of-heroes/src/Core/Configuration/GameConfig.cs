@@ -9,7 +9,8 @@ public sealed record GameConfig(
     LifeConfig Life,
     CollectionConfig Collection,
     TravelConfig Travel,
-    CombatConfig Combat);
+    CombatConfig Combat,
+    SaveConfig Save);
 
 public sealed record ProgressionConfig(
     float InitialAttributePoints,
@@ -35,6 +36,8 @@ public sealed record CollectionConfig(
     float WoodcuttingActionTime);
 
 public sealed record TravelConfig(float ActionTime);
+
+public sealed record SaveConfig(float AutoSaveIntervalSeconds);
 
 public sealed record CombatConfig(
     RollRange HitRollRange,

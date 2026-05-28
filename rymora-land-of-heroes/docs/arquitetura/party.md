@@ -140,6 +140,12 @@ O ciclo abaixo descreve a execucao depois que a acao ja foi programada. A UI pod
 7. `IsComplete` - verifica se `ExecutedCount >= LimitCount` (ByCount), `PassedTime >= EndTime` (ByTime), ou item quantity atingiu (ByItemQuantity).
 8. `CompleteCurrentIfFinished()` - se completo, avanca pra proxima.
 
+Persistencia atual:
+
+- `ActionQueue.Current` e acoes pendentes sao salvas.
+- Progresso parcial (`CurrentTime`, `PassedTime`, `ExecutedCount`, `Started`) e salvo.
+- `PartyActionRequest` salva todos os campos, incluindo path calculado e `AutomationActionId`.
+
 ### 3.5 Loop da Party
 
 A Party e atualizada pelo Application em intervalos regulares de tempo de jogo:
@@ -169,6 +175,13 @@ Macros sao salvos por Party em `PartyAutomation`.
 - O `ProgramRunner` controla estados `Play`, `Pause`, `Stop` e `Error`.
 - `Pause` e `Stop` sao cooperativos: a acao atual termina antes da mudanca de estado.
 
+Persistencia atual:
+
+- Automation salva recording ativo, Macros, Program e Runner.
+- Recording salva id, acoes gravadas e contador da proxima acao.
+- Program salva repeticao global, steps e contador do proximo step.
+- Runner salva estado, erro, indices, iteracoes, tempos acumulados, acao atual e execution id.
+
 ---
 
 ## 5. Inventario
@@ -191,6 +204,7 @@ public sealed class Inventory
 - Itens agrupaveis por `Name` + `Level`.
 - `AddItem` adiciona a instancia.
 - `RemoveItem` remove por nome, nivel e quantidade.
+- Inventario da Party e salvo por itens agrupados com nome, nivel, peso e quantidade.
 - Limite de peso/espacos: adiado.
 
 ### 5.3 Transferencia entre parties
