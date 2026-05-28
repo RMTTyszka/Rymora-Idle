@@ -36,11 +36,13 @@ A alternancia e controlada pelo Application. UI apenas reage ao estado.
 - Botao de combate (alterna para tela de combate).
 
 Implementacao atual:
-- `HudPresenter` mostra party selecionada, tela atual, posicao, acao atual, fila pendente e inventario.
-- A aba `Macros` permite iniciar `Record Macro`, salvar com nome, listar Macros da party e montar o Program ativo.
-- O painel de status mostra estado do Program, acao atual, proxima acao de Macro, erros e botoes `Play`, `Pause` e `Stop`.
+- `HudPresenter` mostra status compacto da party selecionada, tela atual, posicao, acao atual, proxima acao de Macro, erro, fila pendente, inventario e botoes `Play`, `Pause`, `Stop`.
+- `MenuRail` fica no canto esquerdo com botoes compactos de menu. Nesta etapa, existe apenas `Macros`.
+- Clicar `Macros` abre o modal full-screen `MacrosModal` e esconde o HUD/status compacto.
+- Fechar `MacrosModal` mostra o HUD/status compacto novamente.
+- `MacrosModal` possui scroll e concentra gravacao, lista de Macros, Program ativo e editores internos de Macro e Program.
 - HUD fica em `UiLayer/Hud` na cena `scenes/bootstrap.tscn`.
-- `Bootstrap` sincroniza HUD a cada `_Process` usando estado do Core.
+- `Bootstrap` sincroniza HUD e modal a cada `_Process` usando estado do Core.
 
 ### 3.2 Combat screen
 
@@ -77,7 +79,8 @@ Fluxo de Macros:
 - Clique esquerdo no mapa grava `MoveTo` quando a party esta gravando; fora da gravacao, continua enviando movimento imediato.
 - Clique direito abre o menu contextual; durante a gravacao, `Mine` e `Cut Wood` gravam acoes de Macro em vez de enfileirar coleta.
 - Salvar exige nome e cria um Macro da party com as acoes gravadas.
-- A aba `Macros` lista Macros salvos, adiciona Macros ao Program ativo e abre editores para ordenar/remover acoes e ajustar repeticoes.
+- O menu esquerdo `Macros` abre o modal full-screen de Macros.
+- O modal lista Macros salvos, adiciona Macros ao Program ativo e mostra editores internos para ordenar/remover acoes e ajustar repeticoes.
 - A UI continua sem regra de jogo: ela mostra opcoes e envia intencoes; Application/Core validam requisitos e execucao.
 
 TODO tardio:
