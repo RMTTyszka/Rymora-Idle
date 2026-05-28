@@ -31,7 +31,7 @@ Ultimo commit publicado: `45b377e feat: add macro automation panel`
 
 - `dotnet build RymoraLandOfHeroes.sln`
 - `dotnet test RymoraLandOfHeroes.sln --no-restore`
-- Godot headless smoke test
+- Godot headless smoke test: indisponivel; executavel Godot documentado ausente.
 - `git diff --check`
 
 Resultado esperado do smoke test Godot:
@@ -41,7 +41,7 @@ Rymora Godot bootstrap ready. World from TileMapLayer. Mine queued: True.
 Rymora Core loop OK. Iron=1. Elapsed=...
 ```
 
-Comando Godot usado:
+Comando Godot documentado, nao executado nesta maquina:
 
 ```powershell
 & "C:\Users\rmttyszka\AppData\Local\Microsoft\WinGet\Packages\GodotEngine.GodotEngine.Mono_Microsoft.Winget.Source_8wekyb3d8bbwe\Godot_v4.6.2-stable_mono_win64\Godot_v4.6.2-stable_mono_win64_console.exe" --headless --path "." --quit-after 1
