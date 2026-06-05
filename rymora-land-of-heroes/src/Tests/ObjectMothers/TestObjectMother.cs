@@ -42,12 +42,17 @@ internal static class TestObjectMother
         return CreateCreature(template.CreatureName, new LifeConfig(1, 0));
     }
 
-    public static GameConfig CreateGameConfig(float encounterProbability = 0)
+    public static GameConfig CreateGameConfig(
+        float encounterProbability = 0,
+        float encounterRampPerSecond = 0,
+        float encounterRampMaxBonus = 0)
     {
         return new GameConfig(
             EncounterProbability: encounterProbability,
             EncounterInterval: 1,
             EncounterPolicy: new EncounterPolicy(EncounterModifierMode.None),
+            EncounterRampPerSecond: encounterRampPerSecond,
+            EncounterRampMaxBonus: encounterRampMaxBonus,
             CorpseDecayTime: 60,
             Progression: new ProgressionConfig(5, 5, 5, 5),
             Life: new LifeConfig(100, 10),

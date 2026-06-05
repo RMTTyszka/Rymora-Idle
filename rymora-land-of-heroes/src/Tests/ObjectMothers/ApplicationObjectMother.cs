@@ -69,30 +69,37 @@ internal static class ApplicationObjectMother
             ExpectedQuantity: 2);
     }
 
-    public static TravelUpdateScenario ApplicationWithTravelActionQueued(float encounterProbability = 0)
+    public static TravelUpdateScenario ApplicationWithTravelActionQueued(
+        float encounterProbability = 0,
+        float encounterRampPerSecond = 0,
+        float encounterRampMaxBonus = 0,
+        IReadOnlyList<int>? worldRandomRolls = null,
+        IReadOnlyList<int>? combatRandomRolls = null,
+        TilePosition? destination = null)
     {
         var party = new GameParty("party-1", new TilePosition(0, 0));
         var hero = TestObjectMother.CreateCreature("Hero");
         hero.Equipment.MainHand = TestObjectMother.CreateWeapon("Greatsword", attackSpeed: 1, baseDamage: 100);
         party.AddMember(hero);
+        var target = destination ?? new TilePosition(1, 0);
         var application = new GameApplication(
-            TestObjectMother.CreateWorld(random: new SequenceRandomSource(1, 0)),
+            TestObjectMother.CreateWorld(random: new SequenceRandomSource((worldRandomRolls ?? new[] { 1, 0 }).ToArray())),
             new[] { party },
-            TestObjectMother.CreateGameConfig(encounterProbability),
+            TestObjectMother.CreateGameConfig(encounterProbability, encounterRampPerSecond, encounterRampMaxBonus),
             _ => TestObjectMother.CreateCreature("Goblin", new LifeConfig(1, 0)),
-            new SequenceRandomSource(1, 1));
+            new SequenceRandomSource((combatRandomRolls ?? new[] { 1, 1 }).ToArray()));
         application.SelectParty("party-1");
         application.EnqueueAction("party-1", new PartyActionRequest(
             PartyActionType.Travel,
             PartyActionEndType.ByCount,
             TimeToExecute: 1,
-            Destination: new TilePosition(1, 0)));
+            Destination: target));
 
         return new TravelUpdateScenario(
             InputApplication: application,
             InputDeltaTime: 1,
             AssertParty: party,
-            ExpectedPosition: new TilePosition(1, 0),
+            ExpectedPosition: target,
             ExpectedIsInCombat: encounterProbability > 0);
     }
 

@@ -1,6 +1,8 @@
 {
-  "encounterProbability": 25,
+  "encounterProbability": 4,
   "encounterInterval": 1,
+  "encounterRampPerSecond": 3,
+  "encounterRampMaxBonus": 24,
   "encounterPolicy": {
 	"terrainModifierMode": "None"
   },

@@ -34,7 +34,8 @@ public static class SaveSnapshotBuilder
             party.Members.Select(CreateCreature).ToArray(),
             party.Inventory.Items.Select(CreateItem).ToArray(),
             CreateQueue(party.ActionQueue),
-            CreateAutomation(party.Automation));
+            CreateAutomation(party.Automation),
+            party.EncounterState.TravelSecondsSinceReset);
     }
 
     private static CreatureSaveData CreateCreature(Creature creature)

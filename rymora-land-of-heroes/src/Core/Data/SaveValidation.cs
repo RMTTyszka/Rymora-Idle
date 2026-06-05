@@ -39,6 +39,7 @@ public static class SaveValidation
             ValidateQueue(party.PartyId, party.ActionQueue);
             ValidateAutomation(party.PartyId, party.Automation);
             ValidateInventory(party.PartyId, party.InventoryItems);
+            ValidateEncounterState(party);
             if (party.IsInCombat && !activeCombatPartyIds.Contains(party.PartyId))
             {
                 throw new InvalidOperationException($"Party {party.PartyId} is marked in combat but missing active combat.");
@@ -145,6 +146,14 @@ public static class SaveValidation
             {
                 throw new InvalidOperationException($"Party {partyId} inventory item has invalid quantity: {item.Name}.");
             }
+        }
+    }
+
+    private static void ValidateEncounterState(PartySaveData party)
+    {
+        if (!float.IsFinite(party.TravelSecondsSinceEncounterReset) || party.TravelSecondsSinceEncounterReset < 0)
+        {
+            throw new InvalidOperationException($"Party {party.PartyId} TravelSecondsSinceEncounterReset must be finite and non-negative.");
         }
     }
 }

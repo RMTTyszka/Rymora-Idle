@@ -76,6 +76,8 @@ public static class SaveRestorer
             save.Automation.Program.NextStepNumber,
             RestoreRunner(save.Automation.Runner));
 
+        party.EncounterState.Restore(save.TravelSecondsSinceEncounterReset);
+
         return party;
     }
 

@@ -11,7 +11,7 @@ public sealed record SaveData(
     IReadOnlyList<PartySaveData> Parties,
     IReadOnlyList<CombatSaveData> ActiveCombats)
 {
-    public const string CurrentVersion = "1";
+    public const string CurrentVersion = "2";
 }
 
 public sealed record TilePositionSaveData(int X, int Y);
@@ -23,7 +23,8 @@ public sealed record PartySaveData(
     IReadOnlyList<CreatureSaveData> Members,
     IReadOnlyList<ItemSaveData> InventoryItems,
     ActionQueueSaveData ActionQueue,
-    AutomationSaveData Automation);
+    AutomationSaveData Automation,
+    float TravelSecondsSinceEncounterReset = 0);
 
 public sealed record CreatureSaveData(
     string Name,

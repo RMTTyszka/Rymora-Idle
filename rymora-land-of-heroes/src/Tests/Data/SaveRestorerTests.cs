@@ -83,6 +83,23 @@ public sealed class SaveRestorerTests
     }
 
     [Fact]
+    public void Restore_round_trips_party_encounter_travel_seconds()
+    {
+        var scenario = ApplicationObjectMother.ApplicationWithTravelActionQueued();
+        scenario.AssertParty.EncounterState.AddTravelTime(1.75f);
+        var save = scenario.InputApplication.CreateSaveData(DateTimeOffset.UnixEpoch);
+
+        var restored = SaveRestorer.Restore(
+            save,
+            scenario.InputApplication.World,
+            scenario.InputApplication.Config,
+            TestObjectMother.CreateMonster,
+            new SequenceRandomSource(1));
+
+        Assert.Equal(1.75f, restored.Parties.Get("party-1").EncounterState.TravelSecondsSinceReset);
+    }
+
+    [Fact]
     public void GameConfig_exposes_save_auto_save_interval()
     {
         var config = TestObjectMother.CreateGameConfig();

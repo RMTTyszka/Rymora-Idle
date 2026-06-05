@@ -40,6 +40,8 @@ public sealed record SaveData(
     IReadOnlyList<CombatSaveData> ActiveCombats);
 ```
 
+Versao atual do schema: `SaveData.CurrentVersion = "2"`. O bump aconteceu porque `PartySaveData` ganhou um novo campo persistido para estado de encontros durante viagem.
+
 ```csharp
 public sealed record PartySaveData(
     string PartyId,
@@ -48,10 +50,13 @@ public sealed record PartySaveData(
     IReadOnlyList<CreatureSaveData> Members,
     IReadOnlyList<ItemSaveData> InventoryItems,
     ActionQueueSaveData ActionQueue,
-    AutomationSaveData Automation);
+    AutomationSaveData Automation,
+    float TravelSecondsSinceEncounterReset = 0);
 ```
 
 `TilePosition` serializa coordenadas logicas do Core. Save nao grava tipos Godot como `Vector2I`.
+
+`TravelSecondsSinceEncounterReset` persiste o acumulado de tempo de viagem usado pelo ramp temporal de encontros. O valor e validado como finito e nao negativo no load.
 
 O save atual cobre parties, membros, vida atual/maxima, stats, equipamento, inventario, fila atual, progresso parcial, acoes pendentes, Macros, Program, Runner e combates ativos. RNG interno, multiplos slots e cloud save ficam fora da v1.
 
@@ -73,6 +78,8 @@ public sealed record GameConfig
     public float EncounterProbability; // chance base de encontro
     public float EncounterInterval; // tempo entre checks de encontro
     public EncounterPolicy EncounterPolicy; // aplica modificador de terreno sem hardcode no World
+    public float EncounterRampPerSecond; // bonus linear por segundo viajado desde o ultimo reset
+    public float EncounterRampMaxBonus; // teto do bonus temporal acumulado
     public float CorpseDecayTime; // tempo ate corpo desaparecer
     public ProgressionConfig Progression;
     public LifeConfig Life;
@@ -151,6 +158,14 @@ Carregado de `assets/data/game_config.json` pelo adapter Godot.
 
 Valores numericos pendentes na biblia entram em `GameConfig` como balanceamento provisorio, nao como regra fixa no Core.
 
+Campos de encontro relevantes no config atual:
+
+- `EncounterProbability`: chance base global, agora balanceada para um valor baixo por tile.
+- `EncounterInterval`: permanece no schema, sem novo comportamento neste slice.
+- `EncounterRampPerSecond`: quanto a chance base sobe por segundo de viagem acumulado desde o ultimo reset.
+- `EncounterRampMaxBonus`: limite maximo do bonus temporal somado a `EncounterProbability` antes de aplicar modificadores de terreno/regiao/zona.
+- `EncounterPolicy`: controla se `TerrainData.EncounterRateModifier` participa ou nao do calculo; o config atualmente enviado usa `EncounterModifierMode.None` e deixa o modificador de terreno desativado em runtime.
+
 ### 3.2 Content runtime
 
 Conteudo inicial carregado por JSON:
@@ -171,9 +186,12 @@ Antes de montar os catalogos runtime, o adapter valida referencias cruzadas do c
 
 Chance de encontro durante viagem deve ser balanceavel por dados:
 - chance global em `assets/data/game_config.json` (`encounterProbability`).
-- modificador por terreno/bioma em `assets/data/world/terrain_tiles.json` (`encounterRateModifier`).
+- rampa temporal em `assets/data/game_config.json` (`encounterRampPerSecond` e `encounterRampMaxBonus`).
+- modificador por terreno/bioma em `assets/data/world/terrain_tiles.json` (`encounterRateModifier`), aplicado apenas se `EncounterPolicy` habilitar esse uso.
 - modificador por regiao em `assets/data/world/regions.json` (`encounterProbabilityModifier`).
 - modificador por zona em `assets/data/world/zones.json` (`encounterProbabilityModifier`).
+
+No estado enviado hoje, os modificadores ativos em runtime sao os de regiao e zona. O suporte a modificador de terreno existe no codigo, mas fica desligado pelo config atual com `EncounterModifierMode.None`.
 
 ### 3.3 Player settings (preferencias)
 

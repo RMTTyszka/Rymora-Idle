@@ -87,10 +87,12 @@ internal static class JsonGameContentLoader
     private static GameConfig LoadConfig(string path)
     {
         var config = ReadJson<GameConfigDto>(path);
-        return new GameConfig(
+        var gameConfig = new GameConfig(
             config.EncounterProbability,
             config.EncounterInterval,
             new EncounterPolicy(ParseEnum<EncounterModifierMode>(config.EncounterPolicy.TerrainModifierMode)),
+            config.EncounterRampPerSecond,
+            config.EncounterRampMaxBonus,
             config.CorpseDecayTime,
             new ProgressionConfig(
                 config.Progression.InitialAttributePoints,
@@ -110,6 +112,9 @@ internal static class JsonGameContentLoader
                 config.Combat.BaseCriticalMultiplier,
                 new TargetingConfig(config.Combat.Targeting.LowLifeWeight, config.Combat.Targeting.ThreatWeight)),
             new SaveConfig(config.Save.AutoSaveIntervalSeconds));
+
+        gameConfig.Validate();
+        return gameConfig;
     }
 
     private static IReadOnlyList<WeaponTemplate> LoadWeapons(string path)
@@ -230,6 +235,8 @@ internal static class JsonGameContentLoader
         public float EncounterProbability { get; set; }
         public float EncounterInterval { get; set; }
         public EncounterPolicyDto EncounterPolicy { get; set; } = new();
+        public float EncounterRampPerSecond { get; set; }
+        public float EncounterRampMaxBonus { get; set; }
         public float CorpseDecayTime { get; set; }
         public ProgressionConfigDto Progression { get; set; } = new();
         public LifeConfigDto Life { get; set; } = new();

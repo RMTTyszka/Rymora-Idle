@@ -4,13 +4,29 @@ public sealed record GameConfig(
     float EncounterProbability,
     float EncounterInterval,
     EncounterPolicy EncounterPolicy,
+    float EncounterRampPerSecond,
+    float EncounterRampMaxBonus,
     float CorpseDecayTime,
     ProgressionConfig Progression,
     LifeConfig Life,
     CollectionConfig Collection,
     TravelConfig Travel,
     CombatConfig Combat,
-    SaveConfig Save);
+    SaveConfig Save)
+{
+    public void Validate()
+    {
+        if (!float.IsFinite(EncounterRampPerSecond) || EncounterRampPerSecond < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(EncounterRampPerSecond), "Encounter ramp per second must be finite and non-negative.");
+        }
+
+        if (!float.IsFinite(EncounterRampMaxBonus) || EncounterRampMaxBonus < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(EncounterRampMaxBonus), "Encounter ramp max bonus must be finite and non-negative.");
+        }
+    }
+}
 
 public sealed record ProgressionConfig(
     float InitialAttributePoints,

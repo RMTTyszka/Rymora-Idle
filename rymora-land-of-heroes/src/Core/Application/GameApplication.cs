@@ -31,6 +31,8 @@ public sealed class GameApplication
             throw new ArgumentOutOfRangeException(nameof(playTimeSeconds), "Play time must be finite and non-negative.");
         }
 
+        config.Validate();
+
         World = world;
         Parties = new PartyRegistry(parties);
         Config = config;
@@ -296,6 +298,7 @@ public sealed class GameApplication
             _randomSource);
 
         _combats[party.Id] = combat;
+        party.EncounterState.Reset();
         party.IsInCombat = true;
         SyncScreen();
         return combat;
@@ -364,6 +367,11 @@ public sealed class GameApplication
             }
 
             return;
+        }
+
+        if (current.Request.ActionType == PartyActionType.Travel)
+        {
+            party.EncounterState.AddTravelTime(deltaTime);
         }
 
         current.AddProgress(deltaTime);
@@ -493,10 +501,29 @@ public sealed class GameApplication
         var travelCompleted = party.ActionQueue.CompleteCurrentIfFinished();
         NotifyAutomationActionCompleted(party, travelCompleted);
 
-        if (World.ShouldTriggerEncounter(party.Position, Config.EncounterProbability, Config.EncounterPolicy))
+        if (IsSafeEncounterTile(party.Position))
+        {
+            party.EncounterState.Reset();
+            return;
+        }
+
+        if (World.ShouldTriggerEncounter(party.Position, GetEncounterBaseChance(party), Config.EncounterPolicy))
         {
             StartCombat(party.Id, World.SelectRandomEncounter(party.Position));
         }
+    }
+
+    private bool IsSafeEncounterTile(TilePosition position)
+    {
+        return World.GetTerrain(position).IsCity || World.GetRegion(position).IsSafeSpot;
+    }
+
+    private float GetEncounterBaseChance(GameParty party)
+    {
+        var temporalBonus = Math.Min(
+            party.EncounterState.TravelSecondsSinceReset * Config.EncounterRampPerSecond,
+            Config.EncounterRampMaxBonus);
+        return Config.EncounterProbability + temporalBonus;
     }
 
     private void ExecuteCollect(GameParty party, PartyActionState state, bool requiresMining)
@@ -624,6 +651,7 @@ public sealed class GameApplication
     private void HandlePartyDeath(GameParty party)
     {
         party.ActionQueue.Clear();
+        party.EncounterState.Reset();
         party.Position = World.FindNearestSafeSpotPosition(party.Position);
         party.IsInCombat = false;
     }

@@ -127,6 +127,35 @@ public sealed class SaveValidationTests
         Assert.Contains("TimeToExecute", error.Message);
     }
 
+    [Fact]
+    public void Validate_rejects_negative_party_encounter_travel_seconds()
+    {
+        var save = EmptySave() with
+        {
+            Parties = new[] { EmptyParty() with { TravelSecondsSinceEncounterReset = -1 } }
+        };
+
+        var error = Assert.Throws<InvalidOperationException>(() => SaveValidation.Validate(save));
+
+        Assert.Contains("TravelSecondsSinceEncounterReset", error.Message);
+    }
+
+    [Theory]
+    [InlineData(float.NaN)]
+    [InlineData(float.PositiveInfinity)]
+    [InlineData(float.NegativeInfinity)]
+    public void Validate_rejects_non_finite_party_encounter_travel_seconds(float value)
+    {
+        var save = EmptySave() with
+        {
+            Parties = new[] { EmptyParty() with { TravelSecondsSinceEncounterReset = value } }
+        };
+
+        var error = Assert.Throws<InvalidOperationException>(() => SaveValidation.Validate(save));
+
+        Assert.Contains("TravelSecondsSinceEncounterReset", error.Message);
+    }
+
     private static SaveData EmptySave()
     {
         return new SaveData(

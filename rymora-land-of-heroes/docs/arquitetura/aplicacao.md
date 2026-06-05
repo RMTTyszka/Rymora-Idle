@@ -74,10 +74,11 @@ Casos de uso sao metodos em `GameApplication` que coordenam multiplos dominios.
 ### 3.3 StartCombat
 
 ```
-1. World seleciona encontro aleatorio para a regiao.
+1. World seleciona encontro aleatorio a partir dos dados da regiao filtrados pelo terreno atual.
 2. Cria CombatInstance com herois da Party + monstros.
 3. Marca Party.IsInCombat = true.
-4. Se Party for selecionada -> UI alterna para tela de combate.
+4. No fluxo de viagem, `ExecuteTravel` ja chega aqui com o acumulado temporal de encontros da Party resetado.
+5. Se Party for selecionada -> UI alterna para tela de combate.
 ```
 
 ### 3.4 RunCombatTurn
@@ -92,7 +93,7 @@ Casos de uso sao metodos em `GameApplication` que coordenam multiplos dominios.
 
 ```
 1. Se vitoria: limpa instancia, Party volta ao mapa.
-2. Se derrota: Party morre, inicia retorno ao safe spot.
+2. Se derrota: Party morre e `HandlePartyDeath` move a Party diretamente para o safe spot mais proximo na v1.
 3. Atualiza UI.
 ```
 
@@ -102,7 +103,7 @@ Casos de uso sao metodos em `GameApplication` que coordenam multiplos dominios.
 1. Limpa fila de acoes da Party.
 2. World.FindNearestSafeSpotPosition(Position).
 3. Limpa combate ativo.
-4. Move party para safe spot na v1.
+4. Move Party diretamente para esse safe spot na v1, sem enfileirar viagem de retorno.
 5. Estado de fantasma/igreja fica para refinamento do dominio Hero.
 ```
 
@@ -122,6 +123,17 @@ GameApplication.Update(float deltaTime):
         senao:
             RunPartyActions(party, deltaTime)
 ```
+
+No fluxo atual de `RunPartyActions`, quando a acao corrente e `Travel`, `GameApplication` acumula `deltaTime` em `party.EncounterState.TravelSecondsSinceReset` antes de verificar se o passo ja pode ser executado. Esse acumulado alimenta a rampa temporal de encontros.
+
+Quando `ExecuteTravel` conclui um passo:
+
+- move a Party para o proximo tile logico;
+- se entrar em tile `City` ou em regiao `IsSafeSpot`, reseta `EncounterState` e encerra a avaliacao de encontro daquele passo;
+- se a regiao nao tiver encounter para o `TerrainType` atual, nao ha encontro naquele tile;
+- caso contrario, calcula a chance base enriquecida como `EncounterProbability + min(TravelSecondsSinceReset * EncounterRampPerSecond, EncounterRampMaxBonus)`;
+- passa essa chance base enriquecida para `World.ShouldTriggerEncounter`, que aplica modificadores ativos de regiao/zona e pode aplicar modificador de terreno conforme `EncounterPolicy`;
+- se o encontro disparar, reseta `EncounterState` e chama `StartCombat`.
 
 ---
 

@@ -76,4 +76,16 @@ public sealed class SaveSnapshotBuilderTests
         Assert.NotEmpty(combat.Heroes);
         Assert.NotEmpty(combat.Monsters);
     }
+
+    [Fact]
+    public void CreateSaveData_saves_party_encounter_travel_seconds()
+    {
+        var scenario = ApplicationObjectMother.ApplicationWithTravelActionQueued();
+        scenario.AssertParty.EncounterState.AddTravelTime(2.5f);
+
+        var save = scenario.InputApplication.CreateSaveData(DateTimeOffset.UnixEpoch);
+
+        Assert.Equal(SaveData.CurrentVersion, save.SaveVersion);
+        Assert.Equal(2.5f, save.Parties.Single().TravelSecondsSinceEncounterReset);
+    }
 }

@@ -1,4 +1,6 @@
 using RymoraLandOfHeroes.Core.Tests.ObjectMothers;
+using RymoraLandOfHeroes.Core.Common;
+using RymoraLandOfHeroes.Core.Configuration;
 
 namespace RymoraLandOfHeroes.Core.Tests.World;
 
@@ -84,6 +86,32 @@ public sealed class WorldStateTests
             scenario.InputPolicy);
 
         Assert.Equal(scenario.ExpectedResult, result);
+    }
+
+    [Fact]
+    public void ShouldTriggerEncounter_clamps_large_probability_after_modifiers()
+    {
+        var scenario = WorldObjectMother.WorldWithEncounterModifier();
+
+        var result = scenario.InputWorld.ShouldTriggerEncounter(
+            scenario.InputPosition,
+            baseProbability: 150,
+            scenario.InputPolicy);
+
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void ShouldTriggerEncounter_supports_fractional_probability()
+    {
+        var world = TestObjectMother.CreateWorld(random: new SequenceRandomSource(1050));
+
+        var result = world.ShouldTriggerEncounter(
+            new TilePosition(0, 0),
+            baseProbability: 10.5f,
+            new EncounterPolicy(EncounterModifierMode.None));
+
+        Assert.True(result);
     }
 
     [Fact]

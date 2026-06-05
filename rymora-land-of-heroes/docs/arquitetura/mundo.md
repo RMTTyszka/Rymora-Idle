@@ -221,12 +221,15 @@ Durante viagem, a cada tile percorrido:
 
 1. Verifica se ja esta em combate -> pula.
 2. Verifica se esta morto -> pula.
-3. Verifica se terreno atual e City -> pula.
-4. Calcula chance usando `GameConfig.EncounterProbability`, `terrain.EncounterRateModifier` conforme `EncounterPolicy`, `region.EncounterProbabilityModifier` e `zone.EncounterProbabilityModifier`.
-5. Se passar, seleciona um encontro da tabela da regiao filtrada pelo terreno/bioma atual.
-6. Inicia combate via Application.
+3. Avaliacao continua por tile; ao concluir um passo de viagem, o Application decide naquele tile se ha reset seguro ou check de encontro.
+4. Se o tile atual for `City` ou pertencer a regiao `IsSafeSpot`, nao ha encontro e o acumulado temporal de viagem e resetado.
+5. Se a regiao nao tiver encounters para o `TerrainType` atual, nao ha encontro nesse tile.
+6. Caso contrario, calcula chance efetiva usando `GameConfig.EncounterProbability` somada ao bonus temporal acumulado de viagem, mais `region.EncounterProbabilityModifier` e `zone.EncounterProbabilityModifier`.
+7. O codigo tambem suporta aplicar `terrain.EncounterRateModifier` via `EncounterPolicy`, mas a configuracao atual enviada usa `EncounterModifierMode.None` e deixa esse modificador desativado em runtime.
+8. Se passar, seleciona um encontro da tabela da regiao filtrada pelo terreno/bioma atual.
+9. Inicia combate via Application e reseta o acumulado temporal de viagem.
 
-`GameConfig.EncounterProbability` e a chance base global de encontro durante viagem. `RegionData.EncounterProbabilityModifier` ajusta uma regiao especifica. `ZoneData.EncounterProbabilityModifier` ajusta a profundidade/sub-regiao. `TerrainData.EncounterRateModifier` ajusta tiles/biomas especificos. O sinal de `EncounterRateModifier` e configurado por `EncounterModifierMode`.
+`GameConfig.EncounterProbability` e a chance base global de encontro durante viagem. `GameApplication` soma um bonus temporal linear baseado no tempo viajado desde o ultimo reset, limitado por `GameConfig.EncounterRampMaxBonus`, antes de chamar `WorldState.ShouldTriggerEncounter`. `RegionData.EncounterProbabilityModifier` ajusta uma regiao especifica e `ZoneData.EncounterProbabilityModifier` ajusta a profundidade/sub-regiao. `TerrainData.EncounterRateModifier` existe no modelo e pode ser aplicado conforme `EncounterModifierMode`, mas o config atualmente enviado usa `None`, entao o modificador de terreno fica desativado em runtime.
 
 ---
 
@@ -296,14 +299,17 @@ public sealed class WorldState
 1. Party tem fila de waypoints.
 2. Core avanca Party para proximo tile no caminho.
 3. A cada tile: cruza terreno + regiao + zona.
-4. Verifica encontro usando chance combinada e tabela da regiao por terreno.
-5. Se encontrar: Application inicia combate.
-6. Se chegar ao destino: proxima acao da fila.
+4. Se o tile for `City` ou `safe spot`, reseta o acumulado temporal de encontros e nao faz roll.
+5. Se nao houver encounter mapeado para o terreno atual naquela regiao, nao ha encontro nesse tile.
+6. Caso contrario, verifica encontro usando chance combinada por tile e tabela da regiao por terreno, incluindo bonus temporal acumulado de viagem e modificadores ativos de regiao/zona.
+7. O codigo tambem suporta modificador de terreno via `EncounterPolicy`, mas o config enviado o deixa desativado.
+8. Se encontrar: Application inicia combate e reseta o acumulado temporal.
+9. Se chegar ao destino: proxima acao da fila.
 
 ### 7.3 Morrer e voltar
 
 1. Party morre em combate.
 2. Core limpa fila de acoes e acao atual.
 3. Core encontra safe spot mais proximo (`FindNearestSafeSpot`).
-4. Party enfileira viagem ate o safe spot.
+4. Na v1, Party e movida diretamente para a posicao do safe spot mais proximo.
 5. (Heroi vira fantasma - ver regras em biblia e heroi.md)

@@ -116,9 +116,14 @@ Notas:
 
 - `WorldState.ShouldTriggerEncounter` ja existe.
 - `GameApplication.ExecuteTravel` ja chama `StartCombat` quando o encontro dispara.
-- `EncounterProbability` deve ficar configuravel no JSON e nao hardcoded.
-- Decidir se `EncounterInterval` continua necessario ou se encontro por tile e suficiente para v1.
-- Adicionar testes para chance de encontro configurada via `GameConfig` se comportamento mudar.
+- `EncounterProbability` continua configuravel no JSON e agora representa uma chance base baixa por tile.
+- Avaliacao de encontro continua por tile; modificadores de regiao e zona permanecem ativos na configuracao enviada.
+- O codigo suporta modificador de terreno condicionalmente via `EncounterPolicy`, mas a configuracao atual enviada usa `encounterPolicy.terrainModifierMode = "None"`.
+- `GameApplication` acumula tempo de viagem e adiciona bonus temporal linear via `EncounterRampPerSecond`, limitado por `EncounterRampMaxBonus`.
+- O acumulador temporal e resetado quando um encontro comeca.
+- O acumulador temporal tambem e resetado ao entrar em `safe spot` ou em tile `City`.
+- Tiles sem entradas de encounters para o terreno atual nao disparam encontros.
+- `EncounterInterval` permanece no schema, mas atualmente nao participa da logica runtime de encontros.
 
 ### 4. Dados e validacao de conteudo
 

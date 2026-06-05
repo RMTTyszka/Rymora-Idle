@@ -146,7 +146,7 @@ public sealed class WorldState
             return false;
         }
 
-        return _randomSource.NextInclusive(1, 100) <= effectiveProbability;
+        return _randomSource.NextInclusive(1, 10000) <= effectiveProbability * 100;
     }
 
     public static IReadOnlyList<TilePosition> GetNeighbors(TilePosition position)
